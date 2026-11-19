@@ -26,7 +26,7 @@ fierté, sur l'univers de la chambre de Kiki (vert sauge, jaune beurre, girafe).
 - **Illustrations** : uniquement de vraies illustrations ; la mascotte girafe
   (D17) est produite en parallèle, le motif de taches la remplace en attendant.
   Silhouette validée le 2026-11-18 : bébé girafe assis, tête ronde (~40 % de
-  la hauteur), pelage beurre à taches ocre, bandana sauge, étiquette « Kiki »,
+  la hauteur), pelage beurre à taches ocre, bandana et tétine sauge, étiquette « Kiki »,
   unisexe (ni nœud ni cils). Planches : https://claude.ai/artifact/AAaER3hzo28NMq5heuGew3
   Pas de croquis SVG faits main. Icônes : trait 1.8–2 px, coins arrondis.
 - **À éviter** : ombres dures décalées, sur-titres au-dessus des titres,

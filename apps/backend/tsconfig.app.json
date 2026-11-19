@@ -41,6 +41,9 @@
       "path": "../../libs/backend/features/item/tsconfig.lib.json"
     },
     {
+      "path": "../../libs/backend/features/contribution/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/backend/features/birth-list/tsconfig.lib.json"
     },
     {

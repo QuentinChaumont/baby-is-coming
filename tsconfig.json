@@ -89,6 +89,9 @@
     },
     {
       "path": "./libs/backend/features/participation"
+    },
+    {
+      "path": "./libs/backend/features/contribution"
     }
   ],
   "compilerOptions": {}

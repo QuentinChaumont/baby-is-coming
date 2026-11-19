@@ -15,6 +15,7 @@ import { AccountRetentionModule } from '@org/backend-features-account-retention'
 import { AppSettingsModule } from '@org/backend-features-app-settings';
 import { AuditModule } from '@org/backend-features-audit';
 import { BirthListModule } from '@org/backend-features-birth-list';
+import { ContributionModule } from '@org/backend-features-contribution';
 import { ItemModule } from '@org/backend-features-item';
 import { ParticipationModule } from '@org/backend-features-participation';
 import { RoleModule } from '@org/backend-features-role';
@@ -40,6 +41,7 @@ import { UserModule } from '@org/backend-features-user';
     BirthListModule,
     ItemModule,
     ParticipationModule,
+    ContributionModule,
   ],
 })
 export class AppModule {}

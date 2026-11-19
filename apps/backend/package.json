@@ -106,6 +106,7 @@
     "@org/backend-features-app-settings": "0.0.1",
     "@org/backend-features-audit": "0.0.1",
     "@org/backend-features-birth-list": "0.0.1",
+    "@org/backend-features-contribution": "0.0.1",
     "@org/backend-features-item": "0.0.1",
     "@org/backend-features-participation": "0.0.1",
     "@org/backend-features-role": "0.0.1",
