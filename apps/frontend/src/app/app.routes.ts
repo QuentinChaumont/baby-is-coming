@@ -69,6 +69,23 @@ export const appRoutes: Route[] = [
         title: 'Tableau de bord',
       },
       {
+        path: 'objets',
+        loadComponent: () => import('./admin/items-page').then((m) => m.ItemsPage),
+        title: 'Objets',
+      },
+      {
+        path: 'objets/nouveau',
+        loadComponent: () =>
+          import('./admin/item-edit-page').then((m) => m.ItemEditPage),
+        title: 'Nouvel objet',
+      },
+      {
+        path: 'objets/:id',
+        loadComponent: () =>
+          import('./admin/item-edit-page').then((m) => m.ItemEditPage),
+        title: 'Objet',
+      },
+      {
         path: 'profile',
         loadChildren: () =>
           import('@org/frontend-features-profile').then(

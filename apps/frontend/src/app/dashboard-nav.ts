@@ -9,4 +9,5 @@ import { NavItem } from '@org/frontend-dashboard';
  */
 export const DASHBOARD_NAV: NavItem[] = [
   { label: 'Tableau de bord', labelKey: 'dashboard.nav.home', icon: 'home', route: '' },
+  { label: 'Objets', icon: 'redeem', route: 'objets' },
 ];
