@@ -11,6 +11,7 @@ import type {
 import { QueryFilter } from 'mongoose';
 import { normalizeSearch, searchTextOf, toAdminItem, toPublicItem } from './item.mapper';
 import { ItemRepository } from './item.repository';
+import { MediaStorage } from './media.storage';
 import { Item, ItemDocument } from './item.schema';
 
 /** Single list for the MVP (PRODUCT D1). */
@@ -26,7 +27,10 @@ function escapeRegex(text: string): string {
  */
 @Injectable()
 export class ItemService {
-  constructor(private readonly repository: ItemRepository) {}
+  constructor(
+    private readonly repository: ItemRepository,
+    private readonly media: MediaStorage,
+  ) {}
 
   // ── guests ────────────────────────────────────────────────────────────
 
@@ -132,6 +136,7 @@ export class ItemService {
       );
     }
     await this.repository.deleteById(id);
+    await Promise.all(doc.photoIds.map((photoId) => this.media.deleteAll(photoId)));
   }
 
   /** `ids` must list every item of the list exactly once. */

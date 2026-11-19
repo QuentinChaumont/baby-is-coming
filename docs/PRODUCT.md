@@ -508,8 +508,10 @@ Le starter fournit déjà : Angular 22 + Material M3, NestJS, MongoDB, Nx.
      (vignette ~400 px, grande ~1200 px), conversion **WebP** qualité ~80,
      **suppression des métadonnées EXIF** (dont la position GPS), poids cible
      < 200 Ko par image.
-  3. Taille d'upload max ~10 Mo, formats acceptés JPEG / PNG / HEIC (photos iPhone,
-     support HEIC à vérifier côté `sharp`).
+  3. Taille d'upload max 10 Mo, formats JPEG / PNG / WebP. ⚠️ Les binaires
+     précompilés de `sharp` ne décodent pas le HEIC des iPhone (brevets HEVC) :
+     le recadrage navigateur (étape 4.2) exporte en JPEG, ce qui couvre le cas
+     quand le navigateur sait lire le HEIC (Safari) ; sinon, message clair.
   4. Servies avec cache long (`Cache-Control`, URL versionnée).
 - Accès invité sans compte : jeton de gestion signé dans le lien magique.
 - ✅ Anti-spam formulaires publics : simple et invisible — rate limiting (brick `security`) + champ piège (honeypot). Pas de captcha.
