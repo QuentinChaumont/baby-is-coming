@@ -14,7 +14,7 @@ test.describe('connected accounts', () => {
     await linkIdentity(user.email, { provider: 'google', subject: 'g-e2e-1' });
 
     await login(page, user);
-    await page.goto('/app/profile');
+    await page.goto('/admin/profile');
 
     const panel = page
       .locator('section.panel')

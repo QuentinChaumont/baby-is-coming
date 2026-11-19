@@ -16,23 +16,23 @@ test.describe('profile — unsaved changes guard', () => {
     await login(page, user);
     await acceptConsent(page);
 
-    await page.goto('/app/profile');
+    await page.goto('/admin/profile');
     await page.getByLabel('First name').fill('Umatollah');
 
     // leaving now is guarded
-    await page.getByRole('link', { name: 'Home' }).click();
+    await page.getByRole('link', { name: 'Accueil' }).click();
     await expect(
       page.getByRole('heading', { name: 'Leave without saving?' }),
     ).toBeVisible();
     await page.getByRole('button', { name: 'Stay' }).click();
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/admin\/profile$/);
 
     // save, then the same navigation is clean
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(page.locator('mat-snack-bar-container')).toContainText(
       /updated/i,
     );
-    await page.getByRole('link', { name: 'Home' }).click();
-    await expect(page).toHaveURL(/\/app$/);
+    await page.getByRole('link', { name: 'Accueil' }).click();
+    await expect(page).toHaveURL(/\/admin$/);
   });
 });

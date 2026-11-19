@@ -37,7 +37,7 @@ describe('OidcCallback', () => {
 
   it('consumes the token, scrubs the fragment, loads the profile and forwards', () => {
     const { navigateByUrl, replaceState } = configure(
-      '#access_token=at-1&expires_in=900&token_type=Bearer&redirect_to=%2Fapp%2Fx',
+      '#access_token=at-1&expires_in=900&token_type=Bearer&redirect_to=%2Fadmin%2Fx',
     );
 
     const fixture = TestBed.createComponent(OidcCallback);
@@ -50,7 +50,7 @@ describe('OidcCallback', () => {
       .expectOne('/api/auth/me')
       .flush({ id: 'u1', roles: [] });
 
-    expect(navigateByUrl).toHaveBeenCalledWith('/app/x');
+    expect(navigateByUrl).toHaveBeenCalledWith('/admin/x');
   });
 
   it('routes to /login when the fragment has no token', () => {

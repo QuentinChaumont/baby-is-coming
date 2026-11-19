@@ -172,6 +172,7 @@ export class RegisterPage {
 
   private readonly redirectTo = sanitizeRedirect(
     this.route.snapshot.queryParamMap.get('redirectTo'),
+    '/admin',
   );
 
   protected submit(): void {

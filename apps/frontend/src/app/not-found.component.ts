@@ -10,11 +10,11 @@ import { RouterLink } from '@angular/router';
   template: `
     <main class="not-found">
       <p class="not-found__code">404</p>
-      <h1 class="not-found__title">Page not found</h1>
+      <h1 class="not-found__title">Page introuvable</h1>
       <p class="not-found__text">
-        The page you're looking for doesn't exist or has moved.
+        Cette page n'existe pas (ou plus). Kiki l'a peut-être mâchouillée.
       </p>
-      <a routerLink="/">Back to the app</a>
+      <a routerLink="/">Retour à l'accueil</a>
     </main>
   `,
   styles: `

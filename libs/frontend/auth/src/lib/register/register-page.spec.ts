@@ -53,7 +53,7 @@ describe('RegisterPage', () => {
       user: { id: '1', roles: [] },
     });
 
-    expect(navigate).toHaveBeenCalledWith('/');
+    expect(navigate).toHaveBeenCalledWith('/admin');
     http.verify();
   });
 

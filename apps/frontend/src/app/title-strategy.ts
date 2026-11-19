@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { RouterStateSnapshot, TitleStrategy } from '@angular/router';
 
 /** Suffix appended to every page title — rename for this project. */
-const APP_NAME = 'Starter';
+const APP_NAME = 'Kiki';
 
 /**
  * Sets `document.title` from each route's `title` (walked by

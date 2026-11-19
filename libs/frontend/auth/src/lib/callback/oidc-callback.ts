@@ -57,7 +57,7 @@ export class OidcCallback {
   private readonly router = inject(Router);
 
   protected readonly pendingToken = signal<string | null>(null);
-  protected redirectTo = '/app';
+  protected redirectTo = '/admin';
 
   constructor() {
     const view = this.document.defaultView;

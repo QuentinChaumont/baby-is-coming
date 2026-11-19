@@ -23,7 +23,6 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { LangSwitcher } from '@org/frontend-i18n/lang-switcher';
 import { filter, map, of, skip, switchMap, timer } from 'rxjs';
 import { SidenavNav } from './sidenav-nav';
 import { UserMenu } from './user-menu';
@@ -66,7 +65,6 @@ function writeOpenPref(open: boolean): void {
     RouterOutlet,
     SidenavNav,
     UserMenu,
-    LangSwitcher,
     TranslocoPipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -95,7 +93,6 @@ function writeOpenPref(open: boolean): void {
         <span class="shell__title">{{ title }}</span>
       </span>
       <span class="shell__spacer"></span>
-      <lib-lang-switcher></lib-lang-switcher>
       <lib-user-menu></lib-user-menu>
     </mat-toolbar>
 

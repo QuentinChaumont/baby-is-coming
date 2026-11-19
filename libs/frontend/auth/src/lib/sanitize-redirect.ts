@@ -1,6 +1,6 @@
 /**
  * Keeps a post-login redirect on our own app. Accepts only a single-slash
- * absolute path (`/app/reports`); rejects absolute URLs, protocol-relative
+ * absolute path (`/admin/profile`); rejects absolute URLs, protocol-relative
  * values (`//evil.com`), backslashes and whitespace. Falls back to
  * `fallback` (default `/`).
  */

@@ -148,8 +148,8 @@ describe('AuthService', () => {
       label: 'SSO',
       loginUrl: '/auth/oidc/generic/login',
     };
-    expect(service.oidcLoginUrl(provider, '/app/x')).toBe(
-      `${BASE}/auth/oidc/generic/login?redirectTo=%2Fapp%2Fx`,
+    expect(service.oidcLoginUrl(provider, '/admin/x')).toBe(
+      `${BASE}/auth/oidc/generic/login?redirectTo=%2Fadmin%2Fx`,
     );
     expect(service.oidcLoginUrl(provider)).toBe(
       `${BASE}/auth/oidc/generic/login`,

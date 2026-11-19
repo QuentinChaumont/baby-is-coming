@@ -74,7 +74,7 @@ describe('NavTreeItem', () => {
     const fixture = render(GROUP);
     expect(el(fixture).querySelector('button')?.getAttribute('aria-expanded')).toBe('false');
 
-    await navigateTo('/app/admin/roles');
+    await navigateTo('/admin/admin/roles');
     fixture.detectChanges();
 
     expect(el(fixture).querySelector('button')?.getAttribute('aria-expanded')).toBe('true');
@@ -82,7 +82,7 @@ describe('NavTreeItem', () => {
 
   it('a manual collapse wins over an active descendant, and persists', async () => {
     const first = render(GROUP);
-    await navigateTo('/app/admin/roles');
+    await navigateTo('/admin/admin/roles');
     first.detectChanges();
     expect(el(first).querySelector('button')?.getAttribute('aria-expanded')).toBe('true');
 

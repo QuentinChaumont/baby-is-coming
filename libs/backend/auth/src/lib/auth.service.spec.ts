@@ -28,6 +28,7 @@ function build(overrides: {
   const events = new AuthEvents();
   const config = buildTestConfig({
     JWT_SECRET: 'test-secret',
+    AUTH_REGISTRATION_ENABLED: true,
     ...(overrides.requireVerifiedEmail
       ? { AUTH_REQUIRE_VERIFIED_EMAIL: true }
       : {}),

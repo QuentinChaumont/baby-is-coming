@@ -19,7 +19,7 @@ import { ProfileSessionsSection } from './sections/profile-sessions-section';
 import { ProfileTwoFactorSection } from './sections/profile-two-factor-section';
 
 /**
- * `/app/profile` shell (V2.1 step 34). Loads the profile once and composes
+ * `/admin/profile` shell (V2.1 step 34). Loads the profile once and composes
  * the self-contained sections; the only shared state is `profile` (a few
  * sections read it, two hand back an updated copy) and the unsaved-changes
  * check, which it delegates to the sections that own editable forms.

@@ -203,6 +203,7 @@ export class LoginPage {
 
   protected readonly redirectTo = sanitizeRedirect(
     this.route.snapshot.queryParamMap.get('redirectTo'),
+    '/admin',
   );
 
   protected readonly oidcProviders = toSignal(this.auth.oidcProviders(), {
@@ -235,9 +236,12 @@ export class LoginPage {
       },
       error: (err: unknown) => {
         this.submitting.set(false);
-        const body = err instanceof HttpErrorResponse ? err.error : null;
+        const http = err instanceof HttpErrorResponse ? err : null;
+        const body = http?.error ?? null;
+        // Wrong credentials get the localized message; any other API error
+        // (lockout, disabled account…) keeps the server's wording.
         this.error.set(
-          isApiError(body)
+          isApiError(body) && http?.status !== 401
             ? body.message
             : this.transloco.translate('auth.login.invalid'),
         );

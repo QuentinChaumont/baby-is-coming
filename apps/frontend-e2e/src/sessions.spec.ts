@@ -15,17 +15,17 @@ test.describe('sessions / devices', () => {
 
     // register through the UI so pageA *is* the first session (no orphan)
     await pageA.goto('/register');
-    await pageA.getByLabel('First name').fill('Dee');
-    await pageA.getByLabel('Last name').fill('Vice');
-    await pageA.getByLabel('Email').fill(user.email);
-    await pageA.getByLabel('Password', { exact: true }).fill(user.password);
-    await pageA.getByRole('button', { name: 'Create account' }).click();
+    await pageA.getByLabel('Prénom').fill('Dee');
+    await pageA.getByLabel('Nom', { exact: true }).fill('Vice');
+    await pageA.getByLabel('E-mail').fill(user.email);
+    await pageA.getByLabel('Mot de passe', { exact: true }).fill(user.password);
+    await pageA.getByRole('button', { name: 'Créer le compte' }).click();
     await expect(pageA.getByTestId('dashboard-home')).toBeVisible();
 
     await login(pageB, user);
 
     // A now sees two devices, one flagged "This device"
-    await pageA.goto('/app/profile');
+    await pageA.goto('/admin/profile');
     const panel = pageA
       .locator('section.panel')
       .filter({ has: pageA.getByRole('heading', { name: 'Devices' }) });

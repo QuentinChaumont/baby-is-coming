@@ -187,7 +187,7 @@ describe('AppConfigService', () => {
     });
   });
 
-  it('reports registration as enabled unless explicitly disabled', () => {
+  it('reports registration as disabled unless explicitly enabled', () => {
     const base = {
       NODE_ENV: 'development' as const,
       PORT: 3000,
@@ -196,7 +196,7 @@ describe('AppConfigService', () => {
       RATE_LIMIT_LIMIT: 100,
     };
 
-    expect(createService(base).auth.registrationEnabled).toBe(true);
+    expect(createService(base).auth.registrationEnabled).toBe(false);
     expect(
       createService({ ...base, AUTH_REGISTRATION_ENABLED: true }).auth
         .registrationEnabled,
@@ -217,7 +217,7 @@ describe('AppConfigService', () => {
     };
 
     expect(createService(base).auth).toEqual({
-      registrationEnabled: true,
+      registrationEnabled: false,
       requireVerifiedEmail: false,
       resetTokenTtlMinutes: 60,
       verificationTokenTtlHours: 24,
@@ -233,7 +233,7 @@ describe('AppConfigService', () => {
         VERIFICATION_RESEND_COOLDOWN_SECONDS: 60,
       }).auth,
     ).toEqual({
-      registrationEnabled: true,
+      registrationEnabled: false,
       requireVerifiedEmail: true,
       resetTokenTtlMinutes: 15,
       verificationTokenTtlHours: 48,

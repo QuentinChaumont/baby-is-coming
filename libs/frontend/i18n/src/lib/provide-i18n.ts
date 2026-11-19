@@ -16,9 +16,10 @@ import { Observable, of } from 'rxjs';
 import { en } from './i18n/en';
 import { fr } from './i18n/fr';
 
-export const AVAILABLE_LANGS = ['en', 'fr'] as const;
+// French only (PRODUCT D19). `en` stays bundled for a possible later switch.
+export const AVAILABLE_LANGS = ['fr'] as const;
 export type AppLang = (typeof AVAILABLE_LANGS)[number];
-export const DEFAULT_LANG: AppLang = 'en';
+export const DEFAULT_LANG: AppLang = 'fr';
 
 /** Where the chosen language is remembered for a guest. */
 export const LANG_STORAGE_KEY = 'app.lang';
@@ -32,7 +33,7 @@ export function isAppLang(value: unknown): value is AppLang {
 /** Bundled translations — no HTTP, so it works offline / under SSR. */
 class InlineTranslocoLoader implements TranslocoLoader {
   getTranslation(lang: string): Observable<Translation> {
-    return of(lang === 'fr' ? fr : en);
+    return of(lang === 'en' ? en : fr);
   }
 }
 

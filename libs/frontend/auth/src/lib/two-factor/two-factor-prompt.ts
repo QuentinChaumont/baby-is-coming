@@ -98,7 +98,7 @@ export class TwoFactorPrompt {
   private readonly transloco = inject(TranslocoService);
 
   readonly pendingToken = input.required<string>();
-  readonly redirectTo = input('/app');
+  readonly redirectTo = input('/admin');
 
   protected readonly form = this.fb.nonNullable.group({
     code: ['', [Validators.required, Validators.minLength(6)]],

@@ -5,11 +5,11 @@ import {
 } from '@jsverse/transloco';
 import { en } from './i18n/en';
 import { fr } from './i18n/fr';
-import { AVAILABLE_LANGS, DEFAULT_LANG } from './provide-i18n';
 
 /**
  * Drop into a component spec's `providers` so `| transloco` resolves
- * against the real bundled translations.
+ * against the real bundled translations. Specs run in English (both
+ * bundles loaded) even though the app itself ships French only.
  *
  *   TestBed.configureTestingModule({
  *     imports: [MyComponent],
@@ -23,8 +23,8 @@ export function provideTranslocoTesting(
     TranslocoTestingModule.forRoot({
       langs: { en, fr },
       translocoConfig: {
-        availableLangs: [...AVAILABLE_LANGS],
-        defaultLang: DEFAULT_LANG,
+        availableLangs: ['en', 'fr'],
+        defaultLang: 'en',
         reRenderOnLangChange: true,
       },
       preloadLangs: true,

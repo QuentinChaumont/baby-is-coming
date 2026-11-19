@@ -77,6 +77,8 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
       JWT_SECRET: 'e2e-only-not-a-secret',
       CORS_ORIGINS: BASE_URL,
       AUTH_COOKIE_SECURE: 'false',
+      // The suite registers its own accounts; the app ships with it off.
+      AUTH_REGISTRATION_ENABLED: 'true',
       AUTH_RATE_LIMIT_LIMIT: '100000',
       RATE_LIMIT_LIMIT: '100000',
     },

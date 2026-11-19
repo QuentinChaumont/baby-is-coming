@@ -14,18 +14,18 @@ test.describe('dashboard shell', () => {
     await expect(page.getByText(/^Roles:/)).toHaveCount(0);
   });
 
-  test('the sidenav "Home" link returns to /app from a child route', async ({
+  test('the sidenav "Accueil" link returns to /admin from a child route', async ({
     page,
   }) => {
     await login(page, SEEDED_USER);
     await acceptConsent(page);
 
     await page.getByRole('button', { name: 'Account menu' }).click();
-    await page.getByRole('menuitem', { name: 'Profile' }).click();
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await page.getByRole('menuitem', { name: 'Profil' }).click();
+    await expect(page).toHaveURL(/\/admin\/profile$/);
 
-    await page.getByRole('link', { name: 'Home' }).click();
-    await expect(page).toHaveURL(/\/app$/);
+    await page.getByRole('link', { name: 'Accueil' }).click();
+    await expect(page).toHaveURL(/\/admin$/);
     await expect(page.getByTestId('dashboard-home')).toBeVisible();
 
     // after an in-app navigation, focus lands on the content region
@@ -36,7 +36,7 @@ test.describe('dashboard shell', () => {
     await login(page, SEEDED_USER);
     await acceptConsent(page);
 
-    const skip = page.getByRole('link', { name: 'Skip to content' });
+    const skip = page.getByRole('link', { name: 'Aller au contenu' });
     await expect(skip).toHaveAttribute('href', '#shell-main');
     await expect(page.locator('#shell-main')).toHaveAttribute('tabindex', '-1');
   });
@@ -48,7 +48,7 @@ test.describe('dashboard shell', () => {
     await acceptConsent(page);
 
     await page.getByRole('button', { name: 'Account menu' }).click();
-    await page.getByRole('menuitem', { name: 'Manage cookies' }).click();
+    await page.getByRole('menuitem', { name: 'Gérer les cookies' }).click();
     await expect(
       page.getByRole('heading', { name: 'Cookie preferences' }),
     ).toBeVisible();

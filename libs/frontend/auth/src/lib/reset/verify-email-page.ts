@@ -29,14 +29,14 @@ type State = 'pending' | 'ok' | 'error';
         @case ('ok') {
           <h1>{{ 'auth.verify.okTitle' | transloco }}</h1>
           <p>{{ 'auth.verify.okBody' | transloco }}</p>
-          <a mat-flat-button color="primary" routerLink="/app">
+          <a mat-flat-button color="primary" routerLink="/admin">
             {{ 'auth.verify.goToApp' | transloco }}
           </a>
         }
         @case ('error') {
           <h1>{{ 'auth.verify.failedTitle' | transloco }}</h1>
           <p>{{ 'auth.verify.failedBody' | transloco }}</p>
-          <a mat-stroked-button routerLink="/app">
+          <a mat-stroked-button routerLink="/admin">
             {{ 'auth.verify.backToApp' | transloco }}
           </a>
         }

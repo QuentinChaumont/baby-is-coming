@@ -15,5 +15,5 @@
     "jest.config.cts",
     "src/test-setup.ts"
   ],
-  "references": [{ "path": "../core/tsconfig.lib.json" }]
+  "references": []
 }

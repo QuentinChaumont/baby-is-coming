@@ -140,7 +140,7 @@ failing later at first use.
 | `JWT_EXPIRES_IN`               | no                         | `15m`                        | Access-token lifetime                                                                                                                  |
 | `REFRESH_EXPIRES_IN`           | no                         | `30d`                        | Refresh-token lifetime (auth brick)                                                                                                    |
 | `AUTH_COOKIE_SECURE`           | no                         | `true` in prod, else `false` | Allows http cookies in dev                                                                                                             |
-| `AUTH_REGISTRATION_ENABLED`    | no                         | `true`                       | Self-service `POST /api/auth/register` + the `/register` page                                                                          |
+| `AUTH_REGISTRATION_ENABLED`    | no                         | `false`                      | Self-service `POST /api/auth/register` + the `/register` page                                                                          |
 | `AUTH_RATE_LIMIT_LIMIT`        | no                         | `10`                         | Attempts per window for `/auth/login` + `/auth/register`                                                                               |
 | `AUTH_RATE_LIMIT_TTL_SECONDS`  | no                         | `60`                         | That window, in seconds                                                                                                                |
 | `SEED_ADMIN_EMAIL`             | only for `seed:admin`      | —                            | Bootstrap admin account                                                                                                                |
@@ -220,9 +220,9 @@ entity with `--crud` — `AuthModule` logs users in against it. Provides:
   non-httpOnly `csrf-token` cookie.
 - `POST /auth/register` — self-service sign-up (email, password, first/last
   name); creates the account with no roles and returns the same session as
-  login. `GET /auth/registration` → `{ enabled }`. Turn both off with
-  `AUTH_REGISTRATION_ENABLED=false` (then OIDC or an admin-created account
-  is the only way in).
+  login. `GET /auth/registration` → `{ enabled }`. **Off by default**; turn
+  both on with `AUTH_REGISTRATION_ENABLED=true` (otherwise `seed:admin` or
+  OIDC is the only way in).
 - `POST /auth/refresh` — rotates the refresh token (old one revoked;
   replaying it revokes the whole family) and returns a new access token.
   Guarded by a **double-submit CSRF** check (`csrf-token` cookie must match

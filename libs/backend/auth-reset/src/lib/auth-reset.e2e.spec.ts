@@ -105,6 +105,7 @@ describe('auth-reset (e2e, real Mongo instance)', () => {
       JWT_SECRET: 'test-secret',
       JWT_EXPIRES_IN: '1h',
       AUTH_RATE_LIMIT_LIMIT: 1000,
+      AUTH_REGISTRATION_ENABLED: true,
     });
     mail = new InMemoryMailTransport();
 

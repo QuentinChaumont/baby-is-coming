@@ -50,6 +50,8 @@ describe('Auth (e2e, real Mongo instance)', () => {
     testMongo = await startTestMongo({
       JWT_SECRET: 'test-secret',
       JWT_EXPIRES_IN: '1h',
+      // registration ships disabled; this suite exercises it
+      AUTH_REGISTRATION_ENABLED: true,
       // this suite fires far more than the default 10 auth calls / minute
       AUTH_RATE_LIMIT_LIMIT: 1000,
     });
@@ -99,7 +101,7 @@ describe('Auth (e2e, real Mongo instance)', () => {
     return { response, body: (await response.json()) as any };
   }
 
-  it('exposes registration as enabled by default', async () => {
+  it('exposes registration as enabled when configured', async () => {
     const response = await fetch(`${authBaseUrl}/registration`);
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ enabled: true });

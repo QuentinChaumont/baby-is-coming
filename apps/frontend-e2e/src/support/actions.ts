@@ -5,10 +5,10 @@ export async function submitLogin(
   page: Page,
   creds: { email: string; password: string },
 ): Promise<void> {
-  await page.getByLabel('Email').fill(creds.email);
+  await page.getByLabel('E-mail').fill(creds.email);
   // exact — a "Show password" reveal button shares the substring.
-  await page.getByLabel('Password', { exact: true }).fill(creds.password);
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.getByLabel('Mot de passe', { exact: true }).fill(creds.password);
+  await page.getByRole('button', { name: 'Se connecter' }).click();
 }
 
 /** Signs in and waits for the dashboard shell. */

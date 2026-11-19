@@ -43,9 +43,9 @@ function writeExpandedPref(key: string, expanded: boolean): void {
   }
 }
 
-/** `/app` + the item's route, for comparison against `Router.url`. */
+/** `/admin` + the item's route, for comparison against `Router.url`. */
 function navUrl(route: string | undefined): string {
-  return route ? `/app/${route}` : '/app';
+  return route ? `/admin/${route}` : '/admin';
 }
 
 function matchesUrl(route: string | undefined, url: string): boolean {
@@ -197,7 +197,7 @@ export class NavTreeItem {
 
   protected readonly linkPath = computed(() => {
     const route = this.item().route;
-    return route ? ['/app', ...route.split('/')] : ['/app'];
+    return route ? ['/admin', ...route.split('/')] : ['/admin'];
   });
 
   protected readonly descendantActive = computed(() =>

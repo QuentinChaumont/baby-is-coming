@@ -1,19 +1,28 @@
 import { Route } from '@angular/router';
-import {
-  AUTH_ROUTES,
-  RESET_ROUTES,
-  authGuard,
-  roleGuard,
-} from '@org/frontend-auth';
+import { AUTH_ROUTES, RESET_ROUTES, authGuard } from '@org/frontend-auth';
 import { LEGAL_ROUTES } from '@org/frontend-consent';
 import { NotFoundPage } from './not-found.component';
 
+/**
+ * Two spaces (PRODUCT §3):
+ * - the **public site** at `/` — no account, no sign-in UI;
+ * - the **parents' back-office** at `/admin` — sign-in required.
+ *
+ * The login / password-reset pages stay reachable by URL for the parents
+ * but are linked from nowhere on the public site.
+ */
 export const appRoutes: Route[] = [
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () => import('./public-home').then((m) => m.PublicHome),
+    title: "Coucou, c'est Kiki",
+  },
   ...AUTH_ROUTES,
   ...RESET_ROUTES,
   { path: 'legal', children: LEGAL_ROUTES },
   {
-    path: 'app',
+    path: 'admin',
     canActivate: [authGuard],
     loadComponent: () =>
       import('@org/frontend-dashboard/shell').then((m) => m.DashboardShell),
@@ -22,46 +31,7 @@ export const appRoutes: Route[] = [
         path: '',
         loadComponent: () =>
           import('@org/frontend-dashboard/home').then((m) => m.DashboardHome),
-        title: 'Home',
-      },
-      {
-        path: 'admin',
-        canActivate: [roleGuard('admin')],
-        loadComponent: () =>
-          import('@org/frontend-dashboard/admin-tabs').then(
-            (m) => m.AdminTabsShell,
-          ),
-        title: 'Admin',
-        children: [
-          {
-            path: '',
-            loadChildren: () =>
-              import('@org/frontend-features-admin-users').then(
-                (m) => m.ADMIN_USERS_ROUTES,
-              ),
-          },
-          {
-            path: 'roles',
-            loadChildren: () =>
-              import('@org/frontend-features-admin-roles').then(
-                (m) => m.ADMIN_ROLES_ROUTES,
-              ),
-          },
-          {
-            path: 'audit',
-            loadChildren: () =>
-              import('@org/frontend-features-admin-audit').then(
-                (m) => m.ADMIN_AUDIT_ROUTES,
-              ),
-          },
-          {
-            path: 'settings',
-            loadChildren: () =>
-              import('@org/frontend-features-admin-settings').then(
-                (m) => m.ADMIN_SETTINGS_ROUTES,
-              ),
-          },
-        ],
+        title: 'Tableau de bord',
       },
       {
         path: 'profile',
@@ -72,6 +42,5 @@ export const appRoutes: Route[] = [
       },
     ],
   },
-  { path: '', pathMatch: 'full', redirectTo: 'app' },
-  { path: '**', component: NotFoundPage, title: 'Page not found' },
+  { path: '**', component: NotFoundPage, title: 'Page introuvable' },
 ];

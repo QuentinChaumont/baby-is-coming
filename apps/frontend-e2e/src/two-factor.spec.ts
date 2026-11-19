@@ -17,7 +17,7 @@ test.describe('two-factor authentication', () => {
     await login(page, user);
 
     // ---- enroll ----
-    await page.goto('/app/profile');
+    await page.goto('/admin/profile');
     const panel = page.locator('section.panel').filter({
       has: page.getByRole('heading', { name: 'Two-factor authentication' }),
     });
@@ -38,17 +38,17 @@ test.describe('two-factor authentication', () => {
 
     // ---- sign out and back in, now challenged for a code ----
     await page.getByRole('button', { name: 'Account menu' }).click();
-    await page.getByRole('menuitem', { name: 'Sign out' }).click();
+    await page.getByRole('menuitem', { name: 'Se déconnecter' }).click();
     await expect(page).toHaveURL(/\/login$/);
 
     await submitLogin(page, user);
     await expect(
-      page.getByRole('heading', { name: 'Two-factor authentication' }),
+      page.getByRole('heading', { name: 'Authentification à deux facteurs' }),
     ).toBeVisible();
     await expect(page.getByTestId('dashboard-home')).toBeHidden();
 
-    await page.getByLabel('Authentication code').fill(totp(secret));
-    await page.getByRole('button', { name: 'Verify' }).click();
+    await page.getByLabel("Code d'authentification").fill(totp(secret));
+    await page.getByRole('button', { name: 'Vérifier' }).click();
 
     await expect(page.getByTestId('dashboard-home')).toBeVisible();
   });

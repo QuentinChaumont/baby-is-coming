@@ -8,7 +8,7 @@ export interface NavItem {
   /** `mat-icon` ligature name. */
   icon: string;
   /**
-   * Path relative to `/app` (`''` for the landing route). May be nested
+   * Path relative to `/admin` (`''` for the landing route). May be nested
    * (`'admin/roles'`) — split into segments for the router link. Ignored
    * on a group item (one with `children` set) — its header only
    * expands/collapses, it never navigates; put a landing page for the

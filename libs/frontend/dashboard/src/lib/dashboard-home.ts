@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AuthStore } from '@org/frontend-auth';
 
 /**
- * Placeholder landing page for `/app`. Replace it with the project's real
+ * Placeholder landing page for `/admin`. Replace it with the project's real
  * home — it only exists so the shell has something to render out of the box.
  * Styled as a compact session panel to match the console aesthetic.
  */

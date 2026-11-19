@@ -99,10 +99,11 @@ export class AppConfigService {
 
   get auth() {
     return {
-      // Self-service registration is on unless explicitly disabled.
+      // Self-service registration is OFF unless explicitly enabled: the
+      // two parent accounts are created by `seed:admin` (PRODUCT D21).
       registrationEnabled:
-        this.configService.get('AUTH_REGISTRATION_ENABLED', { infer: true }) !==
-        false,
+        this.configService.get('AUTH_REGISTRATION_ENABLED', { infer: true }) ===
+        true,
       // Soft by default: an unverified account can still sign in.
       requireVerifiedEmail:
         this.configService.get('AUTH_REQUIRE_VERIFIED_EMAIL', {

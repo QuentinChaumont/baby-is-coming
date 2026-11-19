@@ -21,9 +21,8 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 html {
-  // "system" by default; step 24's ThemeService forces `light` / `dark`
-  // by setting `color-scheme` on this element.
-  color-scheme: light dark;
+  // Light only (PRODUCT D18): no dark scheme, no runtime theme switch.
+  color-scheme: light;
 
   @include mat.theme(
     (

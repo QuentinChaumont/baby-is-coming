@@ -9,18 +9,18 @@ export const RESET_ROUTES: Route[] = [
     path: 'forgot-password',
     loadComponent: () =>
       import('./forgot-password-page').then((m) => m.ForgotPasswordPage),
-    title: 'Reset your password',
+    title: 'Mot de passe oublié',
   },
   {
     path: 'reset-password',
     loadComponent: () =>
       import('./reset-password-page').then((m) => m.ResetPasswordPage),
-    title: 'Choose a new password',
+    title: 'Nouveau mot de passe',
   },
   {
     path: 'verify-email',
     loadComponent: () =>
       import('./verify-email-page').then((m) => m.VerifyEmailPage),
-    title: 'Verify your email',
+    title: 'Vérification de l\'e-mail',
   },
 ];

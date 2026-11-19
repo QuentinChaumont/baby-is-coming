@@ -21,7 +21,7 @@ class FakeAuthService {
 }
 
 const route = {} as ActivatedRouteSnapshot;
-const state = { url: '/app/reports' } as RouterStateSnapshot;
+const state = { url: '/admin/reports' } as RouterStateSnapshot;
 
 function run(guard: CanActivateFn): Promise<boolean | UrlTree> {
   const result = TestBed.runInInjectionContext(() => guard(route, state));
@@ -69,7 +69,7 @@ describe('auth guards', () => {
       const result = await run(authGuard);
       expect(result).toBeInstanceOf(UrlTree);
       expect((result as UrlTree).toString()).toBe(
-        '/login?redirectTo=%2Fapp%2Freports',
+        '/login?redirectTo=%2Fadmin%2Freports',
       );
     });
   });

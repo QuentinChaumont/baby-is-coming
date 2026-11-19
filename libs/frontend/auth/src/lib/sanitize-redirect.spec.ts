@@ -2,7 +2,7 @@ import { sanitizeRedirect } from './sanitize-redirect';
 
 describe('sanitizeRedirect', () => {
   it('keeps a single-slash absolute path', () => {
-    expect(sanitizeRedirect('/app/reports')).toBe('/app/reports');
+    expect(sanitizeRedirect('/admin/reports')).toBe('/admin/reports');
     expect(sanitizeRedirect('/')).toBe('/');
   });
 
