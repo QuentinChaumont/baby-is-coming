@@ -12,8 +12,13 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="public-header">
-      <a class="public-header__brand" routerLink="/">Kiki</a>
-      <a class="public-header__kitty" routerLink="/cagnotte">Cagnotte</a>
+      <div class="public-header__inner">
+        <a class="public-header__brand" routerLink="/">
+          <img src="favicon.svg" alt="" width="36" height="36" />
+          Kiki
+        </a>
+        <a class="public-header__kitty" routerLink="/cagnotte">Cagnotte</a>
+      </div>
     </header>
     <div class="public-body">
       <router-outlet />
@@ -25,13 +30,20 @@ import { RouterLink, RouterOutlet } from '@angular/router';
       flex-direction: column;
     }
     .public-header {
+      background: var(--app-color-background);
+      border-bottom: var(--app-border-ink);
+    }
+    /* Same width as the page body: on a computer the header lines up with
+       the content instead of spreading across the whole screen. */
+    .public-header__inner {
+      max-width: 40rem;
+      margin: 0 auto;
+      box-sizing: border-box;
+      padding: 10px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 12px 20px;
-      background: var(--app-color-background);
-      border-bottom: var(--app-border-ink);
     }
     .public-header__brand {
       font-family: var(--app-font-display);
@@ -42,6 +54,12 @@ import { RouterLink, RouterOutlet } from '@angular/router';
       min-height: 44px;
       display: inline-flex;
       align-items: center;
+      gap: 8px;
+    }
+    .public-header__brand img {
+      width: 36px;
+      height: 36px;
+      flex: none;
     }
     .public-header__kitty {
       font-weight: 800;
