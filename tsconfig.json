@@ -86,6 +86,9 @@
     },
     {
       "path": "./libs/backend/features/item"
+    },
+    {
+      "path": "./libs/backend/features/participation"
     }
   ],
   "compilerOptions": {}

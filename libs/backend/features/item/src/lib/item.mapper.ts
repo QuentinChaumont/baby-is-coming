@@ -34,6 +34,7 @@ export function toPublicItem(doc: ItemDocument): PublicItem {
     remaining,
     availability: remaining > 0 ? 'available' : 'taken',
     photos: doc.photoIds.map(photoOf),
+    takers: (doc.takers ?? []).map(({ kind, name }) => ({ kind, name })),
   };
 }
 

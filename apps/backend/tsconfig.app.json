@@ -35,6 +35,9 @@
       "path": "../../libs/backend/features/role/tsconfig.lib.json"
     },
     {
+      "path": "../../libs/backend/features/participation/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/backend/features/item/tsconfig.lib.json"
     },
     {

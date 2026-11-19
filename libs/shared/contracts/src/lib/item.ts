@@ -1,3 +1,5 @@
+import type { PublicTaker } from './participation.js';
+
 /** Back-office publication state of a gift (PRODUCT §6.1). Only
  * `published` items are visible to guests. */
 export type ItemPublication = 'draft' | 'published' | 'archived';
@@ -33,6 +35,9 @@ export interface PublicItem {
   remaining: number;
   availability: ItemAvailability;
   photos: ItemPhoto[];
+  /** Who took it (one entry per participation), for the stamps and the
+   * « par … » line (PRODUCT D5). */
+  takers: PublicTaker[];
 }
 
 /** An item as the parents see it in the back-office. */

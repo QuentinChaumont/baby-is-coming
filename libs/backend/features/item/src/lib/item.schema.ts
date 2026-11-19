@@ -1,6 +1,22 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type { ItemPublication } from '@org/shared-contracts';
+import type { ItemPublication, ParticipationKind } from '@org/shared-contracts';
 import { HydratedDocument } from 'mongoose';
+
+/** Guest-safe copy of a participation, kept on the item so guest pages
+ * need no join. Written atomically with `takenQuantity` (DEV step 2.1). */
+@Schema({ _id: false })
+export class ItemTaker {
+  @Prop({ type: String, required: true })
+  participationId!: string;
+
+  @Prop({ type: String, required: true })
+  kind!: ParticipationKind;
+
+  /** « Prénom N. », or `null` (hidden name, parents, anonymized). */
+  @Prop({ type: String, default: null })
+  name!: string | null;
+}
+const ItemTakerSchema = SchemaFactory.createForClass(ItemTaker);
 
 /** A gift of the birth list (PRODUCT F2). */
 @Schema({ timestamps: true, collection: 'items' })
@@ -26,6 +42,9 @@ export class Item {
    * so two guests can never take the last unit at once. */
   @Prop({ type: Number, default: 0 })
   takenQuantity!: number;
+
+  @Prop({ type: [ItemTakerSchema], default: [] })
+  takers!: ItemTaker[];
 
   /** The parents' order (drag & drop in the back-office). */
   @Prop({ type: Number, required: true })
