@@ -11,4 +11,5 @@ export const DASHBOARD_NAV: NavItem[] = [
   { label: 'Tableau de bord', labelKey: 'dashboard.nav.home', icon: 'home', route: '' },
   { label: 'Objets', icon: 'redeem', route: 'objets' },
   { label: 'Participations', icon: 'volunteer_activism', route: 'participations' },
+  { label: 'Cagnotte', icon: 'savings', route: 'cagnotte' },
 ];

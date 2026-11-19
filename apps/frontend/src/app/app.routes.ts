@@ -92,6 +92,12 @@ export const appRoutes: Route[] = [
         title: 'Participations',
       },
       {
+        path: 'cagnotte',
+        loadComponent: () =>
+          import('./admin/kitty-admin-page').then((m) => m.KittyAdminPage),
+        title: 'Cagnotte',
+      },
+      {
         path: 'profile',
         loadChildren: () =>
           import('@org/frontend-features-profile').then(
