@@ -29,6 +29,17 @@ test.describe('public site shell', () => {
     await expect(page.getByRole('heading', { name: 'Trois façons de jouer' })).toBeVisible();
   });
 
+  test('« Partager la liste » copies the link when there is no share sheet', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.goto('/');
+    await acceptConsent(page);
+    await page.evaluate(() => {
+      Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+    });
+    await page.getByRole('button', { name: 'Partager la liste' }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Lien copié' })).toBeVisible();
+  });
+
   test('pages ask search engines not to index them', async ({ page }) => {
     await page.goto('/liste');
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute(

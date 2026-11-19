@@ -5,6 +5,7 @@ import { GiraffeBand, InkCard } from '@org/frontend-ui';
 import type { PublicBirthList } from '@org/shared-contracts';
 import { catchError, map, of, startWith } from 'rxjs';
 import { PublicApi, formatDay } from './public-api.service';
+import { ShareButton } from './share-button';
 
 type HomeState =
   | { status: 'loading' }
@@ -18,7 +19,7 @@ type HomeState =
  */
 @Component({
   selector: 'app-home-page',
-  imports: [RouterLink, GiraffeBand, InkCard],
+  imports: [RouterLink, GiraffeBand, InkCard, ShareButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main class="home">
@@ -94,6 +95,7 @@ type HomeState =
         <a class="app-button app-button--butter app-button--block" routerLink="/cagnotte">
           La cagnotte « J'ai la flemme »
         </a>
+        <app-share-button />
       </nav>
     </main>
   `,

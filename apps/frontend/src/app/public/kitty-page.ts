@@ -54,7 +54,12 @@ export function formatIban(iban: string): string {
         }
         @default {
           <section class="kitty__total" aria-label="Total promis">
-            <p class="kitty__amount">{{ total() }} € promis</p>
+            @if (empty()) {
+              <p class="kitty__amount kitty__amount--empty">Pas encore de participation</p>
+              <p class="kitty__goal">À toi l'honneur !</p>
+            } @else {
+              <p class="kitty__amount">{{ total() }} € promis</p>
+            }
             @if (goal(); as g) {
               <p class="kitty__goal">pour un objectif de {{ g }} €</p>
             }
@@ -181,6 +186,9 @@ export function formatIban(iban: string): string {
       font-weight: 800;
       font-size: 2.25rem;
       line-height: 1.1;
+    }
+    .kitty__amount--empty {
+      font-size: 1.625rem;
     }
     .kitty__goal {
       font-weight: 700;
@@ -329,6 +337,7 @@ export class KittyPage {
     return s.status === 'ready' ? s.payment : null;
   });
   protected readonly total = computed(() => EUR.format(this.kitty()?.totalPromised ?? 0));
+  protected readonly empty = computed(() => (this.kitty()?.totalPromised ?? 0) === 0);
   protected readonly goal = computed(() => {
     const g = this.kitty()?.goal;
     return g ? EUR.format(g) : null;
