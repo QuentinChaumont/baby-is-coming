@@ -32,6 +32,22 @@ import { RouterLink } from '@angular/router';
       width: 140px;
       height: auto;
       margin: 0 auto;
+      transform-origin: 50% 100%;
+      animation: kiki-tilt 600ms cubic-bezier(0.23, 1, 0.32, 1) both;
+    }
+    /* Kiki tilts her head, puzzled — once. */
+    @keyframes kiki-tilt {
+      0% {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      60% {
+        opacity: 1;
+        transform: rotate(-5deg);
+      }
+      100% {
+        transform: rotate(0);
+      }
     }
     .not-found__code {
       margin: 0;

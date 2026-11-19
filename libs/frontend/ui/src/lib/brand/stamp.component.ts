@@ -25,6 +25,7 @@ const LABEL: Record<StampKind, string> = {
 @Component({
   selector: 'lib-stamp',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[class.stamp--slam]': 'slam()' },
   template: `{{ label() }}`,
   styles: `
     :host {
@@ -42,10 +43,30 @@ const LABEL: Record<StampKind, string> = {
       transform: rotate(-12deg);
       white-space: nowrap;
     }
+    /* The page's one authored moment: the ink stamp comes down when a guest
+       has just taken the gift. Lists show stamps at rest. */
+    :host(.stamp--slam) {
+      animation: stamp-slam 320ms var(--app-ease-out, ease-out) both;
+    }
+    @keyframes stamp-slam {
+      0% {
+        opacity: 0;
+        transform: rotate(-20deg) scale(1.8);
+      }
+      60% {
+        opacity: 1;
+        transform: rotate(-11deg) scale(0.94);
+      }
+      100% {
+        transform: rotate(-12deg) scale(1);
+      }
+    }
   `,
 })
 export class Stamp {
   readonly kind = input.required<StampKind>();
+  /** Animate the stamp coming down (just-taken gift). */
+  readonly slam = input(false);
 
   protected readonly label = computed(() => LABEL[this.kind()]);
 }

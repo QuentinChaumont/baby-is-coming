@@ -25,12 +25,12 @@
   text-decoration: none;
   cursor: pointer;
   transition:
-    background-color 160ms ease-out,
-    color 160ms ease-out,
-    transform 160ms ease-out;
+    background-color var(--app-duration-fast) ease,
+    color var(--app-duration-fast) ease,
+    transform 100ms ease-out;
 
   &:active {
-    transform: translateY(1px);
+    transform: scale(0.97);
   }
 
   &:disabled,
@@ -75,4 +75,23 @@
 .app-button--block {
   display: flex;
   width: 100%;
+}
+
+// Shared entrances. Keep them rare: one authored moment per page.
+@keyframes app-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes app-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(8px);
+  }
+}
+
+.app-rise {
+  animation: app-rise var(--app-duration) var(--app-ease-out) both;
 }

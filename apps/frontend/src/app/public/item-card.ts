@@ -88,6 +88,14 @@ export function stampOf(takers: PublicTaker[]): StampKind {
       font-size: 0.8125rem;
       color: var(--app-color-on-surface-variant);
     }
+    .card__photo {
+      transition: transform var(--app-duration) var(--app-ease-out);
+    }
+    @media (hover: hover) {
+      .card:hover .card__photo {
+        transform: translateY(-3px) rotate(-0.4deg);
+      }
+    }
     .card:hover .card__title {
       text-decoration: underline;
       text-underline-offset: 3px;

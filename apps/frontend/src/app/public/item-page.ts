@@ -80,7 +80,7 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
               </a>
               <lib-price-tag class="item__price" [amount]="it.price" variant="label" suffix="d'occasion" />
               @if (taken()) {
-                <span class="item__veil"><lib-stamp [kind]="stamp()" /></span>
+                <span class="item__veil" [class.item__veil--fresh]="justTaken()"><lib-stamp [kind]="stamp()" [slam]="justTaken()" /></span>
               }
             </div>
 
@@ -117,7 +117,7 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
                 <p class="item__notice" role="alert">{{ message }}</p>
               }
               @if (confirmation(); as done) {
-                <div class="item__done">
+                <div class="item__done app-rise">
                   <img class="item__kiki" src="kiki.svg" alt="" width="270" height="430" />
                   <h2>{{ done.title }}</h2>
                   <p>{{ done.text }}</p>
@@ -125,6 +125,7 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
                 </div>
               } @else if (kind(); as chosen) {
                 <app-take-form
+                  class="app-rise"
                   [item]="it"
                   [kind]="chosen"
                   (taken)="onTaken($event, chosen)"
@@ -281,6 +282,16 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
       height: auto;
       margin: 0 auto 4px;
       display: block;
+      transform-origin: 50% 100%;
+      animation: app-pop 420ms var(--app-ease-out) 180ms both;
+    }
+    .item__veil--fresh {
+      animation: veil-in 200ms linear both;
+    }
+    @keyframes veil-in {
+      from {
+        opacity: 0;
+      }
     }
     .item__done h2 {
       margin: 0 0 6px;
@@ -337,6 +348,8 @@ export class ItemPage {
   });
 
   protected readonly taken = computed(() => this.item()?.availability === 'taken');
+  /** The guest just took it on this page: the stamp comes down. */
+  protected readonly justTaken = computed(() => !!this.afterTake() && this.taken());
   protected readonly stamp = computed(() => stampOf(this.item()?.takers ?? []));
   protected readonly takenBy = computed(() => takenByLine(this.item()?.takers ?? []));
   protected readonly listingLabel = listingLabel;

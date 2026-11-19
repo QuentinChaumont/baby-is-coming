@@ -120,6 +120,14 @@ type HomeState =
       width: clamp(112px, 30vw, 150px);
       height: auto;
       pointer-events: none;
+      transform-origin: 50% 100%;
+      animation: kiki-arrive 520ms var(--app-ease-out) 120ms both;
+    }
+    @keyframes kiki-arrive {
+      from {
+        opacity: 0;
+        transform: translateY(18px) rotate(-4deg);
+      }
     }
     .home__hero h1,
     .home__tagline,

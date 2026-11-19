@@ -58,6 +58,12 @@
   --app-space-8: 32px;
   --app-space-10: 40px;
 
+  // ── motion (only transform / opacity; reduced motion handled globally) ──
+  --app-ease-out: cubic-bezier(0.23, 1, 0.32, 1); // entering
+  --app-ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1); // moving
+  --app-duration-fast: 150ms;
+  --app-duration: 260ms;
+
   // ── elevation: rare and soft, never a hard offset shadow ──────────────
   --app-shadow-soft: 0 6px 14px rgba(34, 48, 31, 0.18);
   --app-border-hairline: 1px solid var(--app-color-surface-variant);

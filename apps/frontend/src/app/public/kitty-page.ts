@@ -53,7 +53,7 @@ export function formatIban(iban: string): string {
           <p class="kitty__error" role="alert">Oups, la cagnotte n'a pas pu se charger. Réessaie dans un instant.</p>
         }
         @default {
-          <section class="kitty__total" aria-label="Total promis">
+          <section class="kitty__total" [class.kitty__total--bump]="thanked()" aria-label="Total promis">
             @if (empty()) {
               <p class="kitty__amount kitty__amount--empty">Pas encore de participation</p>
               <p class="kitty__goal">À toi l'honneur !</p>
@@ -69,7 +69,7 @@ export function formatIban(iban: string): string {
           </section>
 
           @if (thanked()) {
-            <section class="kitty__pay" aria-live="polite">
+            <section class="kitty__pay app-rise" aria-live="polite">
               <h2>Merci ! Plus qu'à faire le geste</h2>
               <p>Rien ne passe par le site : voici comment nous faire parvenir ta participation.</p>
               @if (hasPayment()) {
@@ -177,6 +177,14 @@ export function formatIban(iban: string): string {
       border-radius: var(--app-radius-lg);
       padding: 20px;
       transform: rotate(-0.6deg);
+    }
+    .kitty__total--bump {
+      animation: total-bump 360ms var(--app-ease-out) both;
+    }
+    @keyframes total-bump {
+      40% {
+        transform: rotate(-0.6deg) scale(1.04);
+      }
     }
     .kitty__total p {
       margin: 0;
