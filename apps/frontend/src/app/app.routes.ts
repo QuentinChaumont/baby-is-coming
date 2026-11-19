@@ -27,9 +27,7 @@ export const appRoutes: Route[] = [
     children: [
       {
         path: 'liste',
-        loadComponent: () =>
-          import('./public/placeholder-page').then((m) => m.PlaceholderPage),
-        data: { heading: 'La liste' },
+        loadComponent: () => import('./public/list-page').then((m) => m.ListPage),
         title: 'La liste',
       },
       {
