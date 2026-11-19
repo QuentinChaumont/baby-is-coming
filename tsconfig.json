@@ -80,6 +80,9 @@
     },
     {
       "path": "./libs/backend/features/account-retention"
+    },
+    {
+      "path": "./libs/backend/features/birth-list"
     }
   ],
   "compilerOptions": {}

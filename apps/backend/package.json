@@ -105,6 +105,7 @@
     "@org/backend-features-account-retention": "0.0.1",
     "@org/backend-features-app-settings": "0.0.1",
     "@org/backend-features-audit": "0.0.1",
+    "@org/backend-features-birth-list": "0.0.1",
     "@org/backend-features-role": "0.0.1",
     "@org/backend-mailer": "0.0.1",
     "class-transformer": "^0.5.1",
