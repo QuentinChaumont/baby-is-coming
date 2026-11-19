@@ -37,9 +37,7 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'cagnotte',
-        loadComponent: () =>
-          import('./public/placeholder-page').then((m) => m.PlaceholderPage),
-        data: { heading: "La cagnotte « J'ai la flemme »" },
+        loadComponent: () => import('./public/kitty-page').then((m) => m.KittyPage),
         title: 'Cagnotte',
       },
     ],
