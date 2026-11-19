@@ -13,24 +13,26 @@ let nextId = 0;
   template: `
     <svg width="100%" height="96" aria-hidden="true" focusable="false">
       <defs>
-        <!-- One 390 × 96 tile of spots, repeated across any width at a fixed
-             size (never stretched). -->
-        <pattern [attr.id]="patternId" width="390" height="96" patternUnits="userSpaceOnUse">
-          <rect width="390" height="96" class="giraffe-band__kraft" />
+        <!-- A seamless 520 × 96 tile: no spot crosses its edges, so it repeats
+             across any width at a fixed size with no visible join. -->
+        <pattern [attr.id]="patternId" width="520" height="96" patternUnits="userSpaceOnUse">
+          <rect width="520" height="96" class="giraffe-band__kraft" />
           <g class="giraffe-band__spots">
-            <path d="M0 8 L34 4 L46 28 L28 46 L0 40 Z" />
-            <path d="M58 6 L104 10 L110 38 L80 52 L54 34 Z" />
-            <path d="M122 4 L160 2 L170 30 L150 50 L118 36 Z" />
-            <path d="M184 8 L226 6 L236 36 L206 54 L180 38 Z" />
-            <path d="M250 4 L292 8 L298 34 L268 50 L244 30 Z" />
-            <path d="M312 6 L356 4 L366 32 L338 52 L306 36 Z" />
-            <path d="M376 8 L390 6 L390 44 L372 40 Z" />
-            <path d="M14 60 L52 58 L60 84 L36 96 L8 88 Z" />
-            <path d="M78 64 L120 62 L132 90 L96 96 L70 84 Z" />
-            <path d="M146 62 L190 66 L196 92 L160 96 L140 84 Z" />
-            <path d="M214 66 L254 60 L264 88 L232 96 L208 86 Z" />
-            <path d="M282 62 L322 64 L330 90 L296 96 L276 82 Z" />
-            <path d="M346 60 L386 62 L390 90 L356 96 L340 82 Z" />
+            <path d="M12 12 L50 7 L62 30 L42 49 L15 41 Z" />
+            <path d="M80 16 L114 9 L127 33 L104 51 L77 39 Z" />
+            <path d="M150 6 L194 11 L199 35 L174 47 L146 29 Z" />
+            <path d="M226 14 L258 7 L276 27 L255 49 L223 41 Z" />
+            <path d="M300 9 L340 14 L347 39 L319 50 L296 31 Z" />
+            <path d="M372 5 L408 10 L420 31 L396 47 L368 27 Z" />
+            <path d="M444 13 L484 7 L501 30 L478 49 L446 40 Z" />
+            <path d="M8 66 L36 61 L44 84 L24 93 L6 85 Z" />
+            <path d="M66 61 L104 57 L113 83 L84 93 L60 83 Z" />
+            <path d="M136 63 L174 66 L182 88 L146 94 L131 80 Z" />
+            <path d="M206 58 L240 63 L250 86 L222 94 L200 80 Z" />
+            <path d="M276 65 L316 59 L326 84 L292 94 L270 83 Z" />
+            <path d="M350 61 L386 66 L394 89 L360 94 L344 80 Z" />
+            <path d="M418 63 L458 58 L468 84 L432 94 L412 81 Z" />
+            <path d="M488 66 L508 62 L512 84 L496 93 L484 82 Z" />
           </g>
         </pattern>
       </defs>
@@ -50,8 +52,13 @@ let nextId = 0;
     .giraffe-band__kraft {
       fill: var(--app-color-kraft);
     }
+    /* A same-colour round-joined stroke softens the corners, like real
+       giraffe patches. */
     .giraffe-band__spots {
       fill: var(--app-color-giraffe-spot);
+      stroke: var(--app-color-giraffe-spot);
+      stroke-width: 6;
+      stroke-linejoin: round;
     }
   `,
 })
