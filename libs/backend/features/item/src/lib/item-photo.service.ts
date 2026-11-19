@@ -4,7 +4,7 @@ import type { AdminItem } from '@org/shared-contracts';
 import { Types } from 'mongoose';
 import { toAdminItem } from './item.mapper';
 import { ItemRepository } from './item.repository';
-import { MAIN_LIST } from './item.service';
+import { MAIN_LIST } from './list.constants';
 import { MediaStorage } from './media.storage';
 import {
   ACCEPTED_MIME_TYPES,

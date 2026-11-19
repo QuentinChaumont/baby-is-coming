@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from '@org/backend-core';
-import type { AdminItem, PublicItem } from '@org/shared-contracts';
+import type { AdminItem, PublicItem, PublicItemDetail } from '@org/shared-contracts';
 import {
   AdminItemsQueryDto,
   CreateItemDto,
@@ -33,7 +33,7 @@ export class PublicItemsController {
   }
 
   @Get(':id')
-  get(@Param('id') id: string): Promise<PublicItem> {
+  get(@Param('id') id: string): Promise<PublicItemDetail> {
     return this.items.getPublic(id);
   }
 }

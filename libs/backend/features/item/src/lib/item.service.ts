@@ -5,17 +5,18 @@ import type {
   CreateItemRequest,
   ItemPublication,
   PublicItem,
+  PublicItemDetail,
   PublicItemsQuery,
   UpdateItemRequest,
 } from '@org/shared-contracts';
 import { QueryFilter } from 'mongoose';
 import { normalizeSearch, searchTextOf, toAdminItem, toPublicItem } from './item.mapper';
 import { ItemRepository } from './item.repository';
+import { MAIN_LIST } from './list.constants';
+import { ListingService } from './listing.service';
 import { MediaStorage } from './media.storage';
 import { Item, ItemDocument } from './item.schema';
 
-/** Single list for the MVP (PRODUCT D1). */
-export const MAIN_LIST = 'main';
 
 function escapeRegex(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -30,6 +31,7 @@ export class ItemService {
   constructor(
     private readonly repository: ItemRepository,
     private readonly media: MediaStorage,
+    private readonly listings: ListingService,
   ) {}
 
   // ── guests ────────────────────────────────────────────────────────────
@@ -53,12 +55,13 @@ export class ItemService {
     return docs.map(toPublicItem);
   }
 
-  async getPublic(id: string): Promise<PublicItem> {
+  /** The item page: a published item with its active listings. */
+  async getPublic(id: string): Promise<PublicItemDetail> {
     const doc = await this.repository.findById(id);
     if (!doc || doc.listId !== MAIN_LIST || doc.publication !== 'published') {
       throw new NotFoundError('ITEM_NOT_FOUND', 'Item not found');
     }
-    return toPublicItem(doc);
+    return { ...toPublicItem(doc), listings: await this.listings.activeForItem(id) };
   }
 
   // ── parents ───────────────────────────────────────────────────────────
@@ -137,6 +140,7 @@ export class ItemService {
     }
     await this.repository.deleteById(id);
     await Promise.all(doc.photoIds.map((photoId) => this.media.deleteAll(photoId)));
+    await this.listings.removeForItem(id);
   }
 
   /** `ids` must list every item of the list exactly once. */
