@@ -28,9 +28,14 @@ import { LegalPageShell } from './legal-page-shell';
         </thead>
         <tbody>
           <tr>
-            <td>Strictement nécessaires</td>
-            <td>Mémoriser ton choix de cookies ; session et sécurité (CSRF) de l'espace parents.</td>
-            <td>Session / jusqu'à 12 mois</td>
+            <td>Invités</td>
+            <td>Aucun cookie. Seul ton choix sur le bandeau est mémorisé, dans ton navigateur (stockage local), pour ne pas te le redemander.</td>
+            <td>6 mois</td>
+          </tr>
+          <tr>
+            <td>Espace parents (strictement nécessaires)</td>
+            <td>Session et sécurité (CSRF) des parents connectés.</td>
+            <td>Session / 30 jours</td>
           </tr>
           <tr>
             <td>Mesure d'audience</td>
@@ -42,10 +47,10 @@ import { LegalPageShell } from './legal-page-shell';
 
       <h2>Tes choix</h2>
       <p>
-        Les cookies strictement nécessaires ne peuvent pas être refusés. Pour
-        toute autre catégorie, tu choisis via le bandeau affiché lors de ta
-        première visite. Ton choix est conservé 6 mois, puis nous te le
-        redemandons.
+        Le site ne dépose aucun cookie de mesure d'audience ni de publicité.
+        Les cookies de l'espace parents sont strictement nécessaires et ne
+        concernent que les parents connectés. Ton choix sur le bandeau est
+        conservé 6 mois, puis nous te le redemandons.
       </p>
 
       <h2>Contact</h2>

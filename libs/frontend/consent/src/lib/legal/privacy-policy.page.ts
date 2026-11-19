@@ -54,8 +54,8 @@ import { LegalPageShell } from './legal-page-shell';
           par les parents) : noms et petits mots sont supprimés, seuls les
           objets et les totaux restent.
         </li>
-        <li><strong>Journaux techniques</strong> — [12] mois.</li>
-        <li><strong>Choix de cookies</strong> — 6 mois.</li>
+        <li><strong>Journaux techniques</strong> — 6 mois.</li>
+        <li><strong>Ton choix sur le bandeau cookies</strong> — 6 mois, enregistré dans ton navigateur.</li>
       </ul>
 
       <h2>Tes droits</h2>
