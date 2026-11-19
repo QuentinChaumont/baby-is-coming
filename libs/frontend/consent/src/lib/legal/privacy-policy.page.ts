@@ -68,13 +68,13 @@ import { LegalPageShell } from './legal-page-shell';
       </p>
 
       <h2>Transferts hors UE</h2>
-      <p>[À compléter à la mise en ligne selon l'hébergeur retenu.]</p>
+      <p>Les données sont hébergées par OVHcloud dans un centre de données situé en France. Aucune donnée n'est transférée hors de l'Union européenne.</p>
 
       <h2>Décision automatisée</h2>
       <p>Aucune décision automatisée ni aucun profilage.</p>
 
       <h2>Sous-traitants</h2>
-      <p>Hébergement : [NOM DE L'HÉBERGEUR — localisation], à compléter à la mise en ligne.</p>
+      <p>Hébergement : OVH SAS (OVHcloud), 2 rue Kellermann, 59100 Roubaix, France — centre de données en France.</p>
     </lib-legal-page-shell>
   `,
   styles: `

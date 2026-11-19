@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { LegalPageShell } from './legal-page-shell';
 
-/** Legal notice (« mentions légales »). Hosting details are completed at
- * go-live (DEV step 5.3). */
+/** Legal notice (« mentions légales »). Hosted by OVHcloud. */
 @Component({
   selector: 'lib-legal-notice',
   imports: [LegalPageShell],
@@ -25,8 +24,10 @@ import { LegalPageShell } from './legal-page-shell';
 
       <h2>Hébergement</h2>
       <p>
-        Le site est hébergé par <strong>[NOM DE L'HÉBERGEUR]</strong>,
-        [ADRESSE], [TÉLÉPHONE / SITE] — à compléter à la mise en ligne.
+        Le site est hébergé par <strong>OVH SAS</strong> (OVHcloud), 2 rue
+        Kellermann, 59100 Roubaix, France — RCS Lille Métropole
+        424&nbsp;761&nbsp;419 — téléphone : 1007 (depuis la France) —
+        <a href="https://www.ovhcloud.com" target="_blank" rel="noopener">ovhcloud.com</a>.
       </p>
 
       <h2>Propriété intellectuelle</h2>
