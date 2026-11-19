@@ -90,6 +90,17 @@ export class ContributionService {
     return toAdmin(doc);
   }
 
+  /** Wipes guests' personal data, keeping amounts and flags (PRODUCT D13). */
+  async anonymizeAll(): Promise<number> {
+    const res = await this.model
+      .updateMany(
+        { listId: MAIN_LIST, anonymized: false },
+        { $set: { firstName: null, lastName: null, message: null, hideName: true, anonymized: true } },
+      )
+      .exec();
+    return res.modifiedCount;
+  }
+
   /** Only the parents cancel a pledge (PRODUCT R-CON-6) — also how a
    * guest's data is erased on request. */
   async cancel(id: string): Promise<void> {

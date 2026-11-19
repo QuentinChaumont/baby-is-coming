@@ -16,6 +16,8 @@ module.exports = {
   transform: {
     '^.+\\.[tj]s$': ['@swc/jest', swcJestConfig],
   },
+  // `@nestjs/schedule` is pure ESM; let SWC transpile it for Jest only.
+  transformIgnorePatterns: ['/node_modules/(?!(?:@nestjs/schedule)/)'],
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: 'test-output/jest/coverage',
 };

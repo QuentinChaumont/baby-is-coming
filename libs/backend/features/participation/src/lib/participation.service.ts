@@ -107,6 +107,23 @@ export class ParticipationService {
     await this.items.releaseUnits(doc.itemId.toString(), doc.quantity, doc._id.toString());
   }
 
+  /** Wipes guests' personal data (names, messages) and their public names
+   * on items, keeping counts and flags (PRODUCT D13). Returns how many
+   * participations were anonymized. */
+  async anonymizeAll(): Promise<number> {
+    const docs = await this.model.find({ anonymized: false }).select({ _id: 1 }).lean().exec();
+    if (!docs.length) return 0;
+    const ids = docs.map((d) => d._id);
+    await this.model
+      .updateMany(
+        { _id: { $in: ids } },
+        { $set: { firstName: null, lastName: null, message: null, hideName: true, anonymized: true } },
+      )
+      .exec();
+    await this.items.clearTakerNames(ids.map((id) => id.toString()));
+    return ids.length;
+  }
+
   private async record(itemId: string, publishedOnly: boolean, taking: Taking): Promise<PublicItem> {
     const participationId = new Types.ObjectId();
     const showName = taking.firstName && taking.lastName && !taking.hideName;

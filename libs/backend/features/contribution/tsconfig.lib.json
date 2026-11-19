@@ -24,6 +24,9 @@
   ],
   "references": [
     {
+      "path": "../item/tsconfig.lib.json"
+    },
+    {
       "path": "../../testing/tsconfig.lib.json"
     },
     {
@@ -34,6 +37,9 @@
     },
     {
       "path": "../../../shared/contracts/tsconfig.lib.json"
+    },
+    {
+      "path": "../participation/tsconfig.lib.json"
     },
     {
       "path": "../birth-list/tsconfig.lib.json"
