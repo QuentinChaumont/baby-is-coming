@@ -56,13 +56,13 @@ describe('ConsentBanner', () => {
     expect(open).toHaveBeenCalled();
   });
 
-  it('offers Reject all with the same button style as Accept all', () => {
+  it('offers « Tout refuser » with the same button style as « Tout accepter »', () => {
     const fixture = build();
     const buttons = Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll('button'),
     ).map((b) => b.textContent?.trim());
     expect(buttons).toEqual(
-      expect.arrayContaining(['Customise', 'Reject all', 'Accept all']),
+      expect.arrayContaining(['Personnaliser', 'Tout refuser', 'Tout accepter']),
     );
   });
 });

@@ -3,14 +3,14 @@ import { expect, test } from '@playwright/test';
 import { acceptConsent } from './support/actions';
 
 test.describe('cookie consent', () => {
-  test('the banner shows on the first visit, "Accept all" dismisses it for good', async ({
+  test('the banner shows on the first visit, "Tout accepter" dismisses it for good', async ({
     page,
   }) => {
     await page.goto('/login');
     const banner = page.getByTestId('consent-banner');
     await expect(banner).toBeVisible();
 
-    await page.getByRole('button', { name: 'Accept all' }).click();
+    await page.getByRole('button', { name: 'Tout accepter' }).click();
     await expect(banner).toBeHidden();
 
     // the decision is stored — a reload must not bring it back
@@ -18,9 +18,9 @@ test.describe('cookie consent', () => {
     await expect(banner).toBeHidden();
   });
 
-  test('"Customise" reopens the preferences dialog', async ({ page }) => {
+  test('"Personnaliser" reopens the preferences dialog', async ({ page }) => {
     await page.goto('/login');
-    await page.getByRole('button', { name: 'Customise' }).click();
+    await page.getByRole('button', { name: 'Personnaliser' }).click();
     await expect(
       page.getByRole('heading', { name: 'Cookie preferences' }),
     ).toBeVisible();
@@ -33,7 +33,7 @@ test.describe('cookie consent', () => {
 
     const [policy] = await Promise.all([
       page.waitForEvent('popup'),
-      page.getByRole('link', { name: 'cookie policy' }).click(),
+      page.getByRole('link', { name: 'politique cookies' }).click(),
     ]);
     await expect(policy).toHaveURL(/\/legal\/cookies$/);
     await expect(
@@ -53,7 +53,7 @@ test.describe('cookie consent', () => {
 
     const footer = page.locator('footer.legal-links');
     await expect(footer).toBeVisible();
-    await footer.getByRole('link', { name: 'Legal notice' }).click();
+    await footer.getByRole('link', { name: 'Mentions légales' }).click();
 
     await expect(page).toHaveURL(/\/legal\/notice$/);
     await expect(

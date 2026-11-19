@@ -14,15 +14,15 @@ import { CONSENT_CONFIG } from '../consent.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <footer class="legal-links">
-      <nav aria-label="Legal">
-        <a [routerLink]="config.legal.legalNoticeRoute">Legal notice</a>
+      <nav aria-label="Liens légaux">
+        <a [routerLink]="config.legal.legalNoticeRoute">Mentions légales</a>
         <span aria-hidden="true">·</span>
-        <a [routerLink]="config.legal.privacyPolicyRoute">Privacy</a>
+        <a [routerLink]="config.legal.privacyPolicyRoute">Confidentialité</a>
         <span aria-hidden="true">·</span>
         <a [routerLink]="config.legal.cookiePolicyRoute">Cookies</a>
       </nav>
       <span class="legal-links__credit">
-        Built with ❤️ by
+        Fait avec ❤️ par
         <a
           href="https://www.linkedin.com/in/quentin-chmt/"
           target="_blank"

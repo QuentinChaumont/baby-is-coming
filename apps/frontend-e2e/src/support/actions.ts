@@ -23,7 +23,7 @@ export async function login(
 
 /** Dismisses the consent banner if it is showing. */
 export async function acceptConsent(page: Page): Promise<void> {
-  const accept = page.getByRole('button', { name: 'Accept all' });
+  const accept = page.getByRole('button', { name: 'Tout accepter' });
   if (await accept.isVisible().catch(() => false)) {
     await accept.click();
   }

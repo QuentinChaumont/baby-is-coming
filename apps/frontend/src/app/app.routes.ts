@@ -16,8 +16,37 @@ export const appRoutes: Route[] = [
   {
     path: '',
     pathMatch: 'full',
-    loadComponent: () => import('./public-home').then((m) => m.PublicHome),
+    loadComponent: () =>
+      import('./public/home-page').then((m) => m.HomePage),
     title: "Coucou, c'est Kiki",
+  },
+  {
+    path: '',
+    loadComponent: () =>
+      import('./public/public-shell').then((m) => m.PublicShell),
+    children: [
+      {
+        path: 'liste',
+        loadComponent: () =>
+          import('./public/placeholder-page').then((m) => m.PlaceholderPage),
+        data: { heading: 'La liste' },
+        title: 'La liste',
+      },
+      {
+        path: 'objet/:id',
+        loadComponent: () =>
+          import('./public/placeholder-page').then((m) => m.PlaceholderPage),
+        data: { heading: 'Un objet de la liste' },
+        title: 'Objet',
+      },
+      {
+        path: 'cagnotte',
+        loadComponent: () =>
+          import('./public/placeholder-page').then((m) => m.PlaceholderPage),
+        data: { heading: "La cagnotte « J'ai la flemme »" },
+        title: 'Cagnotte',
+      },
+    ],
   },
   // Dev-only showcase of the brand components (DEV step 0.2).
   ...(isDevMode()

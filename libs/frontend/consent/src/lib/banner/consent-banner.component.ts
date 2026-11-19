@@ -28,27 +28,27 @@ import { ConsentService } from '../consent.service';
         class="consent"
         data-testid="consent-banner"
         role="region"
-        aria-label="Cookie consent"
+        aria-label="Consentement aux cookies"
         aria-live="polite"
       >
         <p class="consent__text">
-          We use strictly necessary cookies to run the site, and — with your
-          consent — optional ones. See our
+          Ce site utilise des cookies strictement nécessaires à son
+          fonctionnement et, avec ton accord, des cookies optionnels. Voir la
           <a
             [href]="config.legal.cookiePolicyRoute"
             target="_blank"
             rel="noopener"
           >
-            cookie policy</a
+            politique cookies</a
           >.
         </p>
         <div class="consent__actions">
-          <button mat-stroked-button (click)="customize()">Customise</button>
+          <button mat-stroked-button (click)="customize()">Personnaliser</button>
           <button mat-stroked-button (click)="consent.rejectAll()">
-            Reject all
+            Tout refuser
           </button>
           <button mat-flat-button color="primary" (click)="consent.acceptAll()">
-            Accept all
+            Tout accepter
           </button>
         </div>
       </aside>

@@ -1,0 +1,3 @@
+# Private birth list: reachable by link only, never indexed (PRODUCT D3).
+User-agent: *
+Disallow: /
