@@ -1,60 +1,55 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { LegalPageShell } from './legal-page-shell';
 
-/**
- * TEMPLATE — replace the bracketed placeholders with this project's real
- * cookie policy before going live. The generator never overwrites this
- * file once it exists.
- */
+/** Cookie policy: strictly necessary cookies only (no analytics). */
 @Component({
   selector: 'lib-cookie-policy',
   imports: [LegalPageShell],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <lib-legal-page-shell heading="Cookie Policy">
-      <p class="legal__meta"><em>Last updated: 09/09/2026</em></p>
+    <lib-legal-page-shell heading="Politique cookies">
+      <p class="legal__meta"><em>Dernière mise à jour : 19/11/2026</em></p>
 
-      <h2>Who we are</h2>
+      <h2>Qui sommes-nous</h2>
       <p>
-        This site is operated by <strong>Quentin CHAUMONT EI</strong>,
-        registered at 40 rue Monsarrat, 33800 Bordeaux, France. Data protection
-        contact: chaumont.quentin@gmail.com
+        Ce site est exploité par <strong>Quentin CHAUMONT EI</strong>, 40 rue
+        Monsarrat, 33800 Bordeaux, France. Contact :
+        chaumont.quentin@gmail.com
       </p>
 
-      <h2>What cookies we use</h2>
+      <h2>Les cookies utilisés</h2>
       <table>
         <thead>
           <tr>
-            <th>Category</th>
-            <th>Purpose</th>
-            <th>Retention</th>
+            <th>Catégorie</th>
+            <th>Usage</th>
+            <th>Durée</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Strictly necessary</td>
-            <td>Session, security (CSRF), load balancing.</td>
-            <td>Session / up to 12 months</td>
+            <td>Strictement nécessaires</td>
+            <td>Mémoriser ton choix de cookies ; session et sécurité (CSRF) de l'espace parents.</td>
+            <td>Session / jusqu'à 12 mois</td>
           </tr>
           <tr>
-            <td>Analytics (optional)</td>
-            <td>[TOOL NAME] — anonymous usage statistics.</td>
-            <td>13 months max</td>
+            <td>Mesure d'audience</td>
+            <td>Aucune : ce site ne fait ni statistiques ni publicité.</td>
+            <td>—</td>
           </tr>
         </tbody>
       </table>
 
-      <h2>Your choices</h2>
+      <h2>Tes choix</h2>
       <p>
-        Strictly necessary cookies cannot be refused. For every other category
-        you decide via the consent banner shown on your first visit, and can
-        change your mind at any time from
-        <strong>Manage cookies</strong> in the account menu. Your choice is
-        stored for 6 months, after which we ask again.
+        Les cookies strictement nécessaires ne peuvent pas être refusés. Pour
+        toute autre catégorie, tu choisis via le bandeau affiché lors de ta
+        première visite. Ton choix est conservé 6 mois, puis nous te le
+        redemandons.
       </p>
 
       <h2>Contact</h2>
-      <p>Questions: chaumont.quentin@gmail.com</p>
+      <p>Une question : chaumont.quentin@gmail.com</p>
     </lib-legal-page-shell>
   `,
   styles: `

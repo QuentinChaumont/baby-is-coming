@@ -1,57 +1,52 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { LegalPageShell } from './legal-page-shell';
 
-/**
- * TEMPLATE — the site's legal notice / imprint ("mentions légales" under
- * French law, "Impressum" under German law, etc.). Replace the bracketed
- * placeholders with this project's real details before going live. The
- * generator never overwrites this file once it exists.
- */
+/** Legal notice (« mentions légales »). Hosting details are completed at
+ * go-live (DEV step 5.3). */
 @Component({
   selector: 'lib-legal-notice',
   imports: [LegalPageShell],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <lib-legal-page-shell heading="Legal Notice">
-      <p class="legal__meta"><em>Last updated: 09/09/2026</em></p>
+    <lib-legal-page-shell heading="Mentions légales">
+      <p class="legal__meta"><em>Dernière mise à jour : 19/11/2026</em></p>
 
-      <h2>Site publisher</h2>
+      <h2>Éditeur du site</h2>
       <p>
-        This site is published by <strong>Quentin CHAUMONT EI</strong>, a sole
-        trader ("entreprise individuelle"), registered at 40 rue Monsarrat,
-        33800 Bordeaux, France, under SIREN 839&nbsp;387&nbsp;883 (SIRET
-        839&nbsp;387&nbsp;883&nbsp;00037), [RCS/RM Bordeaux — confirm register].
-        Intra-EU VAT: FR11&nbsp;839&nbsp;387&nbsp;883. Contact:
-        chaumont.quentin@gmail.com.
+        Ce site est édité par <strong>Quentin CHAUMONT EI</strong>, entreprise
+        individuelle, 40 rue Monsarrat, 33800 Bordeaux, France, SIREN
+        839&nbsp;387&nbsp;883 (SIRET 839&nbsp;387&nbsp;883&nbsp;00037), [RCS/RM
+        Bordeaux — à confirmer]. TVA intracommunautaire :
+        FR11&nbsp;839&nbsp;387&nbsp;883. Contact : chaumont.quentin@gmail.com.
       </p>
 
-      <h2>Publication director</h2>
+      <h2>Directeur de la publication</h2>
       <p>Quentin CHAUMONT.</p>
 
-      <h2>Hosting</h2>
+      <h2>Hébergement</h2>
       <p>
-        The site is hosted by <strong>[HOST NAME]</strong>, [HOST ADDRESS],
-        [HOST PHONE / URL].
+        Le site est hébergé par <strong>[NOM DE L'HÉBERGEUR]</strong>,
+        [ADRESSE], [TÉLÉPHONE / SITE] — à compléter à la mise en ligne.
       </p>
 
-      <h2>Intellectual property</h2>
+      <h2>Propriété intellectuelle</h2>
       <p>
-        Unless stated otherwise, all content on this site (text, images, logos,
-        code) is the property of Quentin CHAUMONT EI or its partners and is
-        protected by intellectual-property law. Any reproduction without prior
-        written permission is prohibited.
+        Sauf mention contraire, les contenus de ce site (textes, images,
+        logos, code) appartiennent à leurs auteurs et sont protégés par le
+        droit de la propriété intellectuelle. Toute reproduction sans
+        autorisation écrite préalable est interdite.
       </p>
 
-      <h2>Personal data</h2>
+      <h2>Données personnelles</h2>
       <p>
-        How personal data is processed is described in the
-        <a href="/legal/privacy">Privacy Notice</a>; cookies are covered by the
-        <a href="/legal/cookies">Cookie Policy</a>.
+        Le traitement des données personnelles est décrit dans la
+        <a href="/legal/privacy">politique de confidentialité</a> ; les cookies
+        dans la <a href="/legal/cookies">politique cookies</a>.
       </p>
 
-      <h2>Credits</h2>
+      <h2>Crédits</h2>
       <p>
-        Built on a starter crafted with ❤️ by
+        Fait avec ❤️ par
         <a
           href="https://www.linkedin.com/in/quentin-chmt/"
           target="_blank"

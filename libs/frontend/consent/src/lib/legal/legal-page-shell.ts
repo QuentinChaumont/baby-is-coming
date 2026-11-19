@@ -21,7 +21,7 @@ import { Router } from '@angular/router';
         <span class="legal-shell__name">Starter</span>
       </div>
       <button mat-button class="legal-shell__back" (click)="back()">
-        <mat-icon>arrow_back</mat-icon> Back
+        <mat-icon>arrow_back</mat-icon> Retour
       </button>
       <article class="legal legal-shell__panel">
         <h1>{{ heading() }}</h1>

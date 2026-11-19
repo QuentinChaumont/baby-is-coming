@@ -26,7 +26,7 @@ test.describe('cookie consent', () => {
     ).toBeVisible();
   });
 
-  test('the cookie policy opens in a new tab and Back leaves it', async ({
+  test('the cookie policy opens in a new tab and « Retour » leaves it', async ({
     page,
   }) => {
     await page.goto('/login');
@@ -37,10 +37,10 @@ test.describe('cookie consent', () => {
     ]);
     await expect(policy).toHaveURL(/\/legal\/cookies$/);
     await expect(
-      policy.getByRole('heading', { name: /cookie policy/i }),
+      policy.getByRole('heading', { name: 'Politique cookies' }),
     ).toBeVisible();
 
-    await policy.getByRole('button', { name: /back/i }).click();
+    await policy.getByRole('button', { name: /retour/i }).click();
     await expect(policy).not.toHaveURL(/\/legal\/cookies$/);
   });
 
@@ -57,10 +57,10 @@ test.describe('cookie consent', () => {
 
     await expect(page).toHaveURL(/\/legal\/notice$/);
     await expect(
-      page.getByRole('heading', { name: 'Legal Notice' }),
+      page.getByRole('heading', { name: 'Mentions légales' }),
     ).toBeVisible();
     await expect(
-      page.locator('.legal').getByText(/crafted with .* by/i),
+      page.locator('.legal').getByText(/Fait avec .* par/),
     ).toBeVisible();
   });
 });

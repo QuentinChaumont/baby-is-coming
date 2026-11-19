@@ -13,18 +13,18 @@ export const LEGAL_ROUTES: Route[] = [
     path: 'cookies',
     loadComponent: () =>
       import('./cookie-policy.page').then((m) => m.CookiePolicy),
-    title: 'Cookie policy',
+    title: 'Politique cookies',
   },
   {
     path: 'privacy',
     loadComponent: () =>
       import('./privacy-policy.page').then((m) => m.PrivacyPolicy),
-    title: 'Privacy notice',
+    title: 'Confidentialité',
   },
   {
     path: 'notice',
     loadComponent: () =>
       import('./legal-notice.page').then((m) => m.LegalNotice),
-    title: 'Legal notice',
+    title: 'Mentions légales',
   },
 ];

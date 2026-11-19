@@ -1,98 +1,80 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { PublicSettingsService, RETENTION_FALLBACK } from '@org/frontend-core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { LegalPageShell } from './legal-page-shell';
 
-/**
- * TEMPLATE — replace the bracketed placeholders with this project's real
- * privacy notice before going live. The generator never overwrites this
- * file once it exists.
- */
+/** Privacy notice of the Kiki birth list (DEV step 5.1, PRODUCT §6.6). */
 @Component({
   selector: 'lib-privacy-policy',
   imports: [LegalPageShell],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <lib-legal-page-shell heading="Privacy Notice">
-      <p class="legal__meta"><em>Last updated: 09/09/2026</em></p>
+    <lib-legal-page-shell heading="Politique de confidentialité">
+      <p class="legal__meta"><em>Dernière mise à jour : 19/11/2026</em></p>
 
-      <h2>Controller</h2>
+      <h2>Responsable du traitement</h2>
       <p>
         <strong>Quentin CHAUMONT EI</strong>, 40 rue Monsarrat, 33800 Bordeaux,
-        France. Data protection contact: chaumont.quentin@gmail.com.
+        France. Contact : chaumont.quentin@gmail.com.
       </p>
 
-      <h2>What we process and why</h2>
+      <h2>Ce que nous collectons, et pourquoi</h2>
       <ul>
         <li>
-          <strong>Account data</strong> (email, name, roles) — to provide the
-          service. Legal basis: performance of a contract.
+          <strong>Quand tu prends un cadeau ou participes à la cagnotte</strong> :
+          prénom, nom, ton choix d'afficher ou non ton nom, ton petit mot
+          facultatif et, pour la cagnotte, le montant promis. Objectif :
+          organiser la liste et permettre aux parents de te remercier. Base
+          légale : intérêt légitime. Aucun e-mail ni téléphone n'est demandé.
         </li>
         <li>
-          <strong>Technical logs</strong> (IP, user agent, request IDs) — for
-          security and troubleshooting. Legal basis: legitimate interest.
+          <strong>Comptes des parents</strong> (e-mail, nom) — pour accéder à
+          l'espace parents. Base légale : exécution du service.
         </li>
         <li>
-          <strong>Optional analytics</strong> — only with your consent (see the
-          cookie policy).
+          <strong>Journaux techniques</strong> (adresse IP, navigateur,
+          identifiants de requête) — pour la sécurité. Base légale : intérêt
+          légitime.
         </li>
       </ul>
 
-      <h2>Retention</h2>
+      <h2>Ce que voient les autres invités</h2>
+      <p>
+        Sur la liste, un cadeau pris affiche « Prénom N. » (par exemple
+        « Paul M. »), sauf si tu as coché « Masquer mon nom » : il affiche
+        alors « quelqu'un de discret ». Ton petit mot et le montant de ta
+        participation ne sont jamais publics : seuls les parents les voient.
+        Le site n'est pas référencé par les moteurs de recherche, mais toute
+        personne qui a le lien peut le consulter.
+      </p>
+
+      <h2>Durée de conservation</h2>
       <ul>
         <li>
-          <strong>Account data</strong> — for the life of the account, then
-          deleted or anonymised on closure. Inactive accounts are
-          {{ accountRetentionText() }}.
+          <strong>Données des invités</strong> — effacées automatiquement
+          6 mois après la date prévue de l'accouchement (ou à une date choisie
+          par les parents) : noms et petits mots sont supprimés, seuls les
+          objets et les totaux restent.
         </li>
-        <li><strong>Technical logs</strong> — [12] months.</li>
-        <li>
-          <strong>Consent records</strong> (cookies) — 6 months, then we ask
-          again.
-        </li>
+        <li><strong>Journaux techniques</strong> — [12] mois.</li>
+        <li><strong>Choix de cookies</strong> — 6 mois.</li>
       </ul>
 
-      <h2>Account retention</h2>
-      @if (retention().accountRetention.inactiveDays; as days) {
-        <p>
-          Inactive accounts are permanently deleted after
-          <strong>{{ days }} days</strong> of inactivity.
-          @if (retention().accountRetention.warningDays; as warn) {
-            We email you <strong>{{ warn }} days</strong> beforehand so you can
-            keep the account by signing in.
-          }
-        </p>
-      } @else {
-        <p>
-          We keep your account for as long as it exists. We
-          <strong>do not automatically delete inactive accounts</strong>. You can
-          delete your account at any time from your profile.
-        </p>
-      }
-
-      <h2>Your rights</h2>
+      <h2>Tes droits</h2>
       <p>
-        Access, rectification, erasure, restriction, portability, objection, and
-        the right to lodge a complaint with the French data protection authority
-        (<a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a>).
-        Exercise them at chaumont.quentin@gmail.com.
+        Accès, rectification, effacement, limitation, opposition, et droit
+        d'introduire une réclamation auprès de la
+        <a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a>.
+        Le plus simple : écris aux parents, ou à chaumont.quentin@gmail.com, et
+        ta participation sera modifiée ou supprimée.
       </p>
 
-      <h2>International transfers</h2>
-      <p>
-        [State whether data leaves the EU/EEA and, if so, the safeguards used —
-        or "We do not transfer personal data outside the EU/EEA."]
-      </p>
+      <h2>Transferts hors UE</h2>
+      <p>[À compléter à la mise en ligne selon l'hébergeur retenu.]</p>
 
-      <h2>Automated decision-making</h2>
-      <p>We do not carry out automated decision-making or profiling.</p>
+      <h2>Décision automatisée</h2>
+      <p>Aucune décision automatisée ni aucun profilage.</p>
 
-      <h2>Sub-processors</h2>
-      <p>
-        We rely on the following categories of providers: hosting ([HOST NAME —
-        location]), transactional email ([PROVIDER — location]), and, subject to
-        your consent, analytics ([PROVIDER — location]).
-      </p>
+      <h2>Sous-traitants</h2>
+      <p>Hébergement : [NOM DE L'HÉBERGEUR — localisation], à compléter à la mise en ligne.</p>
     </lib-legal-page-shell>
   `,
   styles: `
@@ -130,19 +112,4 @@ import { LegalPageShell } from './legal-page-shell';
     }
   `,
 })
-export class PrivacyPolicy {
-  private readonly settings = inject(PublicSettingsService);
-
-  protected readonly retention = toSignal(this.settings.get(), {
-    initialValue: RETENTION_FALLBACK,
-  });
-
-  /** One-line retention phrase for the "Retention" list, kept in sync with
-   * the "Account retention" section above. */
-  protected accountRetentionText(): string {
-    const days = this.retention().accountRetention.inactiveDays;
-    return days
-      ? `permanently deleted after ${days} days of inactivity`
-      : 'not automatically deleted';
-  }
-}
+export class PrivacyPolicy {}
