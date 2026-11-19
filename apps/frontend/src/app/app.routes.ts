@@ -86,6 +86,12 @@ export const appRoutes: Route[] = [
         title: 'Objet',
       },
       {
+        path: 'participations',
+        loadComponent: () =>
+          import('./admin/participations-page').then((m) => m.ParticipationsPage),
+        title: 'Participations',
+      },
+      {
         path: 'profile',
         loadChildren: () =>
           import('@org/frontend-features-profile').then(
