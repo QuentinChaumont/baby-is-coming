@@ -65,7 +65,7 @@ export const appRoutes: Route[] = [
       {
         path: '',
         loadComponent: () =>
-          import('@org/frontend-dashboard/home').then((m) => m.DashboardHome),
+          import('./admin/dashboard-page').then((m) => m.DashboardPage),
         title: 'Tableau de bord',
       },
       {

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { acceptConsent, login } from './support/actions';
-import { SEEDED_USER } from './support/seed';
+import { apiTake, seedPublishedItem } from './support/catalog';
+import { SEEDED_ADMIN, SEEDED_USER } from './support/seed';
 
 test.describe('dashboard shell', () => {
   test('shows the signed-in home and the account menu', async ({ page }) => {
@@ -52,5 +53,17 @@ test.describe('dashboard shell', () => {
     await expect(
       page.getByRole('heading', { name: 'Cookie preferences' }),
     ).toBeVisible();
+  });
+
+  test('the parents’ dashboard shows what is new since the last visit', async ({ page }) => {
+    const title = `Gigoteuse ${Date.now().toString(36)}`;
+    const id = await seedPublishedItem({ title, price: 15 });
+    await apiTake(id, { kind: 'don', firstName: 'Mamie', lastName: 'Odile' });
+
+    await login(page, SEEDED_ADMIN);
+    await acceptConsent(page);
+    await expect(page.getByRole('heading', { name: 'Tableau de bord' })).toBeVisible();
+    await expect(page.getByText(`Mamie Odile a pris « ${title} » (don).`)).toBeVisible();
+    await expect(page.getByText('objets publiés')).toBeVisible();
   });
 });

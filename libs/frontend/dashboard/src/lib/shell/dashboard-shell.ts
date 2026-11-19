@@ -209,7 +209,7 @@ export class DashboardShell {
 
   private readonly main = viewChild('main', { read: ElementRef });
 
-  protected readonly title = 'Dashboard';
+  protected readonly title = 'Kiki · espace parents';
 
   constructor() {
     // After an in-app navigation, move focus to the content region so
