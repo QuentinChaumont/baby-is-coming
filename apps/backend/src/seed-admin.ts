@@ -4,9 +4,10 @@ import { UserService } from '@org/backend-features-user';
 import { AppModule } from './app/app.module';
 
 /**
- * Bootstraps the first `admin` account from `SEED_ADMIN_EMAIL` /
- * `SEED_ADMIN_PASSWORD`. Idempotent: an existing user is promoted to
- * `admin` (if needed) rather than recreated.
+ * Creates a parent (`admin`) account from `SEED_ADMIN_EMAIL` /
+ * `SEED_ADMIN_PASSWORD` — run once per parent (PRODUCT D21). The address is
+ * typed by whoever runs the script, so it is marked verified. Idempotent:
+ * an existing user is promoted to `admin` / marked verified if needed.
  *
  *   pnpm seed:admin      # → nx run @org/backend:seed-admin
  */
@@ -28,13 +29,15 @@ async function seedAdmin(): Promise<void> {
     const existing = await users.findByEmail(email);
 
     if (existing) {
-      if (existing.roles.includes('admin')) {
+      const isAdmin = existing.roles.includes('admin');
+      if (isAdmin && existing.emailVerifiedAt) {
         console.log(`[seed:admin] "${email}" already exists — nothing to do.`);
       } else {
         await users.updateById(existing._id.toString(), {
-          roles: [...existing.roles, 'admin'],
+          roles: isAdmin ? existing.roles : [...existing.roles, 'admin'],
+          emailVerifiedAt: existing.emailVerifiedAt ?? new Date(),
         });
-        console.log(`[seed:admin] promoted "${email}" to admin.`);
+        console.log(`[seed:admin] "${email}" is now a verified admin.`);
       }
       return;
     }
@@ -45,6 +48,7 @@ async function seedAdmin(): Promise<void> {
       firstName: 'Admin',
       lastName: 'User',
       roles: ['admin'],
+      emailVerifiedAt: new Date(),
     });
     console.log(`[seed:admin] created admin "${email}".`);
   } finally {
