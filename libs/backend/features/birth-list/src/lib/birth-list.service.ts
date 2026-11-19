@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ValidationError } from '@org/backend-core';
 import type {
   AdminBirthList,
+  PaymentMethods,
   PublicBirthList,
   UpdateBirthListRequest,
 } from '@org/shared-contracts';
@@ -51,44 +52,55 @@ export class BirthListService {
     if (patch.kittyGoal !== undefined) set['kittyGoal'] = patch.kittyGoal;
     if (patch.anonymizeAt !== undefined) set['anonymizeAt'] = patch.anonymizeAt;
 
-    const payment = patch.paymentMethods;
-    if (payment) {
-      if (payment.iban !== undefined) {
-        set['paymentMethods.iban'] = payment.iban
-          ? payment.iban.replace(/\s+/g, '').toUpperCase()
-          : null;
-      }
-      if (payment.ibanHolder !== undefined) {
-        set['paymentMethods.ibanHolder'] = payment.ibanHolder?.trim() || null;
-      }
-      if (payment.note !== undefined) {
-        set['paymentMethods.note'] = payment.note?.trim() || null;
-      }
-      if (payment.links !== undefined) {
-        set['paymentMethods.links'] = payment.links.map((l) => ({
-          label: l.label.trim(),
-          url: l.url.trim(),
-        }));
-      }
-    }
+    Object.assign(set, paymentSet(patch.paymentMethods));
 
     const saved = await this.repository.upsertMain(set);
     return toAdmin(saved.toObject() as BirthList);
   }
 }
 
+/** `paymentMethods` patch → dotted `$set` paths, so a partial update never
+ * clobbers a sibling field. */
+function paymentSet(
+  payment: UpdateBirthListRequest['paymentMethods'],
+): Record<string, unknown> {
+  const set: Record<string, unknown> = {};
+  if (!payment) return set;
+  if (payment.iban !== undefined) {
+    set['paymentMethods.iban'] = payment.iban
+      ? payment.iban.replace(/\s+/g, '').toUpperCase()
+      : null;
+  }
+  if (payment.ibanHolder !== undefined) {
+    set['paymentMethods.ibanHolder'] = payment.ibanHolder?.trim() || null;
+  }
+  if (payment.note !== undefined) {
+    set['paymentMethods.note'] = payment.note?.trim() || null;
+  }
+  if (payment.links !== undefined) {
+    set['paymentMethods.links'] = payment.links.map((l) => ({
+      label: l.label.trim(),
+      url: l.url.trim(),
+    }));
+  }
+  return set;
+}
+
+function toPaymentMethods(stored: BirthList['paymentMethods']): PaymentMethods {
+  return {
+    iban: stored?.iban ?? EMPTY_PAYMENT_METHODS.iban,
+    ibanHolder: stored?.ibanHolder ?? EMPTY_PAYMENT_METHODS.ibanHolder,
+    links: (stored?.links ?? []).map(({ label, url }) => ({ label, url })),
+    note: stored?.note ?? EMPTY_PAYMENT_METHODS.note,
+  };
+}
+
 function toAdmin(stored: BirthList | null): AdminBirthList {
-  const payment = stored?.paymentMethods;
   const list = {
     babyNickname: stored?.babyNickname || DEFAULT_NICKNAME,
     dueDate: stored?.dueDate ?? null,
     welcomeMessage: stored?.welcomeMessage ?? DEFAULT_WELCOME_MESSAGE,
-    paymentMethods: {
-      iban: payment?.iban ?? EMPTY_PAYMENT_METHODS.iban,
-      ibanHolder: payment?.ibanHolder ?? EMPTY_PAYMENT_METHODS.ibanHolder,
-      links: (payment?.links ?? []).map(({ label, url }) => ({ label, url })),
-      note: payment?.note ?? EMPTY_PAYMENT_METHODS.note,
-    },
+    paymentMethods: toPaymentMethods(stored?.paymentMethods),
     kittyGoal: stored?.kittyGoal ?? null,
     anonymizeAt: stored?.anonymizeAt ?? null,
   };

@@ -83,6 +83,9 @@
     },
     {
       "path": "./libs/backend/features/birth-list"
+    },
+    {
+      "path": "./libs/backend/features/item"
     }
   ],
   "compilerOptions": {}

@@ -23,9 +23,6 @@
       "path": "../../libs/backend/features/user/tsconfig.lib.json"
     },
     {
-      "path": "../../libs/backend/features/birth-list/tsconfig.lib.json"
-    },
-    {
       "path": "../../libs/backend/auth/tsconfig.lib.json"
     },
     {
@@ -36,6 +33,12 @@
     },
     {
       "path": "../../libs/backend/features/role/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/backend/features/item/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/backend/features/birth-list/tsconfig.lib.json"
     },
     {
       "path": "../../libs/backend/features/audit/tsconfig.lib.json"
