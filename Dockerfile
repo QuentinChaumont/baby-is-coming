@@ -1,6 +1,10 @@
 # syntax=docker/dockerfile:1
+#
+# One image for the whole app: the NestJS API serves `/api/*` and the built
+# Angular SPA on every other path (SPA_DIR). Dev keeps the two separate
+# (`nx serve @org/backend` + `nx serve frontend`).
 
-# ---- build: full install, Nx build, prune deploy artifacts ----
+# ---- build: full install, Nx build (API + SPA), prune deploy artifacts ----
 FROM node:22-alpine AS build
 WORKDIR /repo
 
@@ -8,6 +12,7 @@ COPY . .
 RUN npm ci --no-audit --no-fund
 
 RUN npx nx run @org/backend:prune
+RUN npx nx build frontend
 
 # `copy-workspace-modules` brings each @org/* lib's package.json along,
 # `devDependencies` and all — including dev-only workspace deps such as
@@ -20,12 +25,15 @@ RUN find apps/backend/dist/workspace_modules -name package.json \
 
 # ---- runtime: production dependencies only ----
 FROM node:22-alpine AS runtime
-ENV NODE_ENV=production
+ENV NODE_ENV=production \
+    SPA_DIR=/app/public
 WORKDIR /app
 
 COPY --from=build /repo/apps/backend/dist ./
 RUN npm install --omit=dev --ignore-scripts --no-audit --no-fund \
  && npm cache clean --force
+
+COPY --from=build /repo/dist/apps/frontend/browser ./public
 
 USER node
 EXPOSE 3000

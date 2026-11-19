@@ -22,7 +22,16 @@ export function setupSecurity(app: INestApplication): void {
     app.getHttpAdapter().getInstance().set('trust proxy', trustProxy);
   }
 
-  app.use(helmet());
+  // Helmet's default CSP, plus `blob:` images: the SPA (served by this
+  // process in production, see `setupSpa`) previews and crops photos from
+  // object URLs (ngx-image-cropper).
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: { 'img-src': ["'self'", 'data:', 'blob:'] },
+      },
+    }),
+  );
   app.use(compression());
 
   // API responses can carry account/session data — never let a shared

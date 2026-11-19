@@ -191,6 +191,7 @@ export function validateEnv(
     rawEnv['TRUST_PROXY'],
     errors,
   );
+  const SPA_DIR = parseOptionalString('SPA_DIR', rawEnv['SPA_DIR'], errors);
   const RATE_LIMIT_TTL_SECONDS = parsePositiveInt(
     'RATE_LIMIT_TTL_SECONDS',
     rawEnv['RATE_LIMIT_TTL_SECONDS'],
@@ -396,6 +397,7 @@ export function validateEnv(
     CORS_ORIGINS,
     ...(LOG_LEVEL !== undefined ? { LOG_LEVEL } : {}),
     ...(TRUST_PROXY !== undefined ? { TRUST_PROXY } : {}),
+    ...(SPA_DIR !== undefined ? { SPA_DIR } : {}),
     RATE_LIMIT_TTL_SECONDS,
     RATE_LIMIT_LIMIT,
     ...(AUTH_RATE_LIMIT_TTL_SECONDS !== undefined

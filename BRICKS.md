@@ -172,8 +172,8 @@ retention isn't installed or configured.
 
 ### `docker`
 
-- **Files (verbatim, opt-in):** `apps/backend/Dockerfile`, `apps/frontend/Dockerfile`, `apps/frontend/nginx.conf`, `docker-compose.yml`, `.dockerignore`.
-- **Wiring:** none — nothing imports these; delete the files to remove.
+- **Files (verbatim, opt-in):** `Dockerfile`, `docker-compose.yml`, `.dockerignore`, `.github/workflows/docker.yml`.
+- **Wiring:** the image sets `SPA_DIR`, which `setupSpa` (`@org/backend-core`, called in `apps/backend/src/main.ts`) uses to serve the SPA from the API. Delete the files to remove; `setupSpa` is a no-op without `SPA_DIR`.
 
 ---
 

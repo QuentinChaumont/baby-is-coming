@@ -1,0 +1,39 @@
+name: Docker image
+
+# Builds the single production image (NestJS API + Angular SPA) and pushes
+# it to Docker Hub. Deployment itself is manual, from the `qct-deploy` repo:
+# bump `image:` in deploy/5-kiki/3-kiki.deploy.yaml, then `kubectl apply`.
+#
+# Bump TAG for every release — the cluster pulls this exact tag.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  IMAGE: quentinchmt/qct-admin
+  TAG: kiki-1.0.0
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_KEY }}
+
+      - name: Build and push
+        run: |
+          docker build . -t "$IMAGE:$TAG"
+          docker push "$IMAGE:$TAG"

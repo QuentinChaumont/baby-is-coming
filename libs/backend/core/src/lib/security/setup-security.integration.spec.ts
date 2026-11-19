@@ -62,6 +62,15 @@ describe('setupSecurity (integration)', () => {
     expect(response.headers.get('x-powered-by')).toBeNull();
   });
 
+  it('allows blob: images in the CSP (photo cropper), keeps the defaults', async () => {
+    const response = await fetch(`${baseUrl}/probe`);
+    const csp = response.headers.get('content-security-policy') ?? '';
+
+    expect(csp).toContain("img-src 'self' data: blob:");
+    expect(csp).toContain("script-src 'self'");
+    expect(csp).toContain("object-src 'none'");
+  });
+
   it('marks API responses no-store, but not other routes', async () => {
     const api = await fetch(`${baseUrl}/api/probe`);
     expect(api.headers.get('cache-control')).toBe('no-store');

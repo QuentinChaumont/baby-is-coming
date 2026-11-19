@@ -50,6 +50,8 @@ export class AppConfigService {
       trustProxy: normaliseTrustProxy(
         this.configService.get('TRUST_PROXY', { infer: true }),
       ),
+      /** Built SPA directory to serve on `/`; `undefined` → API only. */
+      spaDir: this.configService.get('SPA_DIR', { infer: true }),
     };
   }
 

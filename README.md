@@ -133,6 +133,7 @@ failing later at first use.
 | `CORS_ORIGINS`                 | no                         | `http://localhost:4200`      | Comma-separated list                                                                                                                   |
 | `LOG_LEVEL`                    | no                         | `debug` (dev) / `log` (prod) | Minimum severity emitted: `verbose` \| `debug` \| `log` \| `warn` \| `error` \| `fatal`                                                |
 | `TRUST_PROXY`                  | behind a proxy             | — (`false`)                  | Express `trust proxy`: `true`, a hop count (`1`), or `loopback`. Needed so `req.ip` is the real client behind nginx / a load balancer. |
+| `SPA_DIR`                      | no                         | —                            | Built SPA folder to serve on `/` (set to `/app/public` in the Docker image). Unset → API only.                                         |
 | `RATE_LIMIT_TTL_SECONDS`       | no                         | `60`                         | Rate-limit window (security brick)                                                                                                     |
 | `RATE_LIMIT_LIMIT`             | no                         | `100`                        | Max requests per window (security brick)                                                                                               |
 | `MONGO_URI`                    | only if Mongo is installed | —                            | `mongodb://...` or `mongodb+srv://...`                                                                                                 |
@@ -627,30 +628,58 @@ Majors are ignored — bump those by hand with their codemods.
 ## Docker
 
 ```bash
-docker compose up --build      # SPA on http://localhost:8080
+docker compose up --build      # app on http://localhost:8080
 ```
 
-The Docker packaging ships with the repo (delete these files to drop it):
+Production is **one image, one host**: the NestJS process serves the API on
+`/api/*` and the built Angular SPA on every other path. Dev is unchanged —
+`nx serve @org/backend` and `nx serve frontend` stay separate (the dev
+server proxies `/api`).
 
-- **`apps/backend/Dockerfile`** — multi-stage: full install + `nx build` +
-  `nx prune` in the builder, then `node:22-alpine` with **prod deps only**
-  (`main.js` bundles the `@org/*` libs; the pruned `package.json` pulls
-  just the runtime npm packages). `HEALTHCHECK` on `/api/health/live`,
-  runs as `node`.
-- **`apps/frontend/Dockerfile` + `nginx.conf`** — `nx build frontend` then
-  `nginx:alpine`: SPA fallback to `index.html`, `/api` reverse-proxied to
-  the `backend` service, hashed assets cached hard.
-- **`docker-compose.yml`** — `mongo:7` (named volume + healthcheck),
-  `backend` (waits for Mongo; config from the shell / an optional root
-  `.env`), `frontend` on `:8080`. No secret is baked into an image;
-  `JWT_SECRET` comes from the environment (a throwaway default lets
-  `compose up` boot for a smoke test).
+- **`Dockerfile`** (repo root) — multi-stage: full install, `nx prune` of
+  the backend and `nx build frontend` in the builder, then `node:22-alpine`
+  with **prod deps only** (`main.js` bundles the `@org/*` libs; the pruned
+  `package.json` pulls just the runtime npm packages) and the SPA copied to
+  `/app/public` (`SPA_DIR`). `HEALTHCHECK` on `/api/health/live`, runs as
+  `node`.
+- **`SPA_DIR`** — when set, `setupSpa` (`libs/backend/core/src/lib/spa`)
+  serves that folder: hashed bundles cached a year, other files an hour,
+  and any extension-less GET outside `/api` falls back to `index.html`
+  (no-cache) for the Angular router. Helmet's CSP applies to the SPA, which
+  is why the production build turns off Angular's `inlineCritical` (its
+  `onload` attribute is blocked by `script-src-attr 'none'`).
+- **`docker-compose.yml`** — `mongo:7` (named volume + healthcheck) and
+  `app` on `:8080` (waits for Mongo; config from the shell / an optional
+  root `.env`). No secret is baked into the image; `JWT_SECRET` comes from
+  the environment (a throwaway default lets `compose up` boot for a smoke
+  test).
+- **`.github/workflows/docker.yml`** — on `main`, builds the image and
+  pushes `quentinchmt/qct-admin:<TAG>` to Docker Hub (bump `TAG` per
+  release; needs `REGISTRY_USERNAME` / `REGISTRY_KEY` secrets).
 
 The compose stack is a **local smoke test, not a production deployment**:
 Mongo runs without authentication and `JWT_SECRET` falls back to a
-throwaway value. Before shipping, set a real `JWT_SECRET`, enable Mongo
-auth (`MONGO_INITDB_ROOT_*` + a scoped app user in `MONGO_URI`), and put
-the frontend behind a TLS-terminating proxy.
+throwaway value.
+
+### Production (k3s, repo `qct-deploy`)
+
+Manifests live in `qct-deploy/deploy/5-kiki/` (ConfigMap, Secret,
+Deployment + Service, Ingress with its own Let's Encrypt cert) and serve
+`https://kiki.quentinchaumont.fr`. Data goes to the `baby-is-coming`
+database on the same MongoDB Atlas cluster as qct-admin.
+
+1. Bump `TAG` in `.github/workflows/docker.yml`, merge to `main`, wait for
+   the workflow to be green.
+2. In `qct-deploy`, set the same tag in `deploy/5-kiki/3-kiki.deploy.yaml`,
+   then `kubectl diff -f deploy/5-kiki` and `kubectl apply -f deploy/5-kiki`.
+3. `kubectl rollout status deploy/kiki`.
+
+Parent accounts (once, after the first deploy):
+
+```bash
+kubectl exec -it deploy/kiki -- \
+  env SEED_ADMIN_EMAIL=… SEED_ADMIN_PASSWORD=… node seed-admin.js
+```
 
 ## License
 

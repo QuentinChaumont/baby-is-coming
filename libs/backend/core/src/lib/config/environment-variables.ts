@@ -27,6 +27,10 @@ export interface EnvironmentVariables {
    * (`1`), or an Express trust list (`loopback`, a subnet). Unset → `false`
    * (direct exposure). */
   TRUST_PROXY?: string;
+  /** Directory of the built Angular SPA (`dist/apps/frontend/browser`).
+   * Set → the API also serves the SPA on `/` (single image, single host).
+   * Unset → API only (dev: `nx serve frontend` runs on its own port). */
+  SPA_DIR?: string;
   RATE_LIMIT_TTL_SECONDS: number;
   RATE_LIMIT_LIMIT: number;
   /** Stricter rate limit for `POST /auth/login` + `POST /auth/register`
@@ -111,6 +115,7 @@ export const ENVIRONMENT_VARIABLE_NAMES: readonly (keyof EnvironmentVariables)[]
     'CORS_ORIGINS',
     'LOG_LEVEL',
     'TRUST_PROXY',
+    'SPA_DIR',
     'RATE_LIMIT_TTL_SECONDS',
     'RATE_LIMIT_LIMIT',
     'AUTH_RATE_LIMIT_TTL_SECONDS',

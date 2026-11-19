@@ -8,6 +8,7 @@ import {
   createValidationPipe,
   setupOpenApi,
   setupSecurity,
+  setupSpa,
   useRequestIdMiddleware,
 } from '@org/backend-core';
 import { AppModule } from './app/app.module';
@@ -24,6 +25,9 @@ async function bootstrap() {
   app.useGlobalFilters(app.get(GlobalExceptionFilter));
   app.useGlobalPipes(createValidationPipe());
   setupOpenApi(app);
+  // Production image: the built SPA is served on `/` by this same process
+  // (SPA_DIR). Dev leaves it unset and runs `nx serve frontend` separately.
+  setupSpa(app);
 
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
