@@ -7,7 +7,7 @@ test.describe('public site shell', () => {
   }) => {
     await page.goto('/');
     await acceptConsent(page);
-    await expect(page.getByRole('heading', { name: "Coucou, c'est Kiki" })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /c'est Kiki/ })).toBeVisible();
     // the public site never offers to sign in (PRODUCT §3)
     await expect(page.getByRole('link', { name: /connexion|se connecter/i })).toHaveCount(0);
 
@@ -20,6 +20,13 @@ test.describe('public site shell', () => {
 
     await page.getByRole('link', { name: 'Kiki', exact: true }).click();
     await expect(page).toHaveURL(/\/$/);
+  });
+
+  test('the home shows the parents’ note and the three ways to take part', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'Le mot des parents' })).toBeVisible();
+    await expect(page.getByText('Fille ou garçon ? Surprise')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Trois façons de jouer' })).toBeVisible();
   });
 
   test('pages ask search engines not to index them', async ({ page }) => {

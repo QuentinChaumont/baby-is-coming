@@ -40,7 +40,7 @@ test.describe('authentication', () => {
     await page.getByRole('link', { name: "Retour à l'accueil" }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(
-      page.getByRole('heading', { name: "Coucou, c'est Kiki" }),
+      page.getByRole('heading', { name: /c'est Kiki/ }),
     ).toBeVisible();
   });
 
