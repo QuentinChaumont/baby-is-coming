@@ -3,9 +3,10 @@
 > Charte de la piste **A « Brocante en savane »**, retenue le 2026-11-18
 > (D16, cf. `docs/PRODUCT.md` §8). Maquette de référence :
 > https://claude.ai/artifact/GALPtw7v4vJxRJFXD48Fq9 (artboards « A · … »).
-> Le brick `frontend-design` (`libs/frontend/design`) reste l'unique
-> implémentation : **les valeurs ci-dessous ne sont pas encore reportées dans
-> `design.config.ts` / `_tokens.scss`**.
+> Implémentation : `libs/frontend/design` (tokens `_tokens.scss` /
+> `design.config.ts`, boutons `_brand.scss`) et composants de marque dans
+> `libs/frontend/ui/src/lib/brand` (`PriceTag`, `Stamp`, `LinkPill`,
+> `GiraffeBand`, `InkCard`, `Switch`). Vitrine en dev : `/charte`.
 
 ## Direction artistique
 
@@ -60,9 +61,9 @@ Mode clair uniquement (D18) : pas de valeur sombre.
 
 | Rôle | Police | Usage |
 | --- | --- | --- |
-| Display | **Fraunces** 800 (600) | Titres ; tracking -0.02em |
-| Texte | **Nunito** 400 / 600 / 800 | Corps, boutons (800), labels |
-| Manuscrit | **Caveat** 600 | Prix sur étiquettes, notes, sous-titres d'ambiance — jamais pour un texte long |
+| Display | **Fraunces** 800 (600) — `--app-font-display` | Titres ; tracking -0.02em |
+| Texte | **Nunito** 400 / 600 / 800 — `--app-font-family` | Corps, boutons (800), labels |
+| Manuscrit | **Caveat** 600 — `--app-font-hand` | Prix sur étiquettes, notes, sous-titres d'ambiance — jamais pour un texte long |
 
 Échelle de la maquette (mobile) : titre accueil 56px, titre page 32–34px,
 h2 28px, corps 15–16px, petit texte 13–14px.

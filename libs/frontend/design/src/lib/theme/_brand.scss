@@ -1,0 +1,78 @@
+// Brand buttons of the public site (charter « Brocante en savane »).
+// Plain classes so they work on both <button> and <a>:
+//
+//   <a class="app-button app-button--ink" routerLink="/liste">Voir la liste</a>
+//   <button class="app-button app-button--outline">J'ai déjà ça chez moi !</button>
+//   <a class="app-button app-button--butter" routerLink="/cagnotte">La cagnotte</a>
+//
+// The back-office keeps Angular Material buttons (themed from the tokens).
+
+.app-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  border: 2px solid transparent;
+  border-radius: var(--app-radius-md);
+  font: inherit;
+  font-weight: 800;
+  font-size: 1.0625rem;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease-out,
+    color 160ms ease-out,
+    transform 160ms ease-out;
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.app-button--ink {
+  background: var(--app-color-ink);
+  color: var(--app-color-on-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--app-color-sage-strong);
+    color: var(--app-color-on-primary);
+  }
+}
+
+.app-button--butter {
+  background: var(--app-color-secondary);
+  color: var(--app-color-on-secondary);
+
+  &:hover:not(:disabled) {
+    background: #ecd17a;
+    color: var(--app-color-on-secondary);
+  }
+}
+
+.app-button--outline {
+  background: var(--app-color-background);
+  border-color: var(--app-color-ink);
+  color: var(--app-color-ink);
+
+  &:hover:not(:disabled) {
+    background: var(--app-color-surface);
+    color: var(--app-color-ink);
+  }
+}
+
+.app-button--block {
+  display: flex;
+  width: 100%;
+}

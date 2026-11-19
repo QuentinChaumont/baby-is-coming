@@ -1,3 +1,4 @@
+import { isDevMode } from '@angular/core';
 import { Route } from '@angular/router';
 import { AUTH_ROUTES, RESET_ROUTES, authGuard } from '@org/frontend-auth';
 import { LEGAL_ROUTES } from '@org/frontend-consent';
@@ -18,6 +19,17 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('./public-home').then((m) => m.PublicHome),
     title: "Coucou, c'est Kiki",
   },
+  // Dev-only showcase of the brand components (DEV step 0.2).
+  ...(isDevMode()
+    ? [
+        {
+          path: 'charte',
+          loadComponent: () =>
+            import('./charter-page').then((m) => m.CharterPage),
+          title: 'Charte',
+        },
+      ]
+    : []),
   ...AUTH_ROUTES,
   ...RESET_ROUTES,
   { path: 'legal', children: LEGAL_ROUTES },

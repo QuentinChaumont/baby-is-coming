@@ -1,50 +1,64 @@
 // Brand tokens as CSS custom properties — this is what the browser reads.
-// Keep the values in sync with `design.config.ts` (same folder).
+// Keep the values in sync with `design.config.ts` (same folder) and with
+// `DESIGN.md` (charter « Brocante en savane », piste A).
 //
-// Each colour uses `light-dark()` so a single `color-scheme` switch (see
-// `_theme.scss` / step 24's ThemeService) flips the whole palette. The
-// runtime settings panel overrides individual properties on
-// `document.documentElement`.
+// Light only (PRODUCT D18): plain values, no `light-dark()`.
 //
-// Direction: a quiet developer-console surface — neutral chrome, hairline
-// separators, one indigo accent. The accent is reserved for the active
-// nav item, the sorted column, focus rings and primary buttons; never for
-// decoration.
+// Direction: a chic flea market in the savannah — cream paper, ink borders,
+// sage and butter from Kiki's room, kraft labels with giraffe spots,
+// terracotta stamps. Ink carries text and primary actions; butter marks the
+// kitty and labels; sage frames hero bands and action zones.
 
 :root {
-  // colour — light-dark(<light>, <dark>)
-  --app-color-primary: light-dark(#4b57d4, #97a4ff);
-  --app-color-on-primary: light-dark(#ffffff, #10132e);
-  --app-color-secondary: light-dark(#0e7490, #67e8f9);
-  --app-color-on-secondary: light-dark(#ffffff, #062c38);
-  --app-color-error: light-dark(#c22b1f, #f4776a);
-  --app-color-on-error: light-dark(#ffffff, #3a0906);
-  --app-color-background: light-dark(#f4f5f7, #0f1012);
-  --app-color-surface: light-dark(#ffffff, #17181b);
-  --app-color-on-surface: light-dark(#1b1d21, #e4e6e9);
-  --app-color-surface-variant: light-dark(#eef0f3, #212327);
-  --app-color-outline: light-dark(#d6d9de, #2d3036);
+  // ── core palette (Material-mapped) ────────────────────────────────────
+  --app-color-primary: #22301f; // encre
+  --app-color-on-primary: #fbf7ee;
+  --app-color-secondary: #f3de9a; // jaune beurre
+  --app-color-on-secondary: #22301f;
+  --app-color-error: #a4442a;
+  --app-color-on-error: #ffffff;
+  --app-color-background: #fbf7ee; // crème
+  --app-color-surface: #ffffff;
+  --app-color-on-surface: #22301f;
+  --app-color-on-surface-variant: #4e5c4b; // ≥ 4.5:1 on cream and white
+  --app-color-surface-variant: #f1eadb;
+  --app-color-outline: #6f7d69;
 
-  // shape — tight; a developer tool, not a marketing card wall
-  --app-radius-sm: 3px;
-  --app-radius-md: 5px;
-  --app-radius-lg: 8px;
-  --app-radius-pill: 999px;
+  // ── brand extras ──────────────────────────────────────────────────────
+  --app-color-sage: #8fa98a;
+  --app-color-on-sage: #22301f;
+  --app-color-sage-strong: #3f5a3c; // icons, links, focus, handwritten notes
+  --app-color-kraft: #e6d5b8;
+  --app-color-giraffe-spot: #c9a86a; // decoration only
+  --app-color-stamp: #a4442a; // « Chassé ! » / « Adopté ! »
+  --app-color-ink: #22301f; // brand borders (2px)
 
-  // typography
-  --app-font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  // Data voice: identifiers, roles, counts, timestamps, keyboard hints.
-  --app-font-mono:
-    'JetBrains Mono', ui-monospace, 'SF Mono', 'Menlo', 'Consolas', monospace;
+  // ── shape ─────────────────────────────────────────────────────────────
+  --app-radius-sm: 4px; // tilted labels, tags
+  --app-radius-md: 10px; // buttons, inputs
+  --app-radius-lg: 12px; // cards, photos
+  --app-radius-pill: 999px; // link pills, toggles, round buttons
+  --app-border-ink: 2px solid var(--app-color-ink);
 
-  // spacing grid — 4px base, referenced by shell + feature pages
+  // ── typography ────────────────────────────────────────────────────────
+  --app-font-family: 'Nunito Variable', 'Nunito', 'Helvetica Neue', Arial,
+    sans-serif;
+  --app-font-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  --app-font-hand: 'Caveat', 'Segoe Print', cursive;
+  // Data voice in the back-office: identifiers, counts, timestamps.
+  --app-font-mono: ui-monospace, 'SF Mono', 'Menlo', 'Consolas', monospace;
+
+  // ── spacing grid — 4px base ───────────────────────────────────────────
   --app-space-1: 4px;
   --app-space-2: 8px;
   --app-space-3: 12px;
   --app-space-4: 16px;
   --app-space-5: 20px;
   --app-space-6: 24px;
+  --app-space-8: 32px;
+  --app-space-10: 40px;
 
-  // one elevation only — a hairline, not a shadow
-  --app-border-hairline: 1px solid var(--app-color-outline);
+  // ── elevation: rare and soft, never a hard offset shadow ──────────────
+  --app-shadow-soft: 0 6px 14px rgba(34, 48, 31, 0.18);
+  --app-border-hairline: 1px solid var(--app-color-surface-variant);
 }

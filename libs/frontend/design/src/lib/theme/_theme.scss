@@ -12,12 +12,11 @@
 
 @use '@angular/material' as mat;
 @use 'tokens';
+@use 'brand';
 
-// Web fonts: Inter (referenced by `--app-font-family` in `_tokens.scss`) and
-// the Material Icons font that `<mat-icon>` needs to render glyphs instead of
-// literal text. Loaded from Google Fonts for a zero-config start; self-host
-// them for production (see DESIGN.md).
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+// Web fonts: Fraunces / Nunito / Caveat are self-hosted (@fontsource
+// packages, wired in `apps/frontend/project.json` → `styles`). The Material
+// Icons font (back-office `<mat-icon>`) still comes from Google Fonts.
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 html {
@@ -27,13 +26,13 @@ html {
   @include mat.theme(
     (
       color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$cyan-palette,
+        primary: mat.$green-palette,
+        tertiary: mat.$yellow-palette,
         theme-type: color-scheme,
       ),
       typography: (
         plain-family: var(--app-font-family),
-        brand-family: var(--app-font-family),
+        brand-family: var(--app-font-display),
       ),
       density: 0,
     )
@@ -51,6 +50,7 @@ html {
   --mat-sys-on-surface: var(--app-color-on-surface);
   --mat-sys-outline: var(--app-color-outline);
   --mat-sys-outline-variant: var(--app-color-surface-variant);
+  --mat-sys-on-surface-variant: var(--app-color-on-surface-variant);
 }
 
 body {
@@ -69,11 +69,37 @@ body {
   box-sizing: border-box;
 }
 
-// One consistent keyboard-focus ring across the app, tuned to the accent.
+// Display face for headings (Fraunces); body stays Nunito.
+:where(h1, h2, h3) {
+  font-family: var(--app-font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+a {
+  color: var(--app-color-sage-strong);
+  text-underline-offset: 3px;
+}
+a:hover {
+  color: var(--app-color-ink);
+}
+
+::selection {
+  background: var(--app-color-secondary);
+  color: var(--app-color-on-secondary);
+}
+
+// One consistent keyboard-focus ring across the app.
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-  outline: 2px solid var(--app-color-primary);
-  outline-offset: 1px;
+  outline: 3px solid var(--app-color-sage-strong);
+  outline-offset: 2px;
   border-radius: var(--app-radius-sm);
+}
+
+input,
+textarea {
+  caret-color: var(--app-color-sage-strong);
 }
 
 // Honour the OS "reduce motion" setting everywhere at once — Material's
@@ -91,17 +117,17 @@ body {
   }
 }
 
-// Slim, neutral scrollbars — chrome should recede.
+// Slim scrollbars in the sage family — chrome should recede.
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--app-color-outline) transparent;
+  scrollbar-color: var(--app-color-sage) transparent;
 }
 *::-webkit-scrollbar {
   inline-size: 10px;
   block-size: 10px;
 }
 *::-webkit-scrollbar-thumb {
-  background: var(--app-color-outline);
+  background: var(--app-color-sage);
   border-radius: var(--app-radius-pill);
   border: 2px solid transparent;
   background-clip: content-box;
