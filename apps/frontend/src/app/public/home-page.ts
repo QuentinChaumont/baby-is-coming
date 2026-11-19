@@ -24,6 +24,7 @@ type HomeState =
   template: `
     <main class="home">
       <header class="home__hero">
+        <img class="home__kiki" src="kiki.svg" alt="" width="270" height="430" />
         <h1>Coucou,<br />c'est {{ nickname() }}</h1>
         <p class="home__tagline">Une liste de naissance 100 % seconde main</p>
         <div class="home__labels">
@@ -105,11 +106,26 @@ type HomeState =
       margin: 0 auto;
     }
     .home__hero {
+      position: relative;
       background: var(--app-color-sage);
       padding: 44px 24px 14px;
       display: flex;
       flex-direction: column;
       gap: 14px;
+    }
+    .home__kiki {
+      position: absolute;
+      right: 12px;
+      bottom: -6px;
+      width: clamp(112px, 30vw, 150px);
+      height: auto;
+      pointer-events: none;
+    }
+    .home__hero h1,
+    .home__tagline,
+    .home__labels {
+      position: relative;
+      max-width: calc(100% - clamp(100px, 28vw, 140px));
     }
     .home__hero h1 {
       margin: 0;

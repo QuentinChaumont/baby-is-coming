@@ -9,6 +9,7 @@ import { RouterLink } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main class="not-found">
+      <img class="not-found__kiki" src="kiki.svg" alt="Kiki, bébé girafe" width="270" height="430" />
       <p class="not-found__code">404</p>
       <h1 class="not-found__title">Page introuvable</h1>
       <p class="not-found__text">
@@ -20,12 +21,17 @@ import { RouterLink } from '@angular/router';
   styles: `
     .not-found {
       max-width: 420px;
-      margin: 16vh auto;
+      margin: 8vh auto;
       padding: 24px;
       text-align: center;
       display: flex;
       flex-direction: column;
       gap: 8px;
+    }
+    .not-found__kiki {
+      width: 140px;
+      height: auto;
+      margin: 0 auto;
     }
     .not-found__code {
       margin: 0;

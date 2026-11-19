@@ -118,6 +118,7 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
               }
               @if (confirmation(); as done) {
                 <div class="item__done">
+                  <img class="item__kiki" src="kiki.svg" alt="" width="270" height="430" />
                   <h2>{{ done.title }}</h2>
                   <p>{{ done.text }}</p>
                   <a class="app-button app-button--outline app-button--block" routerLink="/liste">Retour à la liste</a>
@@ -271,6 +272,15 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
     .item__taken {
       margin: 0;
       font-weight: 800;
+    }
+    .item__done {
+      text-align: center;
+    }
+    .item__kiki {
+      width: 120px;
+      height: auto;
+      margin: 0 auto 4px;
+      display: block;
     }
     .item__done h2 {
       margin: 0 0 6px;
