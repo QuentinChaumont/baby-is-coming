@@ -17,8 +17,8 @@ import { Router } from '@angular/router';
   template: `
     <div class="legal-shell">
       <div class="legal-shell__brand">
-        <span class="legal-shell__mark" aria-hidden="true">◆</span>
-        <span class="legal-shell__name">Starter</span>
+        <img class="legal-shell__mark" src="favicon.svg" alt="" width="28" height="28" />
+        <span class="legal-shell__name">Kiki</span>
       </div>
       <button mat-button class="legal-shell__back" (click)="back()">
         <mat-icon>arrow_back</mat-icon> Retour
@@ -44,12 +44,13 @@ import { Router } from '@angular/router';
       gap: var(--app-space-2);
     }
     .legal-shell__mark {
-      font-size: 0.875rem;
-      color: var(--app-color-primary);
+      width: 28px;
+      height: 28px;
+      flex: none;
     }
     .legal-shell__name {
-      font: 600 0.9375rem/1 var(--app-font-family);
-      letter-spacing: -0.01em;
+      font: 800 1.25rem/1 var(--app-font-display);
+      letter-spacing: -0.02em;
       color: var(--app-color-on-surface);
     }
     .legal-shell__back {

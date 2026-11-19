@@ -12,8 +12,8 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   template: `
     <div class="auth-shell" [style.--auth-shell-width]="width()">
       <div class="auth-shell__brand">
-        <span class="auth-shell__mark" aria-hidden="true">◆</span>
-        <span class="auth-shell__name">Starter</span>
+        <img class="auth-shell__mark" src="favicon.svg" alt="" width="28" height="28" />
+        <span class="auth-shell__name">Kiki</span>
       </div>
       <section class="auth-shell__panel">
         <ng-content />
@@ -36,12 +36,13 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       gap: var(--app-space-2);
     }
     .auth-shell__mark {
-      font-size: 0.875rem;
-      color: var(--app-color-primary);
+      width: 28px;
+      height: 28px;
+      flex: none;
     }
     .auth-shell__name {
-      font: 600 0.9375rem/1 var(--app-font-family);
-      letter-spacing: -0.01em;
+      font: 800 1.25rem/1 var(--app-font-display);
+      letter-spacing: -0.02em;
       color: var(--app-color-on-surface);
     }
     .auth-shell__panel {

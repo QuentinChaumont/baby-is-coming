@@ -89,7 +89,7 @@ function writeOpenPref(open: boolean): void {
         <mat-icon>{{ opened() ? 'menu_open' : 'menu' }}</mat-icon>
       </button>
       <span class="shell__brand">
-        <span class="shell__mark" aria-hidden="true">◆</span>
+        <img class="shell__mark" src="favicon.svg" alt="" width="28" height="28" />
         <span class="shell__title">{{ title }}</span>
       </span>
       <span class="shell__spacer"></span>
@@ -174,8 +174,9 @@ function writeOpenPref(open: boolean): void {
       gap: 8px;
     }
     .shell__mark {
-      font-size: 0.75rem;
-      color: var(--app-color-primary);
+      width: 28px;
+      height: 28px;
+      flex: none;
     }
     .shell__title {
       font: 600 0.9375rem/1 var(--app-font-family);
