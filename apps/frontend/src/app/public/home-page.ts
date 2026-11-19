@@ -24,6 +24,7 @@ type HomeState =
   template: `
     <main class="home">
       <header class="home__hero">
+        <div class="home__hero-inner">
         <img class="home__kiki" src="kiki.svg" alt="" width="270" height="430" />
         <h1>Coucou,<br />c'est {{ nickname() }}</h1>
         <p class="home__tagline">Une liste de naissance 100 % seconde main</p>
@@ -32,6 +33,7 @@ type HomeState =
             <span class="home__label home__label--butter">Terme prévu : {{ due }}</span>
           }
           <span class="home__label">Fille ou garçon ? Surprise</span>
+        </div>
         </div>
       </header>
       <lib-giraffe-band />
@@ -101,17 +103,27 @@ type HomeState =
     </main>
   `,
   styles: `
-    .home {
+    /* The sage hero and the giraffe band run edge to edge; their content
+       and the rest of the page keep the reading width, centred. */
+    .home__hero {
+      background: var(--app-color-sage);
+    }
+    .home__hero-inner {
+      position: relative;
       max-width: 40rem;
       margin: 0 auto;
-    }
-    .home__hero {
-      position: relative;
-      background: var(--app-color-sage);
+      box-sizing: border-box;
       padding: 44px 24px 14px;
       display: flex;
       flex-direction: column;
       gap: 14px;
+    }
+    .home__note,
+    .home__ways,
+    .home__nav {
+      max-width: 40rem;
+      margin-inline: auto;
+      box-sizing: border-box;
     }
     .home__kiki {
       position: absolute;

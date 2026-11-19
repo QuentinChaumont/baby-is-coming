@@ -33,11 +33,8 @@ import { RouterLink, RouterOutlet } from '@angular/router';
       background: var(--app-color-background);
       border-bottom: var(--app-border-ink);
     }
-    /* Same width as the page body: on a computer the header lines up with
-       the content instead of spreading across the whole screen. */
+    /* Full width: the brand on the left edge, the kitty on the right. */
     .public-header__inner {
-      max-width: 40rem;
-      margin: 0 auto;
       box-sizing: border-box;
       padding: 10px 20px;
       display: flex;
