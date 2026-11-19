@@ -32,9 +32,7 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'objet/:id',
-        loadComponent: () =>
-          import('./public/placeholder-page').then((m) => m.PlaceholderPage),
-        data: { heading: 'Un objet de la liste' },
+        loadComponent: () => import('./public/item-page').then((m) => m.ItemPage),
         title: 'Objet',
       },
       {

@@ -4,7 +4,12 @@ import {
   inject,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { Router, TitleStrategy, provideRouter } from '@angular/router';
+import {
+  Router,
+  TitleStrategy,
+  provideRouter,
+  withComponentInputBinding,
+} from '@angular/router';
 import { map, of, switchMap, tap } from 'rxjs';
 import {
   AuthService,
@@ -30,7 +35,7 @@ import { AppTitleStrategy } from './title-strategy';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(appRoutes),
+    provideRouter(appRoutes, withComponentInputBinding()),
     { provide: TitleStrategy, useClass: AppTitleStrategy },
     provideHttpClient(
       withInterceptors([
