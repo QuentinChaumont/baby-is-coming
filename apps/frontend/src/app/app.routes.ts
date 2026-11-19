@@ -98,6 +98,12 @@ export const appRoutes: Route[] = [
         title: 'Cagnotte',
       },
       {
+        path: 'reglages',
+        loadComponent: () =>
+          import('./admin/settings-page').then((m) => m.SettingsPage),
+        title: 'Réglages',
+      },
+      {
         path: 'profile',
         loadChildren: () =>
           import('@org/frontend-features-profile').then(

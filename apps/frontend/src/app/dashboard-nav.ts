@@ -2,8 +2,7 @@ import { NavItem } from '@org/frontend-dashboard';
 
 /**
  * Sidenav menu of the parents' back-office (`/admin`). Routes are relative
- * to `/admin`. Business entries (objets, participations, cagnotte,
- * réglages) are added by the phase 4 steps of `docs/DEV.md`.
+ * to `/admin`.
  *
  * See `NavItem` in `@org/frontend-dashboard` for the full shape.
  */
@@ -12,4 +11,5 @@ export const DASHBOARD_NAV: NavItem[] = [
   { label: 'Objets', icon: 'redeem', route: 'objets' },
   { label: 'Participations', icon: 'volunteer_activism', route: 'participations' },
   { label: 'Cagnotte', icon: 'savings', route: 'cagnotte' },
+  { label: 'Réglages', icon: 'tune', route: 'reglages' },
 ];
