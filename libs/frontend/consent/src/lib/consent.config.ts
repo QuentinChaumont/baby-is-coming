@@ -21,15 +21,15 @@ export const DEFAULT_CONSENT_CONFIG: ConsentConfig = {
   categories: [
     {
       id: 'essential',
-      label: 'Strictly necessary',
+      label: 'Strictement nécessaires',
       description:
-        'Required for the site to work (session, security). Always on.',
+        'Indispensables au fonctionnement du site (choix de cookies, session de l’espace parents). Toujours actifs.',
       essential: true,
     },
     {
       id: 'analytics',
-      label: 'Analytics',
-      description: 'Anonymous usage statistics to help us improve the product.',
+      label: "Mesure d'audience",
+      description: "Non utilisée sur ce site pour l'instant : aucun cookie de ce type n'est déposé.",
     },
   ],
   legal: {

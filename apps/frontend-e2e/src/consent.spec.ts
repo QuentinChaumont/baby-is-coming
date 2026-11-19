@@ -22,7 +22,7 @@ test.describe('cookie consent', () => {
     await page.goto('/login');
     await page.getByRole('button', { name: 'Personnaliser' }).click();
     await expect(
-      page.getByRole('heading', { name: 'Cookie preferences' }),
+      page.getByRole('heading', { name: 'Préférences cookies' }),
     ).toBeVisible();
   });
 

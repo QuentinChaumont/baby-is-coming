@@ -51,7 +51,7 @@ test.describe('dashboard shell', () => {
     await page.getByRole('button', { name: 'Account menu' }).click();
     await page.getByRole('menuitem', { name: 'Gérer les cookies' }).click();
     await expect(
-      page.getByRole('heading', { name: 'Cookie preferences' }),
+      page.getByRole('heading', { name: 'Préférences cookies' }),
     ).toBeVisible();
   });
 

@@ -18,7 +18,7 @@ const CONFIG: ConsentConfig = {
 };
 
 describe('ConsentPreferences dialog', () => {
-  it('opens from the banner and closes again on Cancel', async () => {
+  it('opens from the banner and closes again on « Annuler »', async () => {
     localStorage.clear();
     TestBed.configureTestingModule({
       imports: [ConsentBanner],
@@ -43,7 +43,7 @@ describe('ConsentPreferences dialog', () => {
 
     const cancel = Array.from(
       document.querySelectorAll('.cdk-overlay-pane button'),
-    ).find((b) => b.textContent?.trim() === 'Cancel') as HTMLButtonElement;
+    ).find((b) => b.textContent?.trim() === 'Annuler') as HTMLButtonElement;
     cancel.click();
     fixture.detectChanges();
     await new Promise((resolve) => setTimeout(resolve, 300));

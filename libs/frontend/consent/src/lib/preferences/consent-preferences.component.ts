@@ -18,7 +18,7 @@ import { ConsentDecision } from '../consent.types';
   imports: [MatDialogModule, MatButtonModule, MatSlideToggleModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h2 mat-dialog-title>Cookie preferences</h2>
+    <h2 mat-dialog-title>Préférences cookies</h2>
     <mat-dialog-content>
       @for (category of categories; track category.id) {
         <div class="pref-row">
@@ -39,19 +39,19 @@ import { ConsentDecision } from '../consent.types';
             [checked]="sessionOn()"
             (change)="onSessionToggle($event.checked)"
           >
-            Session &amp; authentication
+            Session de l'espace parents
           </mat-slide-toggle>
           <p class="pref-row__desc">
-            A cookie keeps you signed in on this device. Turning this off clears
-            it and signs you out.
+            Un cookie te garde connecté sur cet appareil. Le désactiver
+            l'efface et te déconnecte.
           </p>
         </div>
       }
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button (click)="close()">Cancel</button>
+      <button mat-button (click)="close()">Annuler</button>
       <button mat-flat-button color="primary" (click)="save()">
-        Save my choices
+        Enregistrer mes choix
       </button>
     </mat-dialog-actions>
   `,
