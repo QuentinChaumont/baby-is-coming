@@ -12,8 +12,9 @@ import { LegalPageShell } from './legal-page-shell';
 
       <h2>Responsable du traitement</h2>
       <p>
-        <strong>Quentin CHAUMONT EI</strong>, 40 rue Monsarrat, 33800 Bordeaux,
-        France. Contact : chaumont.quentin@gmail.com.
+        <strong>Quentin Chaumont</strong>, particulier, pour une liste de
+        naissance familiale et non commerciale. Contact :
+        chaumont.quentin@gmail.com.
       </p>
 
       <h2>Ce que nous collectons, et pourquoi</h2>
@@ -55,8 +56,7 @@ import { LegalPageShell } from './legal-page-shell';
           objets et les totaux restent.
         </li>
         <li><strong>Journaux techniques</strong> — 6 mois.</li>
-        <li><strong>Ton choix sur le bandeau cookies</strong> — 6 mois, enregistré dans ton navigateur.</li>
-      </ul>
+              </ul>
 
       <h2>Tes droits</h2>
       <p>

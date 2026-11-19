@@ -12,9 +12,8 @@ import { LegalPageShell } from './legal-page-shell';
 
       <h2>Qui sommes-nous</h2>
       <p>
-        Ce site est exploité par <strong>Quentin CHAUMONT EI</strong>, 40 rue
-        Monsarrat, 33800 Bordeaux, France. Contact :
-        chaumont.quentin@gmail.com
+        Ce site familial est édité par un particulier,
+        <strong>Quentin Chaumont</strong>. Contact : chaumont.quentin@gmail.com
       </p>
 
       <h2>Les cookies utilisés</h2>
@@ -29,8 +28,8 @@ import { LegalPageShell } from './legal-page-shell';
         <tbody>
           <tr>
             <td>Invités</td>
-            <td>Aucun cookie. Seul ton choix sur le bandeau est mémorisé, dans ton navigateur (stockage local), pour ne pas te le redemander.</td>
-            <td>6 mois</td>
+            <td>Aucun cookie, aucun traceur.</td>
+            <td>—</td>
           </tr>
           <tr>
             <td>Espace parents (strictement nécessaires)</td>
@@ -47,10 +46,10 @@ import { LegalPageShell } from './legal-page-shell';
 
       <h2>Tes choix</h2>
       <p>
-        Le site ne dépose aucun cookie de mesure d'audience ni de publicité.
-        Les cookies de l'espace parents sont strictement nécessaires et ne
-        concernent que les parents connectés. Ton choix sur le bandeau est
-        conservé 6 mois, puis nous te le redemandons.
+        Le site ne dépose aucun cookie de mesure d'audience ni de publicité :
+        c'est pourquoi aucun bandeau ne te demande ton consentement. Les
+        cookies de l'espace parents sont strictement nécessaires et ne
+        concernent que les parents connectés.
       </p>
 
       <h2>Contact</h2>

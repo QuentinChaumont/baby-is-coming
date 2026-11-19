@@ -12,15 +12,15 @@ import { LegalPageShell } from './legal-page-shell';
 
       <h2>Éditeur du site</h2>
       <p>
-        Ce site est édité par <strong>Quentin CHAUMONT EI</strong>, entreprise
-        individuelle (activité libérale, non inscrite au RCS ni au RM),
-        40 rue Monsarrat, 33800 Bordeaux, France, SIREN 839&nbsp;387&nbsp;883
-        (SIRET 839&nbsp;387&nbsp;883&nbsp;00037). TVA intracommunautaire :
-        FR11&nbsp;839&nbsp;387&nbsp;883. Contact : chaumont.quentin@gmail.com.
+        Ce site personnel et non commercial est édité par un particulier,
+        <strong>Quentin Chaumont</strong>. Conformément à l'article 6, III, 2
+        de la loi pour la confiance dans l'économie numérique (LCEN), ses
+        coordonnées complètes ont été communiquées à l'hébergeur. Contact :
+        chaumont.quentin@gmail.com.
       </p>
 
       <h2>Directeur de la publication</h2>
-      <p>Quentin CHAUMONT.</p>
+      <p>Quentin Chaumont.</p>
 
       <h2>Hébergement</h2>
       <p>
