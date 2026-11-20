@@ -5,7 +5,8 @@ let nextId = 0;
 /**
  * Kraft band with crisp giraffe-spot shapes — the charter's signature
  * decoration. Purely decorative: hidden from assistive tech. Runs the
- * full width of its container, the spots repeated at a fixed size.
+ * full width of its container, the spots repeated at a fixed size; they
+ * drift by slowly while hovered.
  */
 @Component({
   selector: 'lib-giraffe-band',
@@ -36,7 +37,10 @@ let nextId = 0;
           </g>
         </pattern>
       </defs>
-      <rect width="100%" height="96" [attr.fill]="'url(#' + patternId + ')'" />
+      <!-- Wider than the band, so it can drift one tile on hover. -->
+      <g class="giraffe-band__fill">
+        <rect x="-520" width="300%" height="96" [attr.fill]="'url(#' + patternId + ')'" />
+      </g>
     </svg>
   `,
   styles: `
@@ -48,6 +52,21 @@ let nextId = 0;
       display: block;
       width: 100%;
       height: 96px;
+    }
+    /* On hover the spots drift by, like a giraffe ambling past. One full
+       tile per loop, so the motion never jumps; the animation is always
+       there but paused, so leaving the band stops it where it is (no snap
+       back to the start) and hovering again resumes from there. */
+    .giraffe-band__fill {
+      animation: giraffe-band-amble 9s linear infinite paused;
+    }
+    :host(:hover) .giraffe-band__fill {
+      animation-play-state: running;
+    }
+    @keyframes giraffe-band-amble {
+      to {
+        transform: translateX(520px);
+      }
     }
     .giraffe-band__kraft {
       fill: var(--app-color-kraft);
