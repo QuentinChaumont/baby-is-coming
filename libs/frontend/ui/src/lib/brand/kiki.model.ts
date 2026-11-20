@@ -51,7 +51,18 @@ export const EAR_GRIMACE_AT = 1.25;
 /** Taps on Kiki within this window that make her sneeze. */
 export const SNEEZE_TAPS = 8;
 export const SNEEZE_WINDOW_MS = 2_500;
-export const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+export const KONAMI = [
+  'ArrowUp',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowLeft',
+  'ArrowRight',
+  'b',
+  'a',
+];
 
 /** How long Kiki cuddles her doudou when given it. */
 export const KIKI_HUG_MS = 3_200;
@@ -104,13 +115,29 @@ export const SPOTS = [
   { d: 'M238,100 q8,-6 16,2 q0,10 -8,10 q-8,-2 -8,-12 z', dx: 80, dy: -70 },
 ];
 export const NECK_SPOTS = [
-  { d: 'M184,238 q10,-8 20,0 q2,12 -10,14 q-10,-2 -10,-14 z', dx: -100, dy: -10 },
+  {
+    d: 'M184,238 q10,-8 20,0 q2,12 -10,14 q-10,-2 -10,-14 z',
+    dx: -100,
+    dy: -10,
+  },
   { d: 'M206,262 q8,-6 16,2 q0,10 -8,10 q-8,-2 -8,-12 z', dx: 100, dy: 10 },
 ];
 export const BODY_SPOTS = [
-  { d: 'M140,330 q14,-12 28,-2 q6,16 -8,22 q-18,2 -20,-20 z', dx: -110, dy: -30 },
-  { d: 'M226,322 q16,-6 26,6 q2,16 -14,18 q-14,-4 -12,-24 z', dx: 110, dy: -50 },
-  { d: 'M186,356 q14,-10 26,0 q4,14 -10,18 q-16,0 -16,-18 z', dx: -20, dy: 110 },
+  {
+    d: 'M140,330 q14,-12 28,-2 q6,16 -8,22 q-18,2 -20,-20 z',
+    dx: -110,
+    dy: -30,
+  },
+  {
+    d: 'M226,322 q16,-6 26,6 q2,16 -14,18 q-14,-4 -12,-24 z',
+    dx: 110,
+    dy: -50,
+  },
+  {
+    d: 'M186,356 q14,-10 26,0 q4,14 -10,18 q-16,0 -16,-18 z',
+    dx: -20,
+    dy: 110,
+  },
   { d: 'M250,372 q12,-6 20,4 q0,14 -12,14 q-10,-4 -8,-18 z', dx: 120, dy: 40 },
   { d: 'M134,382 q10,-6 18,2 q2,12 -10,12 q-10,-2 -8,-14 z', dx: -120, dy: 50 },
   { d: 'M196,404 q10,-6 18,2 q2,12 -10,12 q-10,-2 -8,-14 z', dx: 30, dy: 120 },
@@ -146,7 +173,8 @@ const BUBBLE_WRAP = 15;
 export function bubbleLines(text: string): string[] {
   if (text.length <= BUBBLE_WRAP) return [text];
   const middle = text.length / 2;
-  const cost = (i: number) => Math.abs(i - middle) - (/[!?,.…]/.test(text[i - 1]) ? 3 : 0);
+  const cost = (i: number) =>
+    Math.abs(i - middle) - (/[!?,.…]/.test(text[i - 1]) ? 3 : 0);
   let cut = -1;
   for (let i = 1; i < text.length - 1; i++) {
     if (text[i] !== ' ' || /[!?:;]/.test(text[i + 1])) continue;
@@ -161,11 +189,19 @@ export function bubbleLines(text: string): string[] {
 export function bubbleGeometry(
   text: string,
   scale = 1,
-): { path: string; centerX: number; font: number; lines: { text: string; y: number }[] } {
+): {
+  path: string;
+  centerX: number;
+  font: number;
+  lines: { text: string; y: number }[];
+} {
   const lines = bubbleLines(text);
   const font = BUBBLE_FONT * scale;
   const lineHeight = BUBBLE_LINE * scale;
-  const width = Math.max(80, Math.max(...lines.map((l) => l.length)) * BUBBLE_GLYPH * scale + 30);
+  const width = Math.max(
+    80,
+    Math.max(...lines.map((l) => l.length)) * BUBBLE_GLYPH * scale + 30,
+  );
   const r = 156;
   const l = r - width;
   const bottom = 84;
@@ -173,7 +209,10 @@ export function bubbleGeometry(
   return {
     centerX: r - width / 2,
     font,
-    lines: lines.map((line, i) => ({ text: line, y: top + 7 + font * 0.8 + i * lineHeight })),
+    lines: lines.map((line, i) => ({
+      text: line,
+      y: top + 7 + font * 0.8 + i * lineHeight,
+    })),
     path: `M${l + 12},${top} H${r - 12} Q${r},${top} ${r},${top + 12} V${bottom - 12} Q${r},${bottom} ${r - 12},${bottom} H${r - 14} L${r + 10},${bottom + 16} L${r - 34},${bottom} H${l + 12} Q${l},${bottom} ${l},${bottom - 12} V${top + 12} Q${l},${top} ${l + 12},${top} Z`,
   };
 }

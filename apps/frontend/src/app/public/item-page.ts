@@ -1,9 +1,29 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Confetti, Kiki, LinkPill, PriceTag, Stamp } from '@org/frontend-ui';
-import type { ListingPlatform, PublicItem, PublicItemDetail, PublicListing } from '@org/shared-contracts';
-import { catchError, map, merge, of, startWith, Subject, switchMap } from 'rxjs';
+import type {
+  ListingPlatform,
+  PublicItem,
+  PublicItemDetail,
+  PublicListing,
+} from '@org/shared-contracts';
+import {
+  catchError,
+  map,
+  merge,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+} from 'rxjs';
 import { itemStamp, takenByLine } from './item-card';
 import { PublicApi } from './public-api.service';
 import { TakeForm, type TakeKind } from './take-form';
@@ -52,7 +72,11 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
   template: `
     @switch (state().status) {
       @case ('loading') {
-        <div class="item__skeleton" aria-busy="true" aria-label="Chargement de l'objet"></div>
+        <div
+          class="item__skeleton"
+          aria-busy="true"
+          aria-label="Chargement de l'objet"
+        ></div>
       }
       @case ('missing') {
         <main class="item__body">
@@ -62,7 +86,9 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
       }
       @case ('error') {
         <main class="item__body">
-          <p class="item__error" role="alert">Oups, l'objet n'a pas pu se charger. Réessaie dans un instant.</p>
+          <p class="item__error" role="alert">
+            Oups, l'objet n'a pas pu se charger. Réessaie dans un instant.
+          </p>
         </main>
       }
       @default {
@@ -72,15 +98,36 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
               @if (it.photos[0]; as photo) {
                 <img [src]="photo.largeUrl" alt="" decoding="async" />
               }
-              <a class="item__back" routerLink="/liste" aria-label="Retour à la liste">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <a
+                class="item__back"
+                routerLink="/liste"
+                aria-label="Retour à la liste"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
                   <path d="M15 5l-7 7 7 7" />
                 </svg>
               </a>
-              <lib-price-tag class="item__price" [amount]="it.price" [max]="it.priceMax" variant="label" [suffix]="priceSuffix()" />
+              <lib-price-tag
+                class="item__price"
+                [amount]="it.price"
+                [max]="it.priceMax"
+                variant="label"
+                [suffix]="priceSuffix()"
+              />
               @if (stamp(); as kind) {
-                <span class="item__veil" [class.item__veil--fresh]="justTaken()"><lib-stamp [kind]="kind" [slam]="justTaken()" /></span>
+                <span class="item__veil" [class.item__veil--fresh]="justTaken()"
+                  ><lib-stamp [kind]="kind" [slam]="justTaken()"
+                /></span>
               }
             </div>
 
@@ -90,7 +137,9 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
                 <p class="item__description">{{ it.description }}</p>
               }
               @if (it.quantity > 1) {
-                <p class="item__units">Encore {{ it.remaining }} sur {{ it.quantity }}</p>
+                <p class="item__units">
+                  Encore {{ it.remaining }} sur {{ it.quantity }}
+                </p>
               }
 
               @if (it.listings.length) {
@@ -98,7 +147,10 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
                   <h2>Des pistes pour chiner</h2>
                   <div class="item__pills">
                     @for (listing of it.listings; track listing.id) {
-                      <lib-link-pill [href]="listing.url" [label]="listingLabel(listing)" />
+                      <lib-link-pill
+                        [href]="listing.url"
+                        [label]="listingLabel(listing)"
+                      />
                     }
                   </div>
                 </div>
@@ -106,8 +158,8 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
 
               @if (!taken() && !confirmation() && !inKitty()) {
                 <p class="item__hand">
-                  Choisis un état que tu trouves correct. Et si tu ne trouves pas, envoie-nous un
-                  petit message pour nous prévenir :)
+                  Choisis un état que tu trouves correct. Et si tu ne trouves
+                  pas, envoie-nous un petit message pour nous prévenir :)
                 </p>
               }
             </section>
@@ -118,10 +170,18 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
               }
               @if (confirmation(); as done) {
                 <div class="item__done app-rise">
-                  <lib-kiki class="item__kiki" [interactive]="false" celebrate />
+                  <lib-kiki
+                    class="item__kiki"
+                    [interactive]="false"
+                    celebrate
+                  />
                   <h2>{{ done.title }}</h2>
                   <p>{{ done.text }}</p>
-                  <a class="app-button app-button--outline app-button--block" routerLink="/liste">Retour à la liste</a>
+                  <a
+                    class="app-button app-button--outline app-button--block"
+                    routerLink="/liste"
+                    >Retour à la liste</a
+                  >
                 </div>
               } @else if (kind(); as chosen) {
                 <app-take-form
@@ -137,36 +197,77 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
                   @if (it.bought) {
                     Celui-là, on l'a acheté grâce à la cagnotte. Merci à vous !
                   } @else {
-                    Celui-là, on l'achètera nous-mêmes avec la cagnotte « J'ai la flemme ».
+                    Celui-là, on l'achètera nous-mêmes avec la cagnotte « J'ai
+                    la flemme ».
                   }
                 </p>
-                <a class="app-button app-button--butter app-button--block" routerLink="/cagnotte">
+                <a
+                  class="app-button app-button--butter app-button--block"
+                  routerLink="/cagnotte"
+                >
                   Participer à la cagnotte
                 </a>
               } @else if (taken()) {
                 <p class="item__taken">
-                  Cet objet a déjà trouvé preneur{{ takenBy() ? ' (' + takenBy() + ')' : '' }}.
+                  Cet objet a déjà trouvé preneur{{
+                    takenBy() ? ' (' + takenBy() + ')' : ''
+                  }}.
                 </p>
-                <a class="app-button app-button--butter app-button--block" routerLink="/cagnotte">
+                <a
+                  class="app-button app-button--butter app-button--block"
+                  routerLink="/cagnotte"
+                >
                   La cagnotte « J'ai la flemme »
                 </a>
               } @else {
-                <button type="button" class="app-button app-button--ink app-button--block" (click)="kind.set('chasse')">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                    <circle cx="11" cy="11" r="6.5" /><path d="M16 16l5 5" />
+                <button
+                  type="button"
+                  class="app-button app-button--ink app-button--block"
+                  (click)="kind.set('chasse')"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="11" cy="11" r="6.5" />
+                    <path d="M16 16l5 5" />
                   </svg>
                   Je pars à la chasse !
                 </button>
-                <button type="button" class="app-button app-button--outline app-button--block" (click)="kind.set('don')">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M3 11l9-7 9 7" /><path d="M5 10v10h14V10" />
+                <button
+                  type="button"
+                  class="app-button app-button--outline app-button--block"
+                  (click)="kind.set('don')"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 11l9-7 9 7" />
+                    <path d="M5 10v10h14V10" />
                   </svg>
                   J'ai déjà ça chez moi !
                 </button>
-                <a class="item__flemme" routerLink="/cagnotte">La flemme de chercher ? La cagnotte</a>
-                <p class="item__warning">Une fois validé, seuls les parents pourront modifier ou annuler.</p>
+                <a class="item__flemme" routerLink="/cagnotte"
+                  >La flemme de chercher ? La cagnotte</a
+                >
+                <p class="item__warning">
+                  Une fois validé, seuls les parents pourront modifier ou
+                  annuler.
+                </p>
               }
             </section>
           </main>
@@ -174,154 +275,7 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
       }
     }
   `,
-  styles: `
-    .item {
-      display: flex;
-      flex-direction: column;
-    }
-    .item__skeleton {
-      height: 440px;
-      background: var(--app-color-surface-variant);
-    }
-    .item__photo {
-      position: relative;
-      aspect-ratio: 4 / 5;
-      max-height: 70vh;
-      background: var(--app-color-kraft);
-    }
-    .item__photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .item__back {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      width: 44px;
-      height: 44px;
-      border-radius: var(--app-radius-pill);
-      background: var(--app-color-background);
-      color: var(--app-color-ink);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .item__price {
-      position: absolute;
-      bottom: -18px;
-      right: 20px;
-    }
-    .item__veil {
-      position: absolute;
-      inset: 0;
-      background: rgba(251, 247, 238, 0.55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .item__body {
-      padding: 36px 24px 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .item__body h1 {
-      margin: 0;
-      font-size: 2rem;
-      line-height: 1.05;
-    }
-    .item__description {
-      margin: 0;
-      font-size: 1rem;
-      line-height: 1.55;
-      white-space: pre-line;
-    }
-    .item__units {
-      margin: 0;
-      font-weight: 800;
-    }
-    .item__listings h2 {
-      margin: 0 0 8px;
-      font-family: var(--app-font-family);
-      font-size: 0.875rem;
-      letter-spacing: 0;
-    }
-    .item__pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .item__hand {
-      margin: 6px 0 0;
-      font-family: var(--app-font-hand);
-      font-size: 1.375rem;
-      line-height: 1.2;
-      color: var(--app-color-sage-strong);
-    }
-    .item__actions {
-      margin-top: 20px;
-      padding: 20px 20px 28px;
-      background: var(--app-color-sage);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .item__flemme {
-      min-height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      color: var(--app-color-ink);
-    }
-    .item__warning {
-      margin: 0;
-      font-size: 0.8125rem;
-      text-align: center;
-    }
-    .item__taken {
-      margin: 0;
-      font-weight: 800;
-    }
-    .item__done {
-      text-align: center;
-    }
-    .item__kiki {
-      width: 120px;
-      margin: 0 auto 4px;
-      display: block;
-      transform-origin: 50% 100%;
-      animation: app-pop 420ms var(--app-ease-out) 180ms both;
-    }
-    .item__veil--fresh {
-      animation: veil-in 200ms linear both;
-    }
-    @keyframes veil-in {
-      from {
-        opacity: 0;
-      }
-    }
-    .item__done h2 {
-      margin: 0 0 6px;
-      font-size: 1.75rem;
-    }
-    .item__done p {
-      margin: 0 0 14px;
-      line-height: 1.5;
-    }
-    .item__notice {
-      margin: 0;
-      font-weight: 800;
-      color: var(--app-color-ink);
-    }
-    .item__error {
-      margin: 0;
-      color: var(--app-color-error);
-      font-weight: 800;
-    }
-  `,
+  styleUrl: './item-page.scss',
 })
 export class ItemPage {
   private readonly api = inject(PublicApi);
@@ -331,7 +285,10 @@ export class ItemPage {
   readonly id = input.required<string>();
 
   protected readonly kind = signal<TakeKind | null>(null);
-  protected readonly confirmation = signal<{ title: string; text: string } | null>(null);
+  protected readonly confirmation = signal<{
+    title: string;
+    text: string;
+  } | null>(null);
   protected readonly notice = signal<string | null>(null);
   private readonly afterTake = signal<PublicItem | null>(null);
   private readonly reloads = new Subject<void>();
@@ -342,7 +299,9 @@ export class ItemPage {
         this.api.item(id).pipe(
           map((item): PageState => ({ status: 'ready', item })),
           catchError((error: { status?: number }) =>
-            of<PageState>({ status: error?.status === 404 ? 'missing' : 'error' }),
+            of<PageState>({
+              status: error?.status === 404 ? 'missing' : 'error',
+            }),
           ),
           startWith<PageState>({ status: 'loading' }),
         ),
@@ -355,21 +314,33 @@ export class ItemPage {
     const s = this.state();
     if (s.status !== 'ready') return null;
     const updated = this.afterTake();
-    return updated && updated.id === s.item.id ? { ...s.item, ...updated } : s.item;
+    return updated && updated.id === s.item.id
+      ? { ...s.item, ...updated }
+      : s.item;
   });
 
-  protected readonly taken = computed(() => this.item()?.availability === 'taken');
+  protected readonly taken = computed(
+    () => this.item()?.availability === 'taken',
+  );
   /** The guest just took it on this page: the stamp comes down. */
-  protected readonly justTaken = computed(() => !!this.afterTake() && this.taken());
-  protected readonly inKitty = computed(() => this.item()?.destination === 'cagnotte');
+  protected readonly justTaken = computed(
+    () => !!this.afterTake() && this.taken(),
+  );
+  protected readonly inKitty = computed(
+    () => this.item()?.destination === 'cagnotte',
+  );
   /** Kitty items may well be bought new: no « d'occasion » there. */
-  protected readonly priceSuffix = computed(() => (this.inKitty() ? '' : "d'occasion"));
+  protected readonly priceSuffix = computed(() =>
+    this.inKitty() ? '' : "d'occasion",
+  );
   /** « Acheté ! » for a bought kitty item, else the friends' stamp once taken. */
   protected readonly stamp = computed(() => {
     const it = this.item();
     return it ? itemStamp(it) : null;
   });
-  protected readonly takenBy = computed(() => takenByLine(this.item()?.takers ?? []));
+  protected readonly takenBy = computed(() =>
+    takenByLine(this.item()?.takers ?? []),
+  );
   protected readonly listingLabel = listingLabel;
 
   protected onTaken(item: PublicItem, kind: TakeKind): void {

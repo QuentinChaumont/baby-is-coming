@@ -15,7 +15,10 @@ export const ITEM_PUBLICATIONS: readonly ItemPublication[] = [
  * move an item between the two at any time. */
 export type ItemDestination = 'amis' | 'cagnotte';
 
-export const ITEM_DESTINATIONS: readonly ItemDestination[] = ['amis', 'cagnotte'];
+export const ITEM_DESTINATIONS: readonly ItemDestination[] = [
+  'amis',
+  'cagnotte',
+];
 
 /** Guest-facing availability (PRODUCT D11): an item is `taken` once every
  * unit has been taken. */

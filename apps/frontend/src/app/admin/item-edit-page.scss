@@ -1,0 +1,150 @@
+.edit {
+  max-width: 48rem;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.edit h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+.edit h2 {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+}
+.edit__back {
+  font-weight: 800;
+}
+.edit__card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+  background: var(--app-color-surface);
+  border: var(--app-border-ink);
+  border-radius: var(--app-radius-lg);
+}
+.edit__card > p {
+  margin: 0;
+}
+.edit__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 800;
+  font-size: 0.875rem;
+  flex: 1 1 10rem;
+}
+.edit__field em {
+  font-weight: 400;
+  font-style: normal;
+}
+.edit input,
+.edit textarea {
+  min-height: 44px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border: var(--app-border-ink);
+  border-radius: var(--app-radius-md);
+  background: var(--app-color-surface);
+  font: inherit;
+  font-size: 1rem;
+  color: var(--app-color-ink);
+}
+.edit__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.edit__photos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.edit__photos li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.edit__photos img {
+  width: 96px;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.edit__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.edit__link {
+  align-self: flex-start;
+  border: 0;
+  background: transparent;
+  padding: 4px 0;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--app-color-ink);
+  cursor: pointer;
+}
+.edit__danger {
+  color: var(--app-color-error);
+}
+.edit__check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-weight: 700;
+}
+.edit__check input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--app-color-ink);
+}
+.edit__hint {
+  font-size: 0.875rem;
+  color: var(--app-color-on-surface-variant);
+}
+.edit__listings {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.edit__listings li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+.edit__badge {
+  padding: 2px 8px;
+  border-radius: var(--app-radius-sm);
+  background: var(--app-color-surface-variant);
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+.edit__listing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: var(--app-border-hairline);
+}
+.edit__message {
+  margin: 0;
+  font-weight: 800;
+}
+.edit__message--error {
+  color: var(--app-color-error);
+}

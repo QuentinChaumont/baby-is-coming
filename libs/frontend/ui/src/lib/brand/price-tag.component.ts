@@ -23,7 +23,10 @@ const EUR = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 });
 @Component({
   selector: 'lib-price-tag',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[class]': '"price-tag price-tag--" + variant()', '[hidden]': 'amount() === null' },
+  host: {
+    '[class]': '"price-tag price-tag--" + variant()',
+    '[hidden]': 'amount() === null',
+  },
   template: `~{{ formatted() }} €{{ suffix() ? ' ' + suffix() : '' }}`,
   styles: `
     :host([hidden]) {
@@ -66,6 +69,8 @@ export class PriceTag {
     const amount = this.amount();
     if (amount === null) return '';
     const max = this.max();
-    return max !== null && max > amount ? `${EUR.format(amount)}–${EUR.format(max)}` : EUR.format(amount);
+    return max !== null && max > amount
+      ? `${EUR.format(amount)}–${EUR.format(max)}`
+      : EUR.format(amount);
   });
 }

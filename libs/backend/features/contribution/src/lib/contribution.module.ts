@@ -3,7 +3,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BirthListModule } from '@org/backend-features-birth-list';
 import { ItemModule } from '@org/backend-features-item';
 import { ParticipationModule } from '@org/backend-features-participation';
-import { AdminContributionsController, PublicKittyController } from './contribution.controller';
+import {
+  AdminContributionsController,
+  PublicKittyController,
+} from './contribution.controller';
 import { Contribution, ContributionSchema } from './contribution.schema';
 import { ContributionService } from './contribution.service';
 import { GuestDataJob } from './guest-data.job';

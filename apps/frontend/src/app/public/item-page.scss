@@ -1,0 +1,146 @@
+.item {
+  display: flex;
+  flex-direction: column;
+}
+.item__skeleton {
+  height: 440px;
+  background: var(--app-color-surface-variant);
+}
+.item__photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  max-height: 70vh;
+  background: var(--app-color-kraft);
+}
+.item__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.item__back {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--app-radius-pill);
+  background: var(--app-color-background);
+  color: var(--app-color-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.item__price {
+  position: absolute;
+  bottom: -18px;
+  right: 20px;
+}
+.item__veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(251, 247, 238, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.item__body {
+  padding: 36px 24px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.item__body h1 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.05;
+}
+.item__description {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  white-space: pre-line;
+}
+.item__units {
+  margin: 0;
+  font-weight: 800;
+}
+.item__listings h2 {
+  margin: 0 0 8px;
+  font-family: var(--app-font-family);
+  font-size: 0.875rem;
+  letter-spacing: 0;
+}
+.item__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.item__hand {
+  margin: 6px 0 0;
+  font-family: var(--app-font-hand);
+  font-size: 1.375rem;
+  line-height: 1.2;
+  color: var(--app-color-sage-strong);
+}
+.item__actions {
+  margin-top: 20px;
+  padding: 20px 20px 28px;
+  background: var(--app-color-sage);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.item__flemme {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: var(--app-color-ink);
+}
+.item__warning {
+  margin: 0;
+  font-size: 0.8125rem;
+  text-align: center;
+}
+.item__taken {
+  margin: 0;
+  font-weight: 800;
+}
+.item__done {
+  text-align: center;
+}
+.item__kiki {
+  width: 120px;
+  margin: 0 auto 4px;
+  display: block;
+  transform-origin: 50% 100%;
+  animation: app-pop 420ms var(--app-ease-out) 180ms both;
+}
+.item__veil--fresh {
+  animation: veil-in 200ms linear both;
+}
+@keyframes veil-in {
+  from {
+    opacity: 0;
+  }
+}
+.item__done h2 {
+  margin: 0 0 6px;
+  font-size: 1.75rem;
+}
+.item__done p {
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+.item__notice {
+  margin: 0;
+  font-weight: 800;
+  color: var(--app-color-ink);
+}
+.item__error {
+  margin: 0;
+  color: var(--app-color-error);
+  font-weight: 800;
+}

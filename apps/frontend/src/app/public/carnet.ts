@@ -1,5 +1,10 @@
 import { Injectable, computed, inject } from '@angular/core';
-import { KikiDiscoveries, KikiTreasures, type KikiDiscovery, type KikiTreasure } from '@org/frontend-ui';
+import {
+  KikiDiscoveries,
+  KikiTreasures,
+  type KikiDiscovery,
+  type KikiTreasure,
+} from '@org/frontend-ui';
 
 /** One page of Kiki's notebook: a secret to discover or a treasure to find. */
 export interface CarnetEntry {
@@ -127,9 +132,12 @@ export class CarnetProgress {
   private readonly treasures = inject(KikiTreasures);
 
   readonly unlocked = computed(
-    () => new Set<string>([...this.discoveries.found(), ...this.treasures.found()]),
+    () =>
+      new Set<string>([...this.discoveries.found(), ...this.treasures.found()]),
   );
-  readonly count = computed(() => CARNET.filter((e) => this.unlocked().has(e.id)).length);
+  readonly count = computed(
+    () => CARNET.filter((e) => this.unlocked().has(e.id)).length,
+  );
   readonly total = CARNET.length;
   readonly complete = computed(() => this.count() === this.total);
 

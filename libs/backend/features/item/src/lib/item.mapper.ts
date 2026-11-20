@@ -3,14 +3,12 @@ import { Item, ItemDocument } from './item.schema';
 
 /** Lower-case and strip accents, so « bébé » matches « BEBE ». */
 export function normalizeSearch(text: string): string {
-  return text
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .trim();
+  return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 }
 
-export function searchTextOf(item: Pick<Item, 'title' | 'description'>): string {
+export function searchTextOf(
+  item: Pick<Item, 'title' | 'description'>,
+): string {
   return normalizeSearch(`${item.title} ${item.description}`);
 }
 
@@ -68,7 +66,11 @@ export function normalizePrice(
 
 /** Sort keys: unpriced items always last, ranges by their low end going
  * up and their high end going down. */
-export function priceSortKey(item: Pick<Item, 'price' | 'priceMax'>, direction: 'asc' | 'desc'): number {
-  if (item.price === null || item.price === undefined) return direction === 'asc' ? Infinity : -Infinity;
+export function priceSortKey(
+  item: Pick<Item, 'price' | 'priceMax'>,
+  direction: 'asc' | 'desc',
+): number {
+  if (item.price === null || item.price === undefined)
+    return direction === 'asc' ? Infinity : -Infinity;
   return direction === 'asc' ? item.price : (item.priceMax ?? item.price);
 }

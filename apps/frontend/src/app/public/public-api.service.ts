@@ -1,4 +1,9 @@
-import { HttpClient, HttpContext, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpContext,
+  HttpErrorResponse,
+  HttpParams,
+} from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { API_BASE_URL } from '@org/frontend-core';
 import { SKIP_ERROR_TOAST } from '@org/frontend-feedback';
@@ -18,7 +23,9 @@ import { Observable } from 'rxjs';
 
 /** Every public call handles its errors inline, in French — never the
  * generic (English) toast. */
-const INLINE_ERRORS = { context: new HttpContext().set(SKIP_ERROR_TOAST, true) };
+const INLINE_ERRORS = {
+  context: new HttpContext().set(SKIP_ERROR_TOAST, true),
+};
 
 /** Guest-facing API (no account): the list, its items, taking a gift,
  * the kitty. */
@@ -36,12 +43,19 @@ export class PublicApi {
     if (query.q?.trim()) params = params.set('q', query.q.trim());
     if (query.showTaken) params = params.set('showTaken', 'true');
     if (query.sort) params = params.set('sort', query.sort);
-    if (query.destination) params = params.set('destination', query.destination);
-    return this.http.get<PublicItem[]>(`${this.base}/items`, { ...INLINE_ERRORS, params });
+    if (query.destination)
+      params = params.set('destination', query.destination);
+    return this.http.get<PublicItem[]>(`${this.base}/items`, {
+      ...INLINE_ERRORS,
+      params,
+    });
   }
 
   item(id: string): Observable<PublicItemDetail> {
-    return this.http.get<PublicItemDetail>(`${this.base}/items/${encodeURIComponent(id)}`, INLINE_ERRORS);
+    return this.http.get<PublicItemDetail>(
+      `${this.base}/items/${encodeURIComponent(id)}`,
+      INLINE_ERRORS,
+    );
   }
 
   take(id: string, request: TakeItemRequest): Observable<PublicItem> {
@@ -57,16 +71,29 @@ export class PublicApi {
   }
 
   pledge(request: PledgeRequest): Observable<PublicKitty> {
-    return this.http.post<PublicKitty>(`${this.base}/contributions`, request, INLINE_ERRORS);
+    return this.http.post<PublicKitty>(
+      `${this.base}/contributions`,
+      request,
+      INLINE_ERRORS,
+    );
   }
 
   /** Who found every secret of Kiki's notebook, first finders first. */
   hallOfFame(): Observable<HallOfFameEntry[]> {
-    return this.http.get<HallOfFameEntry[]>(`${this.base}/hall-of-fame`, INLINE_ERRORS);
+    return this.http.get<HallOfFameEntry[]>(
+      `${this.base}/hall-of-fame`,
+      INLINE_ERRORS,
+    );
   }
 
-  joinHallOfFame(request: JoinHallOfFameRequest): Observable<HallOfFameEntry[]> {
-    return this.http.post<HallOfFameEntry[]>(`${this.base}/hall-of-fame`, request, INLINE_ERRORS);
+  joinHallOfFame(
+    request: JoinHallOfFameRequest,
+  ): Observable<HallOfFameEntry[]> {
+    return this.http.post<HallOfFameEntry[]>(
+      `${this.base}/hall-of-fame`,
+      request,
+      INLINE_ERRORS,
+    );
   }
 }
 
@@ -81,7 +108,10 @@ export function apiErrorCode(error: unknown): string | null {
 /** « 15 mars 2027 » from `2027-03-15`. */
 export function formatDay(isoDay: string): string {
   const [y, m, d] = isoDay.split('-').map(Number);
-  return new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
-    new Date(Date.UTC(y, m - 1, d)),
-  );
+  return new Intl.DateTimeFormat('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(y, m - 1, d)));
 }

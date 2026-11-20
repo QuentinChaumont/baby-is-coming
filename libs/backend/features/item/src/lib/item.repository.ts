@@ -78,11 +78,18 @@ export class ItemRepository extends BaseRepository<Item> {
   }
 
   /** Gives back the units of a cancelled participation. */
-  async releaseUnits(itemId: string, units: number, participationId: string): Promise<void> {
+  async releaseUnits(
+    itemId: string,
+    units: number,
+    participationId: string,
+  ): Promise<void> {
     await this.model
       .updateOne(
         { _id: itemId, 'takers.participationId': participationId },
-        { $inc: { takenQuantity: -units }, $pull: { takers: { participationId } } },
+        {
+          $inc: { takenQuantity: -units },
+          $pull: { takers: { participationId } },
+        },
       )
       .exec();
   }
@@ -100,6 +107,8 @@ export class ItemRepository extends BaseRepository<Item> {
   }
 
   findByIds(ids: string[]): Promise<ItemDocument[]> {
-    return this.model.find({ _id: { $in: ids.filter((id) => isValidObjectId(id)) } }).exec();
+    return this.model
+      .find({ _id: { $in: ids.filter((id) => isValidObjectId(id)) } })
+      .exec();
   }
 }

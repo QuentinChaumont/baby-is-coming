@@ -1,7 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ConflictError, NotFoundError, ValidationError } from '@org/backend-core';
-import { ItemRepository, MAIN_LIST, toPublicItem } from '@org/backend-features-item';
+import {
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from '@org/backend-core';
+import {
+  ItemRepository,
+  MAIN_LIST,
+  toPublicItem,
+} from '@org/backend-features-item';
 import type {
   AdminParticipation,
   AssignItemRequest,
@@ -39,7 +47,8 @@ const clean = (v: string | undefined | null) => v?.trim() || null;
 @Injectable()
 export class ParticipationService {
   constructor(
-    @InjectModel(Participation.name) private readonly model: Model<Participation>,
+    @InjectModel(Participation.name)
+    private readonly model: Model<Participation>,
     private readonly items: ItemRepository,
   ) {}
 
@@ -48,7 +57,10 @@ export class ParticipationService {
     const firstName = request.firstName.trim();
     const lastName = request.lastName.trim();
     if (!firstName || !lastName) {
-      throw new ValidationError('NAME_REQUIRED', 'First and last name are required');
+      throw new ValidationError(
+        'NAME_REQUIRED',
+        'First and last name are required',
+      );
     }
     return this.record(itemId, true, {
       kind: request.kind,
@@ -63,12 +75,18 @@ export class ParticipationService {
 
   /** The parents assign an item to a guest, or mark it taken with no guest
    * (`kind: 'parents'`). Works on drafts too. */
-  async assign(itemId: string, request: AssignItemRequest): Promise<AdminParticipation> {
+  async assign(
+    itemId: string,
+    request: AssignItemRequest,
+  ): Promise<AdminParticipation> {
     const isGuest = request.kind !== 'parents';
     const firstName = isGuest ? clean(request.firstName) : null;
     const lastName = isGuest ? clean(request.lastName) : null;
     if (isGuest && (!firstName || !lastName)) {
-      throw new ValidationError('NAME_REQUIRED', 'First and last name are required');
+      throw new ValidationError(
+        'NAME_REQUIRED',
+        'First and last name are required',
+      );
     }
     await this.record(itemId, false, {
       kind: request.kind,
@@ -79,7 +97,10 @@ export class ParticipationService {
       quantity: request.quantity ?? 1,
       enteredByParents: true,
     });
-    const latest = await this.model.findOne({ itemId: new Types.ObjectId(itemId) }).sort({ createdAt: -1 }).exec();
+    const latest = await this.model
+      .findOne({ itemId: new Types.ObjectId(itemId) })
+      .sort({ createdAt: -1 })
+      .exec();
     return (await this.withTitles(latest ? [latest] : []))[0];
   }
 
@@ -88,43 +109,78 @@ export class ParticipationService {
     return this.withTitles(docs);
   }
 
-  async update(id: string, patch: UpdateParticipationRequest): Promise<AdminParticipation> {
+  async update(
+    id: string,
+    patch: UpdateParticipationRequest,
+  ): Promise<AdminParticipation> {
     const set: Partial<Participation> = {};
     if (patch.received !== undefined) set.received = patch.received;
     if (patch.thanked !== undefined) set.thanked = patch.thanked;
     const doc = isValidObjectId(id)
-      ? await this.model.findByIdAndUpdate(id, { $set: set }, { returnDocument: 'after' }).exec()
+      ? await this.model
+          .findByIdAndUpdate(id, { $set: set }, { returnDocument: 'after' })
+          .exec()
       : null;
-    if (!doc) throw new NotFoundError('PARTICIPATION_NOT_FOUND', 'Participation not found');
+    if (!doc)
+      throw new NotFoundError(
+        'PARTICIPATION_NOT_FOUND',
+        'Participation not found',
+      );
     return (await this.withTitles([doc]))[0];
   }
 
   /** The parents cancel a participation: its units become available again
    * (PRODUCT R-OBJ-5). Also how a guest's data is erased on request. */
   async cancel(id: string): Promise<void> {
-    const doc = isValidObjectId(id) ? await this.model.findByIdAndDelete(id).exec() : null;
-    if (!doc) throw new NotFoundError('PARTICIPATION_NOT_FOUND', 'Participation not found');
-    await this.items.releaseUnits(doc.itemId.toString(), doc.quantity, doc._id.toString());
+    const doc = isValidObjectId(id)
+      ? await this.model.findByIdAndDelete(id).exec()
+      : null;
+    if (!doc)
+      throw new NotFoundError(
+        'PARTICIPATION_NOT_FOUND',
+        'Participation not found',
+      );
+    await this.items.releaseUnits(
+      doc.itemId.toString(),
+      doc.quantity,
+      doc._id.toString(),
+    );
   }
 
   /** Wipes guests' personal data (names, messages) and their public names
    * on items, keeping counts and flags (PRODUCT D13). Returns how many
    * participations were anonymized. */
   async anonymizeAll(): Promise<number> {
-    const docs = await this.model.find({ anonymized: false }).select({ _id: 1 }).lean().exec();
+    const docs = await this.model
+      .find({ anonymized: false })
+      .select({ _id: 1 })
+      .lean()
+      .exec();
     if (!docs.length) return 0;
     const ids = docs.map((d) => d._id);
     await this.model
       .updateMany(
         { _id: { $in: ids } },
-        { $set: { firstName: null, lastName: null, message: null, hideName: true, anonymized: true } },
+        {
+          $set: {
+            firstName: null,
+            lastName: null,
+            message: null,
+            hideName: true,
+            anonymized: true,
+          },
+        },
       )
       .exec();
     await this.items.clearTakerNames(ids.map((id) => id.toString()));
     return ids.length;
   }
 
-  private async record(itemId: string, publishedOnly: boolean, taking: Taking): Promise<PublicItem> {
+  private async record(
+    itemId: string,
+    publishedOnly: boolean,
+    taking: Taking,
+  ): Promise<PublicItem> {
     const participationId = new Types.ObjectId();
     const showName = taking.firstName && taking.lastName && !taking.hideName;
     const updated = await this.items.takeUnits(
@@ -134,28 +190,48 @@ export class ParticipationService {
       {
         participationId: participationId.toHexString(),
         kind: taking.kind,
-        name: showName ? displayName(taking.firstName as string, taking.lastName as string) : null,
+        name: showName
+          ? displayName(taking.firstName as string, taking.lastName as string)
+          : null,
       },
       publishedOnly,
     );
     if (!updated) throw await this.whyNotTaken(itemId, publishedOnly);
 
     try {
-      await this.model.create({ _id: participationId, itemId: new Types.ObjectId(itemId), ...taking });
+      await this.model.create({
+        _id: participationId,
+        itemId: new Types.ObjectId(itemId),
+        ...taking,
+      });
     } catch (error) {
-      await this.items.releaseUnits(itemId, taking.quantity, participationId.toHexString());
+      await this.items.releaseUnits(
+        itemId,
+        taking.quantity,
+        participationId.toHexString(),
+      );
       throw error;
     }
     return toPublicItem(updated);
   }
 
-  private async whyNotTaken(itemId: string, publishedOnly: boolean): Promise<Error> {
+  private async whyNotTaken(
+    itemId: string,
+    publishedOnly: boolean,
+  ): Promise<Error> {
     const item = await this.items.findById(itemId);
-    if (!item || item.listId !== MAIN_LIST || (publishedOnly && item.publication !== 'published')) {
+    if (
+      !item ||
+      item.listId !== MAIN_LIST ||
+      (publishedOnly && item.publication !== 'published')
+    ) {
       return new NotFoundError('ITEM_NOT_FOUND', 'Item not found');
     }
     if (publishedOnly && item.destination === 'cagnotte') {
-      return new ConflictError('ITEM_IN_KITTY', 'The parents buy this one with the kitty');
+      return new ConflictError(
+        'ITEM_IN_KITTY',
+        'The parents buy this one with the kitty',
+      );
     }
     return new ConflictError(
       'ITEM_ALREADY_TAKEN',
@@ -165,8 +241,12 @@ export class ParticipationService {
     );
   }
 
-  private async withTitles(docs: ParticipationDocument[]): Promise<AdminParticipation[]> {
-    const items = await this.items.findByIds([...new Set(docs.map((d) => d.itemId.toString()))]);
+  private async withTitles(
+    docs: ParticipationDocument[],
+  ): Promise<AdminParticipation[]> {
+    const items = await this.items.findByIds([
+      ...new Set(docs.map((d) => d.itemId.toString())),
+    ]);
     const titles = new Map(items.map((i) => [i._id.toString(), i.title]));
     return docs.map((d) => ({
       id: d._id.toString(),

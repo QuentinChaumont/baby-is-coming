@@ -1,5 +1,19 @@
-import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, input, signal, untracked, viewChild } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
+import {
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Confetti } from '@org/frontend-ui';
 import type { HallOfFameEntry } from '@org/shared-contracts';
 import { PublicApi } from './public-api.service';
@@ -29,12 +43,16 @@ const MEDALS = ['🥇', '🥈', '🥉'];
   template: `
     <section class="fame" aria-labelledby="fame-title">
       <h2 id="fame-title">Le tableau d'honneur</h2>
-      <p class="fame__hand">Celles et ceux qui ont trouvé tous les secrets de Kiki.</p>
+      <p class="fame__hand">
+        Celles et ceux qui ont trouvé tous les secrets de Kiki.
+      </p>
       @if (entries().length) {
         <ol class="fame__list">
           @for (entry of entries(); track entry.id; let i = $index) {
             <li [class.fame__me]="entry.name === signed()">
-              <span class="fame__rank" aria-hidden="true">{{ medals[i] ?? i + 1 + '.' }}</span>
+              <span class="fame__rank" aria-hidden="true">{{
+                medals[i] ?? i + 1 + '.'
+              }}</span>
               <span class="fame__name">{{ entry.name }}</span>
               @if (entry.name === signed()) {
                 <span class="fame__you">c'est toi !</span>
@@ -43,10 +61,16 @@ const MEDALS = ['🥇', '🥈', '🥉'];
           }
         </ol>
       } @else {
-        <p class="fame__empty">Personne pour l'instant… La première place t'attend !</p>
+        <p class="fame__empty">
+          Personne pour l'instant… La première place t'attend !
+        </p>
       }
       @if (complete() && !signed() && !open()) {
-        <button type="button" class="app-button app-button--butter" (click)="open.set(true)">
+        <button
+          type="button"
+          class="app-button app-button--butter"
+          (click)="open.set(true)"
+        >
           Inscrire mon nom au tableau d'honneur
         </button>
       }
@@ -54,31 +78,60 @@ const MEDALS = ['🥇', '🥈', '🥉'];
 
     @if (open()) {
       <div class="popup__backdrop" aria-hidden="true"></div>
-      <div class="popup app-rise" role="dialog" aria-modal="true" aria-labelledby="popup-title" (keydown.escape)="later()">
+      <div
+        class="popup app-rise"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="popup-title"
+        (keydown.escape)="later()"
+      >
         <p class="popup__trophy" aria-hidden="true">🏆</p>
         <h2 id="popup-title">Bravo, tu as trouvé tous les secrets !</h2>
-        <p>Inscris ton nom au tableau d'honneur de Kiki. Seuls ton prénom et l'initiale de ton nom seront affichés.</p>
+        <p>
+          Inscris ton nom au tableau d'honneur de Kiki. Seuls ton prénom et
+          l'initiale de ton nom seront affichés.
+        </p>
         <form [formGroup]="form" (ngSubmit)="sign()" novalidate>
           <div class="popup__row">
             <label>
               <span>Prénom</span>
-              <input #first formControlName="firstName" autocomplete="given-name" required maxlength="60" />
+              <input
+                #first
+                formControlName="firstName"
+                autocomplete="given-name"
+                required
+                maxlength="60"
+              />
             </label>
             <label>
               <span>Nom</span>
-              <input formControlName="lastName" autocomplete="family-name" required maxlength="60" />
+              <input
+                formControlName="lastName"
+                autocomplete="family-name"
+                required
+                maxlength="60"
+              />
             </label>
           </div>
           <div class="popup__trap" aria-hidden="true">
-            <label>Site web <input formControlName="website" tabindex="-1" autocomplete="off" /></label>
+            <label
+              >Site web
+              <input formControlName="website" tabindex="-1" autocomplete="off"
+            /></label>
           </div>
           @if (error(); as message) {
             <p class="popup__error" role="alert">{{ message }}</p>
           }
-          <button type="submit" class="app-button app-button--ink app-button--block" [disabled]="busy()">
+          <button
+            type="submit"
+            class="app-button app-button--ink app-button--block"
+            [disabled]="busy()"
+          >
             {{ busy() ? 'Un instant…' : 'Inscrire mon nom' }}
           </button>
-          <button type="button" class="popup__later" (click)="later()">Plus tard</button>
+          <button type="button" class="popup__later" (click)="later()">
+            Plus tard
+          </button>
         </form>
       </div>
     }
@@ -230,7 +283,8 @@ const MEDALS = ['🥇', '🥈', '🥉'];
 export class CarnetFame {
   private readonly api = inject(PublicApi);
   private readonly confetti = inject(Confetti);
-  private readonly firstField = viewChild<ElementRef<HTMLInputElement>>('first');
+  private readonly firstField =
+    viewChild<ElementRef<HTMLInputElement>>('first');
 
   /** This guest found every secret. */
   readonly complete = input(false);
@@ -250,7 +304,10 @@ export class CarnetFame {
   });
 
   constructor() {
-    this.api.hallOfFame().subscribe({ next: (entries) => this.entries.set(entries), error: () => undefined });
+    this.api.hallOfFame().subscribe({
+      next: (entries) => this.entries.set(entries),
+      error: () => undefined,
+    });
 
     // A complete notebook that isn't signed yet: ask, once per visit.
     effect(() => {

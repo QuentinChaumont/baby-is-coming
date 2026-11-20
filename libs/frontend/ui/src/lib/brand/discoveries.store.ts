@@ -47,7 +47,10 @@ export class KikiDiscoveries {
 
   private save(): void {
     try {
-      globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(this.found()));
+      globalThis.localStorage?.setItem(
+        STORAGE_KEY,
+        JSON.stringify(this.found()),
+      );
     } catch {
       /* private mode: remembered for this visit only */
     }
@@ -56,8 +59,12 @@ export class KikiDiscoveries {
 
 function readStored(): KikiDiscovery[] {
   try {
-    const raw = JSON.parse(globalThis.localStorage?.getItem(STORAGE_KEY) ?? '[]');
-    return Array.isArray(raw) ? raw.filter((d): d is KikiDiscovery => typeof d === 'string') : [];
+    const raw = JSON.parse(
+      globalThis.localStorage?.getItem(STORAGE_KEY) ?? '[]',
+    );
+    return Array.isArray(raw)
+      ? raw.filter((d): d is KikiDiscovery => typeof d === 'string')
+      : [];
   } catch {
     return [];
   }

@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ConflictError, NotFoundError, ValidationError } from '@org/backend-core';
+import {
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from '@org/backend-core';
 import type {
   AdminItem,
   CreateItemRequest,
@@ -11,13 +15,19 @@ import type {
   UpdateItemRequest,
 } from '@org/shared-contracts';
 import { QueryFilter } from 'mongoose';
-import { normalizePrice, normalizeSearch, priceSortKey, searchTextOf, toAdminItem, toPublicItem } from './item.mapper';
+import {
+  normalizePrice,
+  normalizeSearch,
+  priceSortKey,
+  searchTextOf,
+  toAdminItem,
+  toPublicItem,
+} from './item.mapper';
 import { ItemRepository } from './item.repository';
 import { MAIN_LIST } from './list.constants';
 import { ListingService } from './listing.service';
 import { MediaStorage } from './media.storage';
 import { Item, ItemDocument } from './item.schema';
-
 
 function escapeRegex(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -38,13 +48,17 @@ export class ItemService {
   // ── guests ────────────────────────────────────────────────────────────
 
   async listPublic(query: PublicItemsQuery = {}): Promise<PublicItem[]> {
-    const filter: QueryFilter<Item> = { listId: MAIN_LIST, publication: 'published' };
+    const filter: QueryFilter<Item> = {
+      listId: MAIN_LIST,
+      publication: 'published',
+    };
     if (query.destination === 'cagnotte') {
       // The kitty shows everything: what's left to buy and what's bought.
       filter.destination = 'cagnotte';
     } else {
       filter.destination = { $ne: 'cagnotte' };
-      if (!query.showTaken) filter.$expr = { $lt: ['$takenQuantity', '$quantity'] };
+      if (!query.showTaken)
+        filter.$expr = { $lt: ['$takenQuantity', '$quantity'] };
     }
     const q = query.q ? normalizeSearch(query.q) : '';
     if (q) {
@@ -56,7 +70,10 @@ export class ItemService {
     if (query.sort === 'price_asc' || query.sort === 'price_desc') {
       const direction = query.sort === 'price_asc' ? 'asc' : 'desc';
       const sign = direction === 'asc' ? 1 : -1;
-      docs.sort((a, b) => sign * (priceSortKey(a, direction) - priceSortKey(b, direction)) || 0);
+      docs.sort(
+        (a, b) =>
+          sign * (priceSortKey(a, direction) - priceSortKey(b, direction)) || 0,
+      );
     }
     return docs.map(toPublicItem);
   }
@@ -67,7 +84,10 @@ export class ItemService {
     if (!doc || doc.listId !== MAIN_LIST || doc.publication !== 'published') {
       throw new NotFoundError('ITEM_NOT_FOUND', 'Item not found');
     }
-    return { ...toPublicItem(doc), listings: await this.listings.activeForItem(id) };
+    return {
+      ...toPublicItem(doc),
+      listings: await this.listings.activeForItem(id),
+    };
   }
 
   // ── parents ───────────────────────────────────────────────────────────
@@ -80,10 +100,16 @@ export class ItemService {
       { position: 1 },
     );
     // A range counts its high end: better to aim a little high.
-    return docs.reduce((sum, d) => sum + (d.priceMax ?? d.price ?? 0) * d.quantity, 0);
+    return docs.reduce(
+      (sum, d) => sum + (d.priceMax ?? d.price ?? 0) * d.quantity,
+      0,
+    );
   }
 
-  async listAdmin(publication?: ItemPublication, destination?: ItemDestination): Promise<AdminItem[]> {
+  async listAdmin(
+    publication?: ItemPublication,
+    destination?: ItemDestination,
+  ): Promise<AdminItem[]> {
     const filter: QueryFilter<Item> = { listId: MAIN_LIST };
     if (publication) filter.publication = publication;
     if (destination === 'cagnotte') filter.destination = 'cagnotte';
@@ -118,13 +144,16 @@ export class ItemService {
     const set: Partial<Item> = {};
 
     if (patch.title !== undefined) set.title = patch.title.trim();
-    if (patch.description !== undefined) set.description = patch.description.trim();
+    if (patch.description !== undefined)
+      set.description = patch.description.trim();
     if (patch.price !== undefined || patch.priceMax !== undefined) {
       Object.assign(
         set,
         this.prices(
           patch.price !== undefined ? patch.price : (current.price ?? null),
-          patch.priceMax !== undefined ? patch.priceMax : (current.priceMax ?? null),
+          patch.priceMax !== undefined
+            ? patch.priceMax
+            : (current.priceMax ?? null),
         ),
       );
     }
@@ -140,7 +169,10 @@ export class ItemService {
     if (patch.publication !== undefined) {
       // Guests always see a photo (PRODUCT F2): no photo, no publication.
       if (patch.publication === 'published' && current.photoIds.length === 0) {
-        throw new ValidationError('PHOTO_REQUIRED', 'Add a photo before publishing');
+        throw new ValidationError(
+          'PHOTO_REQUIRED',
+          'Add a photo before publishing',
+        );
       }
       set.publication = patch.publication;
     }
@@ -150,7 +182,10 @@ export class ItemService {
     if (patch.destination !== undefined) set.destination = patch.destination;
     if (patch.bought !== undefined) {
       if (patch.bought && destination !== 'cagnotte') {
-        throw new ValidationError('NOT_A_KITTY_ITEM', 'Only kitty items can be marked bought');
+        throw new ValidationError(
+          'NOT_A_KITTY_ITEM',
+          'Only kitty items can be marked bought',
+        );
       }
       set.bought = patch.bought;
     }
@@ -178,7 +213,9 @@ export class ItemService {
       );
     }
     await this.repository.deleteById(id);
-    await Promise.all(doc.photoIds.map((photoId) => this.media.deleteAll(photoId)));
+    await Promise.all(
+      doc.photoIds.map((photoId) => this.media.deleteAll(photoId)),
+    );
     await this.listings.removeForItem(id);
   }
 
@@ -188,15 +225,25 @@ export class ItemService {
     const total = await this.repository.count({ listId: MAIN_LIST });
     const known = await this.repository.countByIds(MAIN_LIST, ids);
     if (unique.size !== ids.length || ids.length !== total || known !== total) {
-      throw new ValidationError('INVALID_ORDER', 'ids must list every item exactly once');
+      throw new ValidationError(
+        'INVALID_ORDER',
+        'ids must list every item exactly once',
+      );
     }
     await this.repository.reorder(MAIN_LIST, ids);
     return this.listAdmin();
   }
 
-  private prices(min: number | null, max: number | null): { price: number | null; priceMax: number | null } {
+  private prices(
+    min: number | null,
+    max: number | null,
+  ): { price: number | null; priceMax: number | null } {
     const prices = normalizePrice(min, max);
-    if (!prices) throw new ValidationError('PRICE_RANGE', 'The high end must be above the low end');
+    if (!prices)
+      throw new ValidationError(
+        'PRICE_RANGE',
+        'The high end must be above the low end',
+      );
     return prices;
   }
 

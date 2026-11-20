@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import type { AdminContribution } from '@org/shared-contracts';
 import { AdminApi } from './admin-api.service';
@@ -13,7 +19,9 @@ const FILTERS: { value: Filter; label: string }[] = [
 ];
 
 const contributorName = (c: AdminContribution) =>
-  c.anonymized || !c.firstName ? 'Invité anonymisé' : `${c.firstName} ${c.lastName ?? ''}`.trim();
+  c.anonymized || !c.firstName
+    ? 'Invité anonymisé'
+    : `${c.firstName} ${c.lastName ?? ''}`.trim();
 
 /**
  * Kitty pledges in the back-office (DEV step 4.4, PRODUCT F5): amounts
@@ -29,18 +37,37 @@ const contributorName = (c: AdminContribution) =>
       <h1>Cagnotte</h1>
 
       <div class="kadm__totals">
-        <p><span class="kadm__figure">{{ promised() }}</span> promis</p>
-        <p><span class="kadm__figure">{{ received() }}</span> reçus</p>
+        <p>
+          <span class="kadm__figure">{{ promised() }}</span> promis
+        </p>
+        <p>
+          <span class="kadm__figure">{{ received() }}</span> reçus
+        </p>
       </div>
-      <p class="kadm__hint">Objectif et moyens de paiement : <a routerLink="/admin/reglages">Réglages</a>.</p>
+      <p class="kadm__hint">
+        Objectif et moyens de paiement :
+        <a routerLink="/admin/reglages">Réglages</a>.
+      </p>
 
       @if (message(); as m) {
-        <p class="kadm__message" [class.kadm__message--error]="m.error" [attr.role]="m.error ? 'alert' : 'status'">{{ m.text }}</p>
+        <p
+          class="kadm__message"
+          [class.kadm__message--error]="m.error"
+          [attr.role]="m.error ? 'alert' : 'status'"
+        >
+          {{ m.text }}
+        </p>
       }
 
       <div class="kadm__filters" role="group" aria-label="Filtrer">
         @for (f of filters; track f.value) {
-          <button type="button" [attr.aria-pressed]="filter() === f.value" (click)="filter.set(f.value)">{{ f.label }}</button>
+          <button
+            type="button"
+            [attr.aria-pressed]="filter() === f.value"
+            (click)="filter.set(f.value)"
+          >
+            {{ f.label }}
+          </button>
         }
       </div>
 
@@ -52,8 +79,11 @@ const contributorName = (c: AdminContribution) =>
           <li class="kadm__row">
             <div class="kadm__main">
               <p>
-                <strong>{{ name(c) }}</strong> · <span class="kadm__amount">{{ euros(c.amount) }}</span>
-                @if (c.hideName) { <span class="kadm__tag">nom masqué</span> }
+                <strong>{{ name(c) }}</strong> ·
+                <span class="kadm__amount">{{ euros(c.amount) }}</span>
+                @if (c.hideName) {
+                  <span class="kadm__tag">nom masqué</span>
+                }
               </p>
               <p class="kadm__when">{{ when(c.createdAt) }}</p>
               @if (c.message) {
@@ -61,16 +91,48 @@ const contributorName = (c: AdminContribution) =>
               }
             </div>
             <div class="kadm__side">
-              <label><input type="checkbox" [checked]="c.received" (change)="toggle(c, 'received')" /> Reçu</label>
-              <label><input type="checkbox" [checked]="c.thanked" (change)="toggle(c, 'thanked')" /> Merci envoyé</label>
+              <label
+                ><input
+                  type="checkbox"
+                  [checked]="c.received"
+                  (change)="toggle(c, 'received')"
+                />
+                Reçu</label
+              >
+              <label
+                ><input
+                  type="checkbox"
+                  [checked]="c.thanked"
+                  (change)="toggle(c, 'thanked')"
+                />
+                Merci envoyé</label
+              >
               @if (confirmCancel() === c.id) {
                 <span>
                   Annuler cette promesse ?
-                  <button type="button" class="kadm__link kadm__danger" (click)="cancel(c)">Oui</button>
-                  <button type="button" class="kadm__link" (click)="confirmCancel.set(null)">Non</button>
+                  <button
+                    type="button"
+                    class="kadm__link kadm__danger"
+                    (click)="cancel(c)"
+                  >
+                    Oui
+                  </button>
+                  <button
+                    type="button"
+                    class="kadm__link"
+                    (click)="confirmCancel.set(null)"
+                  >
+                    Non
+                  </button>
                 </span>
               } @else {
-                <button type="button" class="kadm__link" (click)="confirmCancel.set(c.id)">Annuler la promesse</button>
+                <button
+                  type="button"
+                  class="kadm__link"
+                  (click)="confirmCancel.set(c.id)"
+                >
+                  Annuler la promesse
+                </button>
               }
             </div>
           </li>
@@ -224,16 +286,28 @@ export class KittyAdminPage {
   protected readonly contributions = signal<AdminContribution[]>([]);
   protected readonly filter = signal<Filter>('all');
   protected readonly confirmCancel = signal<string | null>(null);
-  protected readonly message = signal<{ text: string; error: boolean } | null>(null);
+  protected readonly message = signal<{ text: string; error: boolean } | null>(
+    null,
+  );
 
   protected readonly visible = computed(() => {
     const all = this.contributions();
     const f = this.filter();
-    return f === 'toReceive' ? all.filter((c) => !c.received) : f === 'toThank' ? all.filter((c) => !c.thanked) : all;
+    return f === 'toReceive'
+      ? all.filter((c) => !c.received)
+      : f === 'toThank'
+        ? all.filter((c) => !c.thanked)
+        : all;
   });
-  protected readonly promised = computed(() => euros(this.contributions().reduce((s, c) => s + c.amount, 0)));
+  protected readonly promised = computed(() =>
+    euros(this.contributions().reduce((s, c) => s + c.amount, 0)),
+  );
   protected readonly received = computed(() =>
-    euros(this.contributions().filter((c) => c.received).reduce((s, c) => s + c.amount, 0)),
+    euros(
+      this.contributions()
+        .filter((c) => c.received)
+        .reduce((s, c) => s + c.amount, 0),
+    ),
   );
 
   constructor() {
@@ -243,14 +317,25 @@ export class KittyAdminPage {
   private reload(): void {
     this.api.contributions().subscribe({
       next: (c) => this.contributions.set(c),
-      error: () => this.message.set({ text: "La cagnotte n'a pas pu se charger.", error: true }),
+      error: () =>
+        this.message.set({
+          text: "La cagnotte n'a pas pu se charger.",
+          error: true,
+        }),
     });
   }
 
   protected toggle(c: AdminContribution, field: 'received' | 'thanked'): void {
     this.api.updateContribution(c.id, { [field]: !c[field] }).subscribe({
-      next: (updated) => this.contributions.update((all) => all.map((x) => (x.id === updated.id ? updated : x))),
-      error: () => this.message.set({ text: "La modification n'a pas pu être enregistrée.", error: true }),
+      next: (updated) =>
+        this.contributions.update((all) =>
+          all.map((x) => (x.id === updated.id ? updated : x)),
+        ),
+      error: () =>
+        this.message.set({
+          text: "La modification n'a pas pu être enregistrée.",
+          error: true,
+        }),
     });
   }
 
@@ -258,10 +343,14 @@ export class KittyAdminPage {
     this.confirmCancel.set(null);
     this.api.cancelContribution(c.id).subscribe({
       next: () => {
-        this.message.set({ text: `Promesse de ${contributorName(c)} annulée.`, error: false });
+        this.message.set({
+          text: `Promesse de ${contributorName(c)} annulée.`,
+          error: false,
+        });
         this.reload();
       },
-      error: () => this.message.set({ text: "L'annulation a échoué.", error: true }),
+      error: () =>
+        this.message.set({ text: "L'annulation a échoué.", error: true }),
     });
   }
 }

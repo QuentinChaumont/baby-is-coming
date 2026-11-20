@@ -1,9 +1,21 @@
-import { Body, Controller, Delete, Get, HttpCode, Injectable, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Injectable,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { InjectModel, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { NotFoundError, Roles } from '@org/backend-core';
-import type { HallOfFameEntry, JoinHallOfFameRequest } from '@org/shared-contracts';
+import type {
+  HallOfFameEntry,
+  JoinHallOfFameRequest,
+} from '@org/shared-contracts';
 import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { HydratedDocument, Model, isValidObjectId } from 'mongoose';
 
@@ -51,11 +63,20 @@ const MAIN_LIST = 'main';
 /** Everyone who found all of Kiki's secrets, first finders first. */
 @Injectable()
 export class HallOfFameService {
-  constructor(@InjectModel(HallOfFame.name) private readonly model: Model<HallOfFame>) {}
+  constructor(
+    @InjectModel(HallOfFame.name) private readonly model: Model<HallOfFame>,
+  ) {}
 
   async list(): Promise<HallOfFameEntry[]> {
-    const docs = await this.model.find({ listId: MAIN_LIST }).sort({ createdAt: 1 }).exec();
-    return docs.map((d) => ({ id: d._id.toString(), name: d.name, createdAt: d.createdAt.toISOString() }));
+    const docs = await this.model
+      .find({ listId: MAIN_LIST })
+      .sort({ createdAt: 1 })
+      .exec();
+    return docs.map((d) => ({
+      id: d._id.toString(),
+      name: d.name,
+      createdAt: d.createdAt.toISOString(),
+    }));
   }
 
   /** Signing twice under the same name doesn't add a second line. */
@@ -72,7 +93,11 @@ export class HallOfFameService {
     const deleted = isValidObjectId(id)
       ? await this.model.findOneAndDelete({ _id: id, listId: MAIN_LIST }).exec()
       : null;
-    if (!deleted) throw new NotFoundError('HALL_OF_FAME_ENTRY_NOT_FOUND', 'Entry not found');
+    if (!deleted)
+      throw new NotFoundError(
+        'HALL_OF_FAME_ENTRY_NOT_FOUND',
+        'Entry not found',
+      );
   }
 }
 

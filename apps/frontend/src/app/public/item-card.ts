@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PriceTag, Stamp, type StampKind } from '@org/frontend-ui';
 import type { PublicItem, PublicTaker } from '@org/shared-contracts';
@@ -15,7 +20,8 @@ export function takenByLine(takers: PublicTaker[]): string | null {
 /** The stamp of a taken item: « Adopté ! » when it was given, else
  * « Chassé ! ». */
 export function stampOf(takers: PublicTaker[]): StampKind {
-  return takers.some((t) => t.kind === 'don') && takers.every((t) => t.kind !== 'chasse')
+  return takers.some((t) => t.kind === 'don') &&
+    takers.every((t) => t.kind !== 'chasse')
     ? 'don'
     : 'chasse';
 }
@@ -39,7 +45,11 @@ export function itemStamp(item: PublicItem): StampKind | null {
         @if (item().photos[0]; as photo) {
           <img [src]="photo.thumbUrl" alt="" loading="lazy" decoding="async" />
         }
-        <lib-price-tag class="card__price" [amount]="item().price" [max]="item().priceMax" />
+        <lib-price-tag
+          class="card__price"
+          [amount]="item().price"
+          [max]="item().priceMax"
+        />
         @if (stamp(); as kind) {
           <span class="card__veil"><lib-stamp [kind]="kind" /></span>
         }
@@ -50,7 +60,9 @@ export function itemStamp(item: PublicItem): StampKind | null {
       } @else if (taken() && takenBy(); as by) {
         <span class="card__by">{{ by }}</span>
       } @else if (item().quantity > 1 && !taken()) {
-        <span class="card__by">Encore {{ item().remaining }} sur {{ item().quantity }}</span>
+        <span class="card__by"
+          >Encore {{ item().remaining }} sur {{ item().quantity }}</span
+        >
       }
     </a>
   `,
@@ -114,7 +126,9 @@ export function itemStamp(item: PublicItem): StampKind | null {
 export class ItemCard {
   readonly item = input.required<PublicItem>();
 
-  protected readonly taken = computed(() => this.item().availability === 'taken');
+  protected readonly taken = computed(
+    () => this.item().availability === 'taken',
+  );
   protected readonly stamp = computed(() => itemStamp(this.item()));
   protected readonly takenBy = computed(() => takenByLine(this.item().takers));
 }

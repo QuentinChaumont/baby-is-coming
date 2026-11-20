@@ -11,7 +11,11 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from '@org/backend-core';
-import type { AdminItem, PublicItem, PublicItemDetail } from '@org/shared-contracts';
+import type {
+  AdminItem,
+  PublicItem,
+  PublicItemDetail,
+} from '@org/shared-contracts';
 import {
   AdminItemsQueryDto,
   CreateItemDto,
@@ -68,7 +72,10 @@ export class AdminItemsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() body: UpdateItemDto): Promise<AdminItem> {
+  update(
+    @Param('id') id: string,
+    @Body() body: UpdateItemDto,
+  ): Promise<AdminItem> {
     return this.items.update(id, body);
   }
 

@@ -1,7 +1,23 @@
-import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDropList,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
-import type { AdminItem, ItemDestination, ItemPublication } from '@org/shared-contracts';
+import type {
+  AdminItem,
+  ItemDestination,
+  ItemPublication,
+} from '@org/shared-contracts';
 import { AdminApi } from './admin-api.service';
 import { priceRange } from './admin-format';
 
@@ -37,12 +53,18 @@ export const PUBLICATION_LABEL: Record<ItemPublication, string> = {
     <div class="items">
       <header class="items__head">
         <h1>Objets</h1>
-        <a class="app-button app-button--ink" routerLink="nouveau">Ajouter un objet</a>
+        <a class="app-button app-button--ink" routerLink="nouveau"
+          >Ajouter un objet</a
+        >
       </header>
 
       <div class="items__filters" role="group" aria-label="Filtrer par statut">
         @for (f of filters; track f.label) {
-          <button type="button" [attr.aria-pressed]="filter() === f.value" (click)="filter.set(f.value)">
+          <button
+            type="button"
+            [attr.aria-pressed]="filter() === f.value"
+            (click)="filter.set(f.value)"
+          >
             {{ f.label }}
           </button>
         }
@@ -50,7 +72,11 @@ export const PUBLICATION_LABEL: Record<ItemPublication, string> = {
 
       <div class="items__filters" role="group" aria-label="Filtrer par liste">
         @for (d of destinations; track d.label) {
-          <button type="button" [attr.aria-pressed]="destination() === d.value" (click)="destination.set(d.value)">
+          <button
+            type="button"
+            [attr.aria-pressed]="destination() === d.value"
+            (click)="destination.set(d.value)"
+          >
             {{ d.label }}
           </button>
         }
@@ -66,32 +92,76 @@ export const PUBLICATION_LABEL: Record<ItemPublication, string> = {
         <p>Aucun objet ici pour l'instant.</p>
       } @else {
         @if (filtered()) {
-          <p class="items__hint">Affiche « Tous » et « Toutes les listes » pour changer l'ordre.</p>
+          <p class="items__hint">
+            Affiche « Tous » et « Toutes les listes » pour changer l'ordre.
+          </p>
         }
-        <ol class="items__list" cdkDropList [cdkDropListDisabled]="filtered()" (cdkDropListDropped)="drop($event)">
-          @for (item of visible(); track item.id; let i = $index; let last = $last) {
+        <ol
+          class="items__list"
+          cdkDropList
+          [cdkDropListDisabled]="filtered()"
+          (cdkDropListDropped)="drop($event)"
+        >
+          @for (
+            item of visible();
+            track item.id;
+            let i = $index;
+            let last = $last
+          ) {
             <li class="items__row" cdkDrag>
               @if (!filtered()) {
-                <span class="items__grip" cdkDragHandle aria-hidden="true">⋮⋮</span>
+                <span class="items__grip" cdkDragHandle aria-hidden="true"
+                  >⋮⋮</span
+                >
               }
               <span class="items__thumb">
                 @if (item.photos[0]; as p) {
                   <img [src]="p.thumbUrl" alt="" />
                 }
               </span>
-              <a class="items__title" [routerLink]="[item.id]">{{ item.title }}</a>
-              <span class="items__price">{{ priceRange(item.price, item.priceMax) }}</span>
-              <span class="items__badge" [attr.data-status]="item.publication">{{ publicationLabel[item.publication] }}</span>
+              <a class="items__title" [routerLink]="[item.id]">{{
+                item.title
+              }}</a>
+              <span class="items__price">{{
+                priceRange(item.price, item.priceMax)
+              }}</span>
+              <span
+                class="items__badge"
+                [attr.data-status]="item.publication"
+                >{{ publicationLabel[item.publication] }}</span
+              >
               @if (item.destination === 'cagnotte') {
-                <span class="items__badge items__badge--kitty">{{ item.bought ? 'Cagnotte · acheté ✓' : 'Cagnotte' }}</span>
+                <span class="items__badge items__badge--kitty">{{
+                  item.bought ? 'Cagnotte · acheté ✓' : 'Cagnotte'
+                }}</span>
               }
               <span class="items__avail">
-                {{ item.availability === 'taken' ? 'Pris' : item.quantity > 1 ? item.remaining + '/' + item.quantity + ' dispo' : 'Disponible' }}
+                {{
+                  item.availability === 'taken'
+                    ? 'Pris'
+                    : item.quantity > 1
+                      ? item.remaining + '/' + item.quantity + ' dispo'
+                      : 'Disponible'
+                }}
               </span>
               @if (!filtered()) {
                 <span class="items__move">
-                  <button type="button" [disabled]="i === 0" (click)="move(i, -1)" [attr.aria-label]="'Monter ' + item.title">↑</button>
-                  <button type="button" [disabled]="last" (click)="move(i, 1)" [attr.aria-label]="'Descendre ' + item.title">↓</button>
+                  <button
+                    type="button"
+                    [disabled]="i === 0"
+                    (click)="move(i, -1)"
+                    [attr.aria-label]="'Monter ' + item.title"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    [disabled]="last"
+                    (click)="move(i, 1)"
+                    [attr.aria-label]="'Descendre ' + item.title"
+                  >
+                    ↓
+                  </button>
                 </span>
               }
             </li>
@@ -248,12 +318,16 @@ export class ItemsPage {
   protected readonly filter = signal<ItemPublication | null>(null);
   protected readonly destination = signal<ItemDestination | null>(null);
   /** Reordering needs the whole list in view. */
-  protected readonly filtered = computed(() => this.filter() !== null || this.destination() !== null);
+  protected readonly filtered = computed(
+    () => this.filter() !== null || this.destination() !== null,
+  );
 
   protected readonly visible = computed(() => {
     const f = this.filter();
     const d = this.destination();
-    return this.items().filter((i) => (!f || i.publication === f) && (!d || i.destination === d));
+    return this.items().filter(
+      (i) => (!f || i.publication === f) && (!d || i.destination === d),
+    );
   });
 
   constructor() {

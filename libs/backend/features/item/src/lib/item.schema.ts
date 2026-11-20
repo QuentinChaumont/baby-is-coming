@@ -1,5 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type { ItemDestination, ItemPublication, ParticipationKind } from '@org/shared-contracts';
+import type {
+  ItemDestination,
+  ItemPublication,
+  ParticipationKind,
+} from '@org/shared-contracts';
 import { HydratedDocument } from 'mongoose';
 
 /** Guest-safe copy of a participation, kept on the item so guest pages

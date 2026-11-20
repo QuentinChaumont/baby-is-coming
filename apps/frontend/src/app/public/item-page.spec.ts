@@ -1,5 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import type { PublicItem } from '@org/shared-contracts';
 import { itemStamp } from './item-card';
@@ -23,14 +26,27 @@ const ITEM: PublicItem = {
 
 describe('itemStamp', () => {
   it('stamps « Acheté ! » a bought kitty item, even one a friend took', () => {
-    expect(itemStamp({ ...ITEM, destination: 'cagnotte', bought: true })).toBe('achete');
+    expect(itemStamp({ ...ITEM, destination: 'cagnotte', bought: true })).toBe(
+      'achete',
+    );
     expect(
-      itemStamp({ ...ITEM, availability: 'taken', bought: true, takers: [{ kind: 'chasse', name: 'Paul M.' }] }),
+      itemStamp({
+        ...ITEM,
+        availability: 'taken',
+        bought: true,
+        takers: [{ kind: 'chasse', name: 'Paul M.' }],
+      }),
     ).toBe('achete');
   });
 
-  it('keeps the friends\' stamp otherwise, and none while available', () => {
-    expect(itemStamp({ ...ITEM, availability: 'taken', takers: [{ kind: 'don', name: null }] })).toBe('don');
+  it("keeps the friends' stamp otherwise, and none while available", () => {
+    expect(
+      itemStamp({
+        ...ITEM,
+        availability: 'taken',
+        takers: [{ kind: 'don', name: null }],
+      }),
+    ).toBe('don');
     expect(itemStamp({ ...ITEM, destination: 'cagnotte' })).toBeNull();
   });
 });
@@ -38,10 +54,26 @@ describe('itemStamp', () => {
 describe('listingLabel', () => {
   it('reads « Plateforme · prix · ville »', () => {
     expect(
-      listingLabel({ id: 'l', url: 'https://x', platform: 'leboncoin', title: null, price: 90, location: 'Nantes', imageUrl: null }),
+      listingLabel({
+        id: 'l',
+        url: 'https://x',
+        platform: 'leboncoin',
+        title: null,
+        price: 90,
+        location: 'Nantes',
+        imageUrl: null,
+      }),
     ).toBe('Leboncoin · 90 € · Nantes');
     expect(
-      listingLabel({ id: 'l', url: 'https://x', platform: 'autre', title: null, price: null, location: null, imageUrl: null }),
+      listingLabel({
+        id: 'l',
+        url: 'https://x',
+        platform: 'autre',
+        title: null,
+        price: null,
+        location: null,
+        imageUrl: null,
+      }),
     ).toBe('Annonce');
   });
 });
@@ -56,7 +88,11 @@ describe('TakeForm', () => {
     fixture.componentRef.setInput('item', ITEM);
     fixture.componentRef.setInput('kind', 'chasse');
     fixture.detectChanges();
-    return { fixture, http: TestBed.inject(HttpTestingController), el: fixture.nativeElement as HTMLElement };
+    return {
+      fixture,
+      http: TestBed.inject(HttpTestingController),
+      el: fixture.nativeElement as HTMLElement,
+    };
   }
   const type = (el: HTMLElement, selector: string, value: string) => {
     const input = el.querySelector(selector) as HTMLInputElement;
@@ -68,7 +104,9 @@ describe('TakeForm', () => {
     const { fixture, http, el } = render();
     (el.querySelector('button[type="submit"]') as HTMLButtonElement).click();
     fixture.detectChanges();
-    expect(el.querySelector('[role="alert"]')?.textContent).toContain('Ton prénom et ton nom');
+    expect(el.querySelector('[role="alert"]')?.textContent).toContain(
+      'Ton prénom et ton nom',
+    );
     http.expectNone('/api/public/items/i1/take');
   });
 
@@ -85,7 +123,13 @@ describe('TakeForm', () => {
     (el.querySelector('button[type="submit"]') as HTMLButtonElement).click();
 
     const req = http.expectOne('/api/public/items/i1/take');
-    expect(req.request.body).toMatchObject({ kind: 'chasse', firstName: ' Paul ', lastName: 'Martin', hideName: true, quantity: 2 });
+    expect(req.request.body).toMatchObject({
+      kind: 'chasse',
+      firstName: ' Paul ',
+      lastName: 'Martin',
+      hideName: true,
+      quantity: 2,
+    });
     req.flush({ ...ITEM, remaining: 0, availability: 'taken' });
     expect(taken).toHaveBeenCalled();
   });
@@ -99,7 +143,10 @@ describe('TakeForm', () => {
     (el.querySelector('button[type="submit"]') as HTMLButtonElement).click();
     http
       .expectOne('/api/public/items/i1/take')
-      .flush({ statusCode: 409, code: 'ITEM_ALREADY_TAKEN', message: 'x' }, { status: 409, statusText: 'Conflict' });
+      .flush(
+        { statusCode: 409, code: 'ITEM_ALREADY_TAKEN', message: 'x' },
+        { status: 409, statusText: 'Conflict' },
+      );
     expect(conflict).toHaveBeenCalled();
   });
 });

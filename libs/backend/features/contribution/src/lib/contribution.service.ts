@@ -49,7 +49,10 @@ export class ContributionService {
     const firstName = request.firstName.trim();
     const lastName = request.lastName.trim();
     if (!firstName || !lastName) {
-      throw new ValidationError('NAME_REQUIRED', 'First and last name are required');
+      throw new ValidationError(
+        'NAME_REQUIRED',
+        'First and last name are required',
+      );
     }
     await this.model.create({
       listId: MAIN_LIST,
@@ -64,7 +67,10 @@ export class ContributionService {
 
   /** Total and visible names — never an individual amount (PRODUCT D8). */
   async kitty(): Promise<PublicKitty> {
-    const docs = await this.model.find({ listId: MAIN_LIST }).sort({ createdAt: 1 }).exec();
+    const docs = await this.model
+      .find({ listId: MAIN_LIST })
+      .sort({ createdAt: 1 })
+      .exec();
     const { kittyGoal } = await this.birthList.getPublic();
     // The parents' goal, or else what the kitty's items add up to.
     const goal = kittyGoal ?? ((await this.items.kittyItemsTotal()) || null);
@@ -73,24 +79,38 @@ export class ContributionService {
       goal,
       contributorCount: docs.length,
       contributors: docs
-        .filter((d) => !d.hideName && !d.anonymized && d.firstName && d.lastName)
+        .filter(
+          (d) => !d.hideName && !d.anonymized && d.firstName && d.lastName,
+        )
         .map((d) => displayName(d.firstName as string, d.lastName as string)),
     };
   }
 
   async list(): Promise<AdminContribution[]> {
-    const docs = await this.model.find({ listId: MAIN_LIST }).sort({ createdAt: -1 }).exec();
+    const docs = await this.model
+      .find({ listId: MAIN_LIST })
+      .sort({ createdAt: -1 })
+      .exec();
     return docs.map(toAdmin);
   }
 
-  async update(id: string, patch: UpdateContributionRequest): Promise<AdminContribution> {
+  async update(
+    id: string,
+    patch: UpdateContributionRequest,
+  ): Promise<AdminContribution> {
     const set: Partial<Contribution> = {};
     if (patch.received !== undefined) set.received = patch.received;
     if (patch.thanked !== undefined) set.thanked = patch.thanked;
     const doc = isValidObjectId(id)
-      ? await this.model.findByIdAndUpdate(id, { $set: set }, { returnDocument: 'after' }).exec()
+      ? await this.model
+          .findByIdAndUpdate(id, { $set: set }, { returnDocument: 'after' })
+          .exec()
       : null;
-    if (!doc) throw new NotFoundError('CONTRIBUTION_NOT_FOUND', 'Contribution not found');
+    if (!doc)
+      throw new NotFoundError(
+        'CONTRIBUTION_NOT_FOUND',
+        'Contribution not found',
+      );
     return toAdmin(doc);
   }
 
@@ -99,7 +119,15 @@ export class ContributionService {
     const res = await this.model
       .updateMany(
         { listId: MAIN_LIST, anonymized: false },
-        { $set: { firstName: null, lastName: null, message: null, hideName: true, anonymized: true } },
+        {
+          $set: {
+            firstName: null,
+            lastName: null,
+            message: null,
+            hideName: true,
+            anonymized: true,
+          },
+        },
       )
       .exec();
     return res.modifiedCount;
@@ -108,7 +136,13 @@ export class ContributionService {
   /** Only the parents cancel a pledge (PRODUCT R-CON-6) — also how a
    * guest's data is erased on request. */
   async cancel(id: string): Promise<void> {
-    const doc = isValidObjectId(id) ? await this.model.findByIdAndDelete(id).exec() : null;
-    if (!doc) throw new NotFoundError('CONTRIBUTION_NOT_FOUND', 'Contribution not found');
+    const doc = isValidObjectId(id)
+      ? await this.model.findByIdAndDelete(id).exec()
+      : null;
+    if (!doc)
+      throw new NotFoundError(
+        'CONTRIBUTION_NOT_FOUND',
+        'Contribution not found',
+      );
   }
 }

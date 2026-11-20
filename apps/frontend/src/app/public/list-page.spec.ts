@@ -1,5 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import type { PublicItem } from '@org/shared-contracts';
@@ -15,7 +18,13 @@ const item = (over: Partial<PublicItem>): PublicItem => ({
   quantity: 1,
   remaining: 1,
   availability: 'available',
-  photos: [{ id: 'p1', thumbUrl: '/api/media/p1/thumb', largeUrl: '/api/media/p1/large' }],
+  photos: [
+    {
+      id: 'p1',
+      thumbUrl: '/api/media/p1/thumb',
+      largeUrl: '/api/media/p1/large',
+    },
+  ],
   takers: [],
   destination: 'amis',
   bought: false,
@@ -24,11 +33,20 @@ const item = (over: Partial<PublicItem>): PublicItem => ({
 
 describe('takers display', () => {
   it('names takers, hides hidden names and skips the parents', () => {
-    expect(takenByLine([{ kind: 'chasse', name: 'Paul M.' }])).toBe('par Paul M.');
-    expect(takenByLine([{ kind: 'don', name: null }])).toBe("par quelqu'un de discret");
+    expect(takenByLine([{ kind: 'chasse', name: 'Paul M.' }])).toBe(
+      'par Paul M.',
+    );
+    expect(takenByLine([{ kind: 'don', name: null }])).toBe(
+      "par quelqu'un de discret",
+    );
     expect(takenByLine([{ kind: 'parents', name: null }])).toBeNull();
     expect(stampOf([{ kind: 'don', name: null }])).toBe('don');
-    expect(stampOf([{ kind: 'chasse', name: null }, { kind: 'don', name: null }])).toBe('chasse');
+    expect(
+      stampOf([
+        { kind: 'chasse', name: null },
+        { kind: 'don', name: null },
+      ]),
+    ).toBe('chasse');
   });
 });
 
@@ -40,11 +58,19 @@ describe('ListPage', () => {
   function render() {
     TestBed.configureTestingModule({
       imports: [ListPage],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+      ],
     });
     const fixture = TestBed.createComponent(ListPage);
     fixture.detectChanges();
-    return { fixture, http: TestBed.inject(HttpTestingController), el: fixture.nativeElement as HTMLElement };
+    return {
+      fixture,
+      http: TestBed.inject(HttpTestingController),
+      el: fixture.nativeElement as HTMLElement,
+    };
   }
 
   it('lists available items with their price, then refetches with filters', () => {
@@ -62,7 +88,13 @@ describe('ListPage', () => {
     const req = http.expectOne((r) => r.url === '/api/public/items');
     expect(req.request.params.get('showTaken')).toBe('true');
     expect(req.request.params.get('sort')).toBe('price_asc');
-    req.flush([item({ availability: 'taken', remaining: 0, takers: [{ kind: 'chasse', name: 'Paul M.' }] })]);
+    req.flush([
+      item({
+        availability: 'taken',
+        remaining: 0,
+        takers: [{ kind: 'chasse', name: 'Paul M.' }],
+      }),
+    ]);
     fixture.detectChanges();
     expect(el.querySelector('lib-stamp')?.textContent).toContain('Chassé !');
     expect(el.textContent).toContain('par Paul M.');

@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  afterNextRender,
+  inject,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Confetti, Doudou, Hochet } from '@org/frontend-ui';
 import { CARNET, CarnetProgress } from './carnet';
@@ -15,32 +21,51 @@ import { CarnetFame } from './carnet-fame';
   template: `
     <main class="carnet">
       <h1>Le carnet de Kiki</h1>
-      <p class="carnet__hand">Tous les secrets de Kiki sont notés ici. Sauras-tu les trouver tous ?</p>
+      <p class="carnet__hand">
+        Tous les secrets de Kiki sont notés ici. Sauras-tu les trouver tous ?
+      </p>
 
       <section class="carnet__progress" aria-label="Progression">
         <p class="carnet__count">
-          <strong>{{ progress.count() }} / {{ progress.total }}</strong> secrets découverts
+          <strong>{{ progress.count() }} / {{ progress.total }}</strong> secrets
+          découverts
         </p>
-        <div class="carnet__bar" role="progressbar" [attr.aria-valuenow]="progress.count()" aria-valuemin="0" [attr.aria-valuemax]="progress.total">
-          <span [style.width.%]="(progress.count() / progress.total) * 100"></span>
+        <div
+          class="carnet__bar"
+          role="progressbar"
+          [attr.aria-valuenow]="progress.count()"
+          aria-valuemin="0"
+          [attr.aria-valuemax]="progress.total"
+        >
+          <span
+            [style.width.%]="(progress.count() / progress.total) * 100"
+          ></span>
         </div>
         @if (progress.complete()) {
           <p class="carnet__done">Bravo, tu connais Kiki par cœur ! 🦒💛</p>
         } @else {
-          <p class="carnet__tip">Joue avec Kiki sur <a routerLink="/">l'accueil</a> pour remplir le carnet.</p>
+          <p class="carnet__tip">
+            Joue avec Kiki sur <a routerLink="/">l'accueil</a> pour remplir le
+            carnet.
+          </p>
         }
       </section>
 
       <ul class="carnet__grid">
         @for (entry of entries; track entry.id) {
           @if (progress.unlocked().has(entry.id)) {
-            <li class="carnet__entry" [class.carnet__entry--treasure]="entry.kind === 'treasure'">
+            <li
+              class="carnet__entry"
+              [class.carnet__entry--treasure]="entry.kind === 'treasure'"
+            >
               @if (entry.id === 'doudou') {
                 <lib-doudou class="carnet__drawing" />
               } @else if (entry.id === 'hochet') {
                 <lib-hochet class="carnet__drawing" />
               } @else {
-                <span class="carnet__icon" aria-hidden="true">{{ entry.icon }}</span>
+                <span class="carnet__icon" aria-hidden="true">{{
+                  entry.icon
+                }}</span>
               }
               <div>
                 <h2>{{ entry.title }}</h2>
@@ -64,10 +89,28 @@ import { CarnetFame } from './carnet-fame';
       <div class="carnet__reset">
         @if (confirming()) {
           <p>Tout oublier ? Les trésors retourneront se cacher.</p>
-          <button type="button" class="app-button app-button--outline" (click)="reset()">Oui, tout effacer</button>
-          <button type="button" class="carnet__link" (click)="confirming.set(false)">Non, je garde</button>
+          <button
+            type="button"
+            class="app-button app-button--outline"
+            (click)="reset()"
+          >
+            Oui, tout effacer
+          </button>
+          <button
+            type="button"
+            class="carnet__link"
+            (click)="confirming.set(false)"
+          >
+            Non, je garde
+          </button>
         } @else {
-          <button type="button" class="carnet__link" (click)="confirming.set(true)">Effacer le carnet et recommencer</button>
+          <button
+            type="button"
+            class="carnet__link"
+            (click)="confirming.set(true)"
+          >
+            Effacer le carnet et recommencer
+          </button>
         }
       </div>
     </main>

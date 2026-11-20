@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import type { HallOfFameEntry } from '@org/shared-contracts';
 import { AdminApi } from './admin-api.service';
 import { when } from './admin-format';
@@ -13,7 +18,10 @@ import { when } from './admin-format';
   template: `
     <section class="fame" aria-labelledby="fame-admin-title">
       <h2 id="fame-admin-title">Tableau d'honneur du carnet</h2>
-      <p class="fame__hint">Les invités qui ont trouvé tous les secrets de Kiki (prénom et initiale seulement).</p>
+      <p class="fame__hint">
+        Les invités qui ont trouvé tous les secrets de Kiki (prénom et initiale
+        seulement).
+      </p>
       @if (error(); as message) {
         <p class="fame__error" role="alert">{{ message }}</p>
       }
@@ -30,11 +38,28 @@ import { when } from './admin-format';
               @if (confirming() === entry.id) {
                 <span class="fame__confirm">
                   Retirer {{ entry.name }} ?
-                  <button type="button" class="fame__link fame__danger" (click)="remove(entry)">Oui, retirer</button>
-                  <button type="button" class="fame__link" (click)="confirming.set(null)">Non</button>
+                  <button
+                    type="button"
+                    class="fame__link fame__danger"
+                    (click)="remove(entry)"
+                  >
+                    Oui, retirer
+                  </button>
+                  <button
+                    type="button"
+                    class="fame__link"
+                    (click)="confirming.set(null)"
+                  >
+                    Non
+                  </button>
                 </span>
               } @else {
-                <button type="button" class="fame__link" (click)="confirming.set(entry.id)" [attr.aria-label]="'Retirer ' + entry.name">
+                <button
+                  type="button"
+                  class="fame__link"
+                  (click)="confirming.set(entry.id)"
+                  [attr.aria-label]="'Retirer ' + entry.name"
+                >
                   Retirer
                 </button>
               }
@@ -142,7 +167,8 @@ export class HallOfFameAdmin {
     this.confirming.set(null);
     this.error.set(null);
     this.api.removeFromHallOfFame(entry.id).subscribe({
-      next: () => this.entries.update((list) => list.filter((e) => e.id !== entry.id)),
+      next: () =>
+        this.entries.update((list) => list.filter((e) => e.id !== entry.id)),
       error: () => this.error.set(`${entry.name} n'a pas pu être retiré.`),
     });
   }

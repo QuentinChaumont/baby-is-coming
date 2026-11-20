@@ -1,0 +1,297 @@
+<div class="edit">
+  <a routerLink="/admin/objets" class="edit__back">← Tous les objets</a>
+  <h1>{{ isNew() ? 'Nouvel objet' : (item()?.title ?? 'Objet') }}</h1>
+
+  @if (message(); as m) {
+  <p
+    class="edit__message"
+    [class.edit__message--error]="m.error"
+    [attr.role]="m.error ? 'alert' : 'status'"
+  >
+    {{ m.text }}
+  </p>
+  }
+
+  <form class="edit__card" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <h2>Détails</h2>
+    <label class="edit__field">
+      <span>Titre</span>
+      <input formControlName="title" required maxlength="120" />
+    </label>
+    <label class="edit__field">
+      <span
+        >Description
+        <em>(critères, taille, « pliable d'une main svp »…)</em></span
+      >
+      <textarea
+        formControlName="description"
+        rows="4"
+        maxlength="2000"
+      ></textarea>
+    </label>
+    <div class="edit__row">
+      <label class="edit__field">
+        <span>Prix indicatif (€)</span>
+        <input
+          formControlName="price"
+          type="number"
+          min="0"
+          step="1"
+          placeholder="Ex. 80"
+        />
+      </label>
+      <label class="edit__field">
+        <span>Jusqu'à (€) <em>(fourchette)</em></span>
+        <input
+          formControlName="priceMax"
+          type="number"
+          min="0"
+          step="1"
+          placeholder="Ex. 120"
+        />
+      </label>
+    </div>
+    <p class="edit__hint">
+      Un prix, une fourchette, ou rien du tout si vous ne savez pas.
+    </p>
+    <div class="edit__row">
+      <label class="edit__field">
+        <span>Quantité</span>
+        <input
+          formControlName="quantity"
+          type="number"
+          min="1"
+          max="99"
+          step="1"
+          required
+        />
+      </label>
+    </div>
+    <button
+      type="submit"
+      class="app-button app-button--ink"
+      [disabled]="busy()"
+    >
+      {{ isNew() ? "Créer l'objet" : 'Enregistrer' }}
+    </button>
+  </form>
+
+  @if (item(); as it) {
+  <section class="edit__card">
+    <h2>Photos</h2>
+    <ul class="edit__photos">
+      @for (photo of it.photos; track photo.id; let first = $first) {
+      <li>
+        <img
+          [src]="photo.thumbUrl"
+          [alt]="first ? 'Photo principale' : 'Photo'"
+        />
+        <button
+          type="button"
+          class="edit__link"
+          (click)="removePhoto(photo.id)"
+        >
+          Retirer
+        </button>
+      </li>
+      }
+    </ul>
+    <app-photo-uploader [itemId]="it.id" (uploaded)="item.set($event)" />
+  </section>
+
+  <section class="edit__card">
+    <h2>Liste</h2>
+    <p class="edit__hint">
+      Liste des amis : les invités peuvent le prendre. Cagnotte : vous
+      l'achèterez avec la cagnotte.
+    </p>
+    <div class="edit__buttons" role="group" aria-label="Liste de l'objet">
+      <button
+        type="button"
+        class="app-button"
+        [class.app-button--ink]="it.destination === 'amis'"
+        [class.app-button--outline]="it.destination !== 'amis'"
+        [attr.aria-pressed]="it.destination === 'amis'"
+        (click)="setDestination('amis')"
+      >
+        Liste des amis
+      </button>
+      <button
+        type="button"
+        class="app-button"
+        [class.app-button--ink]="it.destination === 'cagnotte'"
+        [class.app-button--outline]="it.destination !== 'cagnotte'"
+        [attr.aria-pressed]="it.destination === 'cagnotte'"
+        (click)="setDestination('cagnotte')"
+      >
+        Cagnotte
+      </button>
+    </div>
+    @if (it.destination === 'cagnotte') { @if (it.takenQuantity) {
+    <p class="edit__hint">
+      Déjà pris par un invité : sa participation est conservée.
+    </p>
+    }
+    <label class="edit__check">
+      <input
+        type="checkbox"
+        [checked]="it.bought"
+        (change)="setBought($any($event.target).checked)"
+      />
+      <span>Acheté (les invités voient le tampon « Acheté ! »)</span>
+    </label>
+    }
+  </section>
+
+  <section class="edit__card">
+    <h2>Publication</h2>
+    <p>
+      Statut : <strong>{{ publicationLabel[it.publication] }}</strong> · {{
+      it.availability === 'taken' ? 'pris' : 'disponible' }} @if
+      (it.takenQuantity) { ({{ it.takenQuantity }}/{{ it.quantity }} pris) }
+    </p>
+    <div class="edit__buttons">
+      @if (it.publication !== 'published') {
+      <button
+        type="button"
+        class="app-button app-button--ink"
+        (click)="publish('published')"
+      >
+        Publier
+      </button>
+      } @if (it.publication !== 'draft') {
+      <button
+        type="button"
+        class="app-button app-button--outline"
+        (click)="publish('draft')"
+      >
+        Repasser en brouillon
+      </button>
+      } @if (it.publication !== 'archived') {
+      <button
+        type="button"
+        class="app-button app-button--outline"
+        (click)="publish('archived')"
+      >
+        Archiver
+      </button>
+      }
+    </div>
+    @if (it.takenQuantity === 0) { @if (confirmDelete()) {
+    <p>Supprimer définitivement « {{ it.title }} » ?</p>
+    <div class="edit__buttons">
+      <button
+        type="button"
+        class="app-button app-button--outline edit__danger"
+        (click)="remove()"
+      >
+        Oui, supprimer
+      </button>
+      <button
+        type="button"
+        class="app-button app-button--outline"
+        (click)="confirmDelete.set(false)"
+      >
+        Non
+      </button>
+    </div>
+    } @else {
+    <button
+      type="button"
+      class="edit__link edit__danger"
+      (click)="confirmDelete.set(true)"
+    >
+      Supprimer l'objet
+    </button>
+    } } @else {
+    <p class="edit__hint">
+      Cet objet a été pris : il ne peut qu'être archivé. Préviens les personnes
+      concernées (voir Participations).
+    </p>
+    }
+  </section>
+
+  <section class="edit__card">
+    <h2>Annonces seconde main</h2>
+    @if (listings().length) {
+    <ul class="edit__listings">
+      @for (l of listings(); track l.id) {
+      <li>
+        <a [href]="l.url" target="_blank" rel="noopener noreferrer"
+          >{{ l.title || l.url }}</a
+        >
+        <span
+          >{{ l.platform }} @if (l.price !== null) { · {{ l.price }} € } @if
+          (l.location) { · {{ l.location }} }
+        </span>
+        <span class="edit__badge">{{ listingStatusLabel[l.status] }}</span>
+        @if (l.status !== 'active') {
+        <button
+          type="button"
+          class="edit__link"
+          (click)="setListing(l, 'active')"
+        >
+          Rendre visible
+        </button>
+        } @else {
+        <button
+          type="button"
+          class="edit__link"
+          (click)="setListing(l, 'hidden')"
+        >
+          Masquer
+        </button>
+        <button
+          type="button"
+          class="edit__link"
+          (click)="setListing(l, 'expired')"
+        >
+          Expirée
+        </button>
+        }
+        <button
+          type="button"
+          class="edit__link edit__danger"
+          (click)="deleteListing(l)"
+        >
+          Supprimer
+        </button>
+      </li>
+      }
+    </ul>
+    } @else {
+    <p>
+      Aucune annonce. Colle le lien d'une annonce Leboncoin, Vinted… pour aider
+      les chasseurs.
+    </p>
+    }
+    <form
+      class="edit__listing-form"
+      [formGroup]="listingForm"
+      (ngSubmit)="addListing()"
+      novalidate
+    >
+      <label class="edit__field">
+        <span>Lien de l'annonce (https://…)</span>
+        <input formControlName="url" type="url" required />
+      </label>
+      <div class="edit__row">
+        <label class="edit__field"
+          ><span>Titre <em>(facultatif)</em></span
+          ><input formControlName="title"
+        /></label>
+        <label class="edit__field"
+          ><span>Prix (€)</span
+          ><input formControlName="price" type="number" min="0" step="1"
+        /></label>
+        <label class="edit__field"
+          ><span>Ville</span><input formControlName="location"
+        /></label>
+      </div>
+      <button type="submit" class="app-button app-button--outline">
+        Ajouter l'annonce
+      </button>
+    </form>
+  </section>
+  }
+</div>
