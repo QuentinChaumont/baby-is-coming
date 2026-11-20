@@ -10,7 +10,8 @@ import { SoapBubbles } from './soap-bubbles';
 import { KikiCorner } from './kiki-corner';
 import { TreasureGift } from './treasure-gift';
 
-/** « Plus que 42 dodos » — the nights left until the due date. */
+/** « Plus que 42 (vrais) dodos » — the nights left until the due date (the
+ * real nights of sleep: after that, it's over). */
 export function dodosLine(dueDate: string | null | undefined, today = new Date()): string | null {
   if (!dueDate) return null;
   const [y, m, d] = dueDate.split('-').map(Number);
@@ -19,8 +20,8 @@ export function dodosLine(dueDate: string | null | undefined, today = new Date()
   const nights = Math.round((due - now) / 86_400_000);
   if (nights < 0) return null;
   if (nights === 0) return "C'est le grand jour !";
-  if (nights === 1) return "Plus qu'un dodo !";
-  return `Plus que ${nights} dodos`;
+  if (nights === 1) return "Plus qu'un (vrai) dodo !";
+  return `Plus que ${nights} (vrais) dodos`;
 }
 
 type HomeState =
@@ -57,7 +58,7 @@ type HomeState =
         <p class="home__tagline">Une liste de naissance 100 % seconde main</p>
         <div class="home__labels">
           @if (dueDate(); as due) {
-            <span class="home__label home__label--butter">Terme prévu : {{ due }}</span>
+            <span class="home__label home__label--butter">Terme prévu : <span class="home__nowrap">{{ due }}</span></span>
           }
           @if (dodos(); as left) {
             <span class="home__label home__label--count">{{ left }}</span>
@@ -138,6 +139,13 @@ type HomeState =
        and the rest of the page keep the reading width, centred. */
     .home__hero {
       background: var(--app-color-sage);
+      /* Bubbles drifting past the edge must not widen the page (on mobile
+       * the browser zooms out and the layout jumps). Clip keeps
+       * vertical overflow visible and creates no scroll container. */
+      overflow-x: clip;
+    }
+    .home__nowrap {
+      white-space: nowrap;
     }
     .home__hero-inner {
       position: relative;

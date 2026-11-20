@@ -51,8 +51,8 @@ describe('HomePage', () => {
 
   it('counts the nights left until the due date', () => {
     const today = new Date(2027, 2, 1);
-    expect(dodosLine('2027-03-15', today)).toBe('Plus que 14 dodos');
-    expect(dodosLine('2027-03-02', today)).toBe("Plus qu'un dodo !");
+    expect(dodosLine('2027-03-15', today)).toBe('Plus que 14 (vrais) dodos');
+    expect(dodosLine('2027-03-02', today)).toBe("Plus qu'un (vrai) dodo !");
     expect(dodosLine('2027-03-01', today)).toBe("C'est le grand jour !");
     expect(dodosLine('2027-02-20', today)).toBeNull();
     expect(dodosLine(null, today)).toBeNull();
