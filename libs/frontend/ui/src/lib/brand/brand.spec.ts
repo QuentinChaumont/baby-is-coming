@@ -12,6 +12,8 @@ import { Switch } from './switch.component';
   template: `
     <lib-price-tag id="overlay" [amount]="1250" />
     <lib-price-tag id="label" [amount]="120" variant="label" suffix="d'occasion" />
+    <lib-price-tag id="range" [amount]="80" [max]="120" />
+    <lib-price-tag id="none" [amount]="null" />
     <lib-stamp [kind]="kind()" />
     <lib-link-pill href="https://example.com/annonce" label="Leboncoin" />
     <lib-giraffe-band />
@@ -39,6 +41,12 @@ describe('brand components', () => {
     );
     expect(el.querySelector('#label')?.textContent?.trim()).toBe("~120 € d'occasion");
     expect(el.querySelector('#label')?.className).toContain('price-tag--label');
+  });
+
+  it('shows a price range, and nothing at all without a price', () => {
+    const { el } = render();
+    expect(el.querySelector('#range')?.textContent?.trim()).toBe('~80–120 €');
+    expect((el.querySelector('#none') as HTMLElement).hidden).toBe(true);
   });
 
   it('labels the stamp from the way the gift was taken', () => {

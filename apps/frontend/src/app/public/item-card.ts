@@ -20,6 +20,13 @@ export function stampOf(takers: PublicTaker[]): StampKind {
     : 'chasse';
 }
 
+/** Whether an item wears a stamp, and which: « Acheté ! » once the parents
+ * bought a kitty item, else the friends' stamp once fully taken. */
+export function itemStamp(item: PublicItem): StampKind | null {
+  if (item.bought) return 'achete';
+  return item.availability === 'taken' ? stampOf(item.takers) : null;
+}
+
 /** A gift in the list grid: 4:5 photo with its handwritten price, a stamp
  * once taken, the title and who took it. */
 @Component({
@@ -32,13 +39,15 @@ export function stampOf(takers: PublicTaker[]): StampKind {
         @if (item().photos[0]; as photo) {
           <img [src]="photo.thumbUrl" alt="" loading="lazy" decoding="async" />
         }
-        <lib-price-tag class="card__price" [amount]="item().price" />
-        @if (taken()) {
-          <span class="card__veil"><lib-stamp [kind]="stamp()" /></span>
+        <lib-price-tag class="card__price" [amount]="item().price" [max]="item().priceMax" />
+        @if (stamp(); as kind) {
+          <span class="card__veil"><lib-stamp [kind]="kind" /></span>
         }
       </div>
       <span class="card__title">{{ item().title }}</span>
-      @if (taken() && takenBy(); as by) {
+      @if (item().bought) {
+        <span class="card__by">grâce à la cagnotte</span>
+      } @else if (taken() && takenBy(); as by) {
         <span class="card__by">{{ by }}</span>
       } @else if (item().quantity > 1 && !taken()) {
         <span class="card__by">Encore {{ item().remaining }} sur {{ item().quantity }}</span>
@@ -106,6 +115,6 @@ export class ItemCard {
   readonly item = input.required<PublicItem>();
 
   protected readonly taken = computed(() => this.item().availability === 'taken');
-  protected readonly stamp = computed(() => stampOf(this.item().takers));
+  protected readonly stamp = computed(() => itemStamp(this.item()));
   protected readonly takenBy = computed(() => takenByLine(this.item().takers));
 }

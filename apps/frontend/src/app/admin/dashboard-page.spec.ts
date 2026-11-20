@@ -6,8 +6,8 @@ import type { AdminContribution, AdminItem, AdminParticipation } from '@org/shar
 import { DashboardPage } from './dashboard-page';
 
 const item = (over: Partial<AdminItem>): AdminItem => ({
-  id: 'i', title: 'Poussette', description: '', price: 120, quantity: 1, remaining: 1,
-  availability: 'available', photos: [], takers: [], publication: 'published', position: 1,
+  id: 'i', title: 'Poussette', description: '', price: 120, priceMax: null, quantity: 1, remaining: 1,
+  availability: 'available', photos: [], takers: [], destination: 'amis', bought: false, publication: 'published', position: 1,
   takenQuantity: 0, createdAt: '2026-11-01T00:00:00Z', updatedAt: '2026-11-01T00:00:00Z', ...over,
 });
 const participation: AdminParticipation = {

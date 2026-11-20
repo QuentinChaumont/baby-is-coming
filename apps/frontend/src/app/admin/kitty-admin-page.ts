@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { RouterLink } from '@angular/router';
 import type { AdminContribution } from '@org/shared-contracts';
 import { AdminApi } from './admin-api.service';
+import { HallOfFameAdmin } from './hall-of-fame-admin';
 import { euros, when } from './admin-format';
 
 type Filter = 'all' | 'toReceive' | 'toThank';
@@ -21,7 +22,7 @@ const contributorName = (c: AdminContribution) =>
  */
 @Component({
   selector: 'app-kitty-admin-page',
-  imports: [RouterLink],
+  imports: [RouterLink, HallOfFameAdmin],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="kadm">
@@ -75,6 +76,8 @@ const contributorName = (c: AdminContribution) =>
           </li>
         }
       </ul>
+
+      <app-hall-of-fame-admin />
     </div>
   `,
   styles: `

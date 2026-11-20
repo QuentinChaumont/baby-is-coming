@@ -48,7 +48,7 @@ export class AdminItemsController {
 
   @Get()
   list(@Query() query: AdminItemsQueryDto): Promise<AdminItem[]> {
-    return this.items.listAdmin(query.publication);
+    return this.items.listAdmin(query.publication, query.destination);
   }
 
   @Get(':id')

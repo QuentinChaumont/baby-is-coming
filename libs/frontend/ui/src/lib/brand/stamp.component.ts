@@ -5,12 +5,14 @@ import {
   input,
 } from '@angular/core';
 
-/** How the gift was taken: hunted second-hand, or given from home. */
-export type StampKind = 'chasse' | 'don';
+/** How the gift was taken: hunted second-hand, given from home — or, for
+ * a kitty item, bought by the parents. */
+export type StampKind = 'chasse' | 'don' | 'achete';
 
 const LABEL: Record<StampKind, string> = {
   chasse: 'Chassé !',
   don: 'Adopté !',
+  achete: 'Acheté !',
 };
 
 /**

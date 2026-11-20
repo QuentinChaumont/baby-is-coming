@@ -180,4 +180,72 @@ describe('Items (e2e, real Mongo instance)', () => {
     }
     expect((await fetch(`${baseUrl}/public/items?sort=random`)).status).toBe(400);
   });
+
+  it('moves items between the friends list and the kitty, keeping their takers', async () => {
+    // Baignoire: 1 of 2 already taken by a friend.
+    const moved = await admin(`/${bath.id}`, { method: 'PATCH', body: { destination: 'cagnotte' } });
+    expect(moved.status).toBe(200);
+    expect(await moved.json()).toMatchObject({ destination: 'cagnotte', bought: false, takenQuantity: 1 });
+
+    expect((await publicList('?showTaken=true')).map((i) => i.title)).not.toContain('Baignoire pliable');
+    const kitty = await publicList('?destination=cagnotte');
+    expect(kitty.map((i) => i.title)).toEqual(['Baignoire pliable']);
+
+    const drafted = await create({ title: 'Lit parapluie', price: 60, destination: 'cagnotte' });
+    expect(drafted).toMatchObject({ destination: 'cagnotte', publication: 'draft' });
+    expect((await admin('?destination=cagnotte')).status).toBe(200);
+    const adminKitty = (await (await admin('?destination=cagnotte')).json()) as AdminItem[];
+    expect(adminKitty.map((i) => i.title)).toEqual(['Baignoire pliable', 'Lit parapluie']);
+  });
+
+  it('marks kitty items bought — and only kitty items; moving back clears it', async () => {
+    const notKitty = await admin(`/${scarf.id}`, { method: 'PATCH', body: { bought: true } });
+    expect(notKitty.status).toBe(400);
+    expect(((await notKitty.json()) as { code: string }).code).toBe('NOT_A_KITTY_ITEM');
+
+    await admin(`/${bath.id}`, { method: 'PATCH', body: { bought: true } });
+    expect((await publicList('?destination=cagnotte'))[0]).toMatchObject({ bought: true });
+
+    const back = await admin(`/${bath.id}`, { method: 'PATCH', body: { destination: 'amis' } });
+    expect(await back.json()).toMatchObject({ destination: 'amis', bought: false });
+    expect((await publicList()).map((i) => i.title)).toContain('Baignoire pliable');
+    expect((await admin(`/${bath.id}`, { method: 'PATCH', body: { destination: 'nowhere' } })).status).toBe(400);
+  });
+
+  it('takes a single price, a range, or none at all', async () => {
+    const none = await create({ title: 'Mobile musical' });
+    expect(none).toMatchObject({ price: null, priceMax: null });
+    const range = await create({ title: 'Transat', price: 20, priceMax: 45 });
+    expect(range).toMatchObject({ price: 20, priceMax: 45 });
+    const maxOnly = await create({ title: 'Veilleuse', priceMax: 15 });
+    expect(maxOnly).toMatchObject({ price: 15, priceMax: null });
+
+    const upsideDown = await admin('', { method: 'POST', body: { title: 'X', price: 50, priceMax: 10 } });
+    expect(upsideDown.status).toBe(400);
+    expect(((await upsideDown.json()) as { code: string }).code).toBe('PRICE_RANGE');
+
+    const cleared = await admin(`/${range.id}`, { method: 'PATCH', body: { price: null, priceMax: null } });
+    expect(await cleared.json()).toMatchObject({ price: null, priceMax: null });
+    const widened = await admin(`/${range.id}`, { method: 'PATCH', body: { price: 20, priceMax: 45 } });
+    expect(await widened.json()).toMatchObject({ price: 20, priceMax: 45 });
+    const lowered = await admin(`/${range.id}`, { method: 'PATCH', body: { priceMax: 30 } });
+    expect(await lowered.json()).toMatchObject({ price: 20, priceMax: 30 });
+  });
+
+  it('sorts ranges by their ends, and unpriced items last both ways', async () => {
+    const titles = ['Mobile musical', 'Transat'];
+    for (const item of (await (await admin('')).json()) as AdminItem[]) {
+      if (!titles.includes(item.title)) continue;
+      await givePhoto(item.id);
+      await admin(`/${item.id}`, { method: 'PATCH', body: { publication: 'published' } });
+    }
+    const asc = (await publicList('?sort=price_asc')).map((i) => i.title);
+    const desc = (await publicList('?sort=price_desc')).map((i) => i.title);
+    expect(asc[asc.length - 1]).toBe('Mobile musical');
+    expect(desc[desc.length - 1]).toBe('Mobile musical');
+    // Transat (20–30 €) goes up by its low end, down by its high end.
+    expect(asc.indexOf('Transat')).toBeLessThan(asc.indexOf('Écharpe de portage'));
+    expect(desc.indexOf('Transat')).toBeLessThan(desc.indexOf('Baignoire pliable'));
+    expect(asc.indexOf('Baignoire pliable')).toBeLessThan(asc.indexOf('Transat'));
+  });
 });

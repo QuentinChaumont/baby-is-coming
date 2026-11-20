@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BabyBottle, Confetti, LinkPill } from '@org/frontend-ui';
-import type { PaymentMethods, PublicKitty } from '@org/shared-contracts';
+import { ItemCard } from './item-card';
+import type { PaymentMethods, PublicItem, PublicKitty } from '@org/shared-contracts';
 import { catchError, forkJoin, map, of, startWith } from 'rxjs';
 import { PublicApi } from './public-api.service';
 
@@ -35,7 +36,7 @@ export function formatIban(iban: string): string {
  */
 @Component({
   selector: 'app-kitty-page',
-  imports: [ReactiveFormsModule, BabyBottle, LinkPill],
+  imports: [ReactiveFormsModule, BabyBottle, ItemCard, LinkPill],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main class="kitty">
@@ -70,6 +71,18 @@ export function formatIban(iban: string): string {
               <p class="kitty__thanks">{{ line }}</p>
             }
           </section>
+
+          @if (kittyItems().length) {
+            <section class="kitty__items" aria-labelledby="kitty-items-title">
+              <h2 id="kitty-items-title">Ce qu'on achètera avec la cagnotte</h2>
+              <p class="kitty__items-hint">On coche au fur et à mesure de nos achats.</p>
+              <ul class="kitty__grid">
+                @for (item of kittyItems(); track item.id) {
+                  <li><app-item-card [item]="item" /></li>
+                }
+              </ul>
+            </section>
+          }
 
           @if (thanked()) {
             <section class="kitty__pay app-rise" aria-live="polite">
@@ -191,6 +204,25 @@ export function formatIban(iban: string): string {
     }
     .kitty__total p {
       margin: 0;
+    }
+    .kitty__items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .kitty__items-hint {
+      margin: 0;
+      font-family: var(--app-font-hand);
+      font-size: 1.25rem;
+      color: var(--app-color-sage-strong);
+    }
+    .kitty__grid {
+      list-style: none;
+      margin: 8px 0 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px 16px;
     }
     /* The bottle fills up towards the goal, on the right of the amounts. */
     .kitty__bottle {
@@ -323,6 +355,11 @@ export class KittyPage {
   private readonly confetti = inject(Confetti);
 
   private readonly latest = signal<PublicKitty | null>(null);
+  /** What the parents will buy with the kitty (bought ones stamped). */
+  protected readonly kittyItems = toSignal(
+    this.api.items({ destination: 'cagnotte' }).pipe(catchError(() => of<PublicItem[]>([]))),
+    { initialValue: [] as PublicItem[] },
+  );
   protected readonly thanked = signal(false);
   protected readonly submitting = signal(false);
   protected readonly failure = signal<string | null>(null);

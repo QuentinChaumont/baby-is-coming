@@ -202,5 +202,4 @@ export const MOOD_DISCOVERY: Partial<Record<KikiMood, KikiDiscovery>> = {
   cross: 'loucher',
   tongue: 'langue',
   lick: 'bulles',
-  joy: 'danse',
 };

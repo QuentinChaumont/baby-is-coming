@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { Confetti, Kiki, LinkPill, PriceTag, Stamp } from '@org/frontend-ui';
 import type { ListingPlatform, PublicItem, PublicItemDetail, PublicListing } from '@org/shared-contracts';
 import { catchError, map, merge, of, startWith, Subject, switchMap } from 'rxjs';
-import { stampOf, takenByLine } from './item-card';
+import { itemStamp, takenByLine } from './item-card';
 import { PublicApi } from './public-api.service';
 import { TakeForm, type TakeKind } from './take-form';
 
@@ -78,9 +78,9 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
                   <path d="M15 5l-7 7 7 7" />
                 </svg>
               </a>
-              <lib-price-tag class="item__price" [amount]="it.price" variant="label" suffix="d'occasion" />
-              @if (taken()) {
-                <span class="item__veil" [class.item__veil--fresh]="justTaken()"><lib-stamp [kind]="stamp()" [slam]="justTaken()" /></span>
+              <lib-price-tag class="item__price" [amount]="it.price" [max]="it.priceMax" variant="label" [suffix]="priceSuffix()" />
+              @if (stamp(); as kind) {
+                <span class="item__veil" [class.item__veil--fresh]="justTaken()"><lib-stamp [kind]="kind" [slam]="justTaken()" /></span>
               }
             </div>
 
@@ -104,7 +104,7 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
                 </div>
               }
 
-              @if (!taken() && !confirmation()) {
+              @if (!taken() && !confirmation() && !inKitty()) {
                 <p class="item__hand">
                   Choisis un état que tu trouves correct. Et si tu ne trouves pas, envoie-nous un
                   petit message pour nous prévenir :)
@@ -132,6 +132,17 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
                   (conflict)="onConflict()"
                   (cancelled)="kind.set(null)"
                 />
+              } @else if (inKitty()) {
+                <p class="item__taken">
+                  @if (it.bought) {
+                    Celui-là, on l'a acheté grâce à la cagnotte. Merci à vous !
+                  } @else {
+                    Celui-là, on l'achètera nous-mêmes avec la cagnotte « J'ai la flemme ».
+                  }
+                </p>
+                <a class="app-button app-button--butter app-button--block" routerLink="/cagnotte">
+                  Participer à la cagnotte
+                </a>
               } @else if (taken()) {
                 <p class="item__taken">
                   Cet objet a déjà trouvé preneur{{ takenBy() ? ' (' + takenBy() + ')' : '' }}.
@@ -350,7 +361,14 @@ export class ItemPage {
   protected readonly taken = computed(() => this.item()?.availability === 'taken');
   /** The guest just took it on this page: the stamp comes down. */
   protected readonly justTaken = computed(() => !!this.afterTake() && this.taken());
-  protected readonly stamp = computed(() => stampOf(this.item()?.takers ?? []));
+  protected readonly inKitty = computed(() => this.item()?.destination === 'cagnotte');
+  /** Kitty items may well be bought new: no « d'occasion » there. */
+  protected readonly priceSuffix = computed(() => (this.inKitty() ? '' : "d'occasion"));
+  /** « Acheté ! » for a bought kitty item, else the friends' stamp once taken. */
+  protected readonly stamp = computed(() => {
+    const it = this.item();
+    return it ? itemStamp(it) : null;
+  });
   protected readonly takenBy = computed(() => takenByLine(this.item()?.takers ?? []));
   protected readonly listingLabel = listingLabel;
 

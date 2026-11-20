@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import type { PublicItem } from '@org/shared-contracts';
+import { itemStamp } from './item-card';
 import { listingLabel } from './item-page';
 import { TakeForm } from './take-form';
 
@@ -10,12 +11,29 @@ const ITEM: PublicItem = {
   title: 'Poussette',
   description: '',
   price: 120,
+  priceMax: null,
   quantity: 3,
   remaining: 2,
   availability: 'available',
   photos: [],
   takers: [],
+  destination: 'amis',
+  bought: false,
 };
+
+describe('itemStamp', () => {
+  it('stamps « Acheté ! » a bought kitty item, even one a friend took', () => {
+    expect(itemStamp({ ...ITEM, destination: 'cagnotte', bought: true })).toBe('achete');
+    expect(
+      itemStamp({ ...ITEM, availability: 'taken', bought: true, takers: [{ kind: 'chasse', name: 'Paul M.' }] }),
+    ).toBe('achete');
+  });
+
+  it('keeps the friends\' stamp otherwise, and none while available', () => {
+    expect(itemStamp({ ...ITEM, availability: 'taken', takers: [{ kind: 'don', name: null }] })).toBe('don');
+    expect(itemStamp({ ...ITEM, destination: 'cagnotte' })).toBeNull();
+  });
+});
 
 describe('listingLabel', () => {
   it('reads « Plateforme · prix · ville »', () => {

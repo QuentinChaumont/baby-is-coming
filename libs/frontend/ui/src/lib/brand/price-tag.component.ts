@@ -23,9 +23,12 @@ const EUR = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 });
 @Component({
   selector: 'lib-price-tag',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[class]': '"price-tag price-tag--" + variant()' },
+  host: { '[class]': '"price-tag price-tag--" + variant()', '[hidden]': 'amount() === null' },
   template: `~{{ formatted() }} €{{ suffix() ? ' ' + suffix() : '' }}`,
   styles: `
+    :host([hidden]) {
+      display: none;
+    }
     :host {
       display: inline-block;
       font-family: var(--app-font-hand);
@@ -52,9 +55,17 @@ const EUR = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 });
   `,
 })
 export class PriceTag {
-  readonly amount = input.required<number>();
+  /** The price, or the low end of a range; `null` hides the tag. */
+  readonly amount = input.required<number | null>();
+  /** High end of a range: « ~80–120 € ». */
+  readonly max = input<number | null>(null);
   readonly variant = input<PriceTagVariant>('overlay');
   readonly suffix = input<string>('');
 
-  protected readonly formatted = computed(() => EUR.format(this.amount()));
+  protected readonly formatted = computed(() => {
+    const amount = this.amount();
+    if (amount === null) return '';
+    const max = this.max();
+    return max !== null && max > amount ? `${EUR.format(amount)}–${EUR.format(max)}` : EUR.format(amount);
+  });
 }

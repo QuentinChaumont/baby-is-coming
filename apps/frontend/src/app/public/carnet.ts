@@ -103,22 +103,6 @@ export const CARNET: readonly CarnetEntry[] = [
     hint: 'Le ciel de l’accueil cache quelque chose…',
   },
   {
-    id: 'danse',
-    kind: 'secret',
-    icon: '🎉',
-    title: 'La danse de la joie',
-    text: 'Prends un cadeau de la liste : elle danse de joie.',
-    hint: 'Fais-lui un cadeau !',
-  },
-  {
-    id: 'cache-cache',
-    kind: 'secret',
-    icon: '🌳',
-    title: 'Cache-cache',
-    text: 'Sur une page qui n’existe pas, elle se cache derrière un arbre… bien trop fin.',
-    hint: 'Perds-toi sur le site…',
-  },
-  {
     id: 'doudou',
     kind: 'treasure',
     icon: '🐰',

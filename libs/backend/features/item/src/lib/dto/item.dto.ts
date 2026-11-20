@@ -15,8 +15,10 @@ import {
   MinLength,
 } from 'class-validator';
 import {
+  ITEM_DESTINATIONS,
   ITEM_PUBLICATIONS,
   type CreateItemRequest,
+  type ItemDestination,
   type ItemPublication,
   type ItemSort,
   type PublicItemsQuery,
@@ -41,12 +43,20 @@ export class PublicItemsQueryDto implements PublicItemsQuery {
   @IsOptional()
   @IsIn(['price_asc', 'price_desc'])
   sort?: ItemSort;
+
+  @IsOptional()
+  @IsIn(ITEM_DESTINATIONS)
+  destination?: ItemDestination;
 }
 
 export class AdminItemsQueryDto {
   @IsOptional()
   @IsIn(ITEM_PUBLICATIONS)
   publication?: ItemPublication;
+
+  @IsOptional()
+  @IsIn(ITEM_DESTINATIONS)
+  destination?: ItemDestination;
 }
 
 export class CreateItemDto implements CreateItemRequest {
@@ -60,16 +70,27 @@ export class CreateItemDto implements CreateItemRequest {
   @MaxLength(2000)
   description?: string;
 
+  @IsOptional()
   @IsInt()
   @Min(0)
   @Max(MAX_PRICE)
-  price!: number;
+  price?: number | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(MAX_PRICE)
+  priceMax?: number | null;
 
   @IsOptional()
   @IsInt()
   @Min(1)
   @Max(MAX_QUANTITY)
   quantity?: number;
+
+  @IsOptional()
+  @IsIn(ITEM_DESTINATIONS)
+  destination?: ItemDestination;
 }
 
 export class UpdateItemDto implements UpdateItemRequest {
@@ -88,7 +109,13 @@ export class UpdateItemDto implements UpdateItemRequest {
   @IsInt()
   @Min(0)
   @Max(MAX_PRICE)
-  price?: number;
+  price?: number | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(MAX_PRICE)
+  priceMax?: number | null;
 
   @IsOptional()
   @IsInt()
@@ -99,6 +126,14 @@ export class UpdateItemDto implements UpdateItemRequest {
   @IsOptional()
   @IsIn(ITEM_PUBLICATIONS)
   publication?: ItemPublication;
+
+  @IsOptional()
+  @IsIn(ITEM_DESTINATIONS)
+  destination?: ItemDestination;
+
+  @IsOptional()
+  @IsBoolean()
+  bought?: boolean;
 }
 
 export class ReorderItemsDto implements ReorderItemsRequest {

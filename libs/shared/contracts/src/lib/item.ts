@@ -10,6 +10,13 @@ export const ITEM_PUBLICATIONS: readonly ItemPublication[] = [
   'archived',
 ];
 
+/** Where an item lives: the friends' list (guests take it), or the kitty
+ * (the parents buy it with the « J'ai la flemme » money). The parents can
+ * move an item between the two at any time. */
+export type ItemDestination = 'amis' | 'cagnotte';
+
+export const ITEM_DESTINATIONS: readonly ItemDestination[] = ['amis', 'cagnotte'];
+
 /** Guest-facing availability (PRODUCT D11): an item is `taken` once every
  * unit has been taken. */
 export type ItemAvailability = 'available' | 'taken';
@@ -28,16 +35,22 @@ export interface PublicItem {
   id: string;
   title: string;
   description: string;
-  /** Indicative second-hand price, whole euros. */
-  price: number;
+  /** Indicative price, whole euros: the exact price, or the low end of a
+   * range — `null` when the parents gave none. */
+  price: number | null;
+  /** High end of a price range (`null` for a single price or none). */
+  priceMax: number | null;
   quantity: number;
   /** Units still available (`quantity` − taken units). */
   remaining: number;
   availability: ItemAvailability;
   photos: ItemPhoto[];
   /** Who took it (one entry per participation), for the stamps and the
-   * « par … » line (PRODUCT D5). */
+   * « par … » line (PRODUCT D5). Kept when the item moves to the kitty. */
   takers: PublicTaker[];
+  destination: ItemDestination;
+  /** Kitty items only: the parents bought it (« Acheté ! »). */
+  bought: boolean;
 }
 
 /** An item as the parents see it in the back-office. */
@@ -59,21 +72,34 @@ export interface PublicItemsQuery {
   showTaken?: boolean;
   /** Default: the parents' order. */
   sort?: ItemSort;
+  /** Default `amis`: the friends' list. `cagnotte` lists every kitty item,
+   * bought ones included. */
+  destination?: ItemDestination;
 }
 
 export interface CreateItemRequest {
   title: string;
   description?: string;
-  price: number;
+  /** Exact price or low end of a range; omit / `null` for none. */
+  price?: number | null;
+  /** High end of a range; alone, it's read as a single price. */
+  priceMax?: number | null;
   quantity?: number;
+  /** Default `amis`. */
+  destination?: ItemDestination;
 }
 
 export interface UpdateItemRequest {
   title?: string;
   description?: string;
-  price?: number;
+  price?: number | null;
+  priceMax?: number | null;
   quantity?: number;
   publication?: ItemPublication;
+  /** Moving to `amis` clears `bought`. */
+  destination?: ItemDestination;
+  /** Kitty items only. */
+  bought?: boolean;
 }
 
 /** `POST /api/admin/items/reorder` — every item id, in the new order. */

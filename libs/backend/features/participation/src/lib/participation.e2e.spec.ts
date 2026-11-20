@@ -137,6 +137,14 @@ describe('Participations (e2e, real Mongo instance)', () => {
     expect((await take(item.id, { ...guest, kind: 'parents' })).status).toBe(400);
   });
 
+  it('never lets guests take a kitty item (the parents buy those)', async () => {
+    const item = await publishedItem('Lit parapluie');
+    await admin(`/items/${item.id}`, 'PATCH', { destination: 'cagnotte' });
+    const res = await take(item.id, guest);
+    expect(res.status).toBe(409);
+    expect(((await res.json()) as { code: string }).code).toBe('ITEM_IN_KITTY');
+  });
+
   it('silently drops honeypot submissions', async () => {
     const item = await publishedItem('Mobile');
     const res = await take(item.id, { ...guest, website: 'https://spam.example' });

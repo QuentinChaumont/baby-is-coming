@@ -14,6 +14,7 @@ import { AuthModule } from '@org/backend-auth';
 import { UserModule, UserService } from '@org/backend-features-user';
 import { listenOnRandomPort, startTestMongo, TestMongo } from '@org/backend-testing';
 import type { AdminContribution, PublicKitty } from '@org/shared-contracts';
+import { ItemRepository } from '@org/backend-features-item';
 import { ContributionModule } from './contribution.module';
 
 @Module({
@@ -110,5 +111,47 @@ describe('Kitty (e2e, real Mongo instance)', () => {
 
   it('keeps the follow-up behind the admin role', async () => {
     expect((await fetch(`${baseUrl}/admin/contributions`)).status).toBe(401);
+  });
+
+  it('without a goal set, aims for what the kitty items add up to', async () => {
+    await app.get(ItemRepository).create({
+      listId: 'main',
+      title: 'Lit parapluie',
+      price: 40,
+      quantity: 2,
+      position: 1,
+      publication: 'published',
+      destination: 'cagnotte',
+    });
+    expect((await kitty()).goal).toBe(80);
+  });
+
+  it('keeps a hall of fame of « Prénom N. », first finders first, never the full name', async () => {
+    const join = (body: unknown) =>
+      fetch(`${baseUrl}/public/hall-of-fame`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+    expect(await (await fetch(`${baseUrl}/public/hall-of-fame`)).json()).toEqual([]);
+    expect((await join({ firstName: 'Paul', lastName: 'martin' })).status).toBe(201);
+    await join({ firstName: 'Anne', lastName: 'Durand' });
+    await join({ firstName: 'Paul', lastName: 'Martin' }); // same name: no second line
+    await join({ firstName: 'Robot', lastName: 'Spam', website: 'http://spam' }); // honeypot
+    const list = (await (await fetch(`${baseUrl}/public/hall-of-fame`)).json()) as { name: string }[];
+    expect(list.map((e) => e.name)).toEqual(['Paul M.', 'Anne D.']);
+    expect(JSON.stringify(list)).not.toContain('Martin');
+    expect((await join({ firstName: '', lastName: 'X' })).status).toBe(400);
+  });
+
+  it('lets the parents remove a name from the hall of fame, and only them', async () => {
+    const before = (await (await fetch(`${baseUrl}/public/hall-of-fame`)).json()) as { id: string; name: string }[];
+    const anne = before.find((e) => e.name === 'Anne D.') as { id: string };
+    expect((await fetch(`${baseUrl}/admin/hall-of-fame/${anne.id}`, { method: 'DELETE' })).status).toBe(401);
+    expect((await admin(`/hall-of-fame/${anne.id}`, 'DELETE')).status).toBe(204);
+    expect((await admin(`/hall-of-fame/${anne.id}`, 'DELETE')).status).toBe(404);
+    expect((await admin('/hall-of-fame/nope', 'DELETE')).status).toBe(404);
+    const after = (await (await admin('/hall-of-fame')).json()) as { name: string }[];
+    expect(after.map((e) => e.name)).toEqual(['Paul M.']);
   });
 });

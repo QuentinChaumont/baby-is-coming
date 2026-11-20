@@ -5,10 +5,15 @@ import { provideRouter } from '@angular/router';
 import type { AdminItem } from '@org/shared-contracts';
 import { ItemsPage } from './items-page';
 
-const item = (id: string, publication: AdminItem['publication'] = 'published'): AdminItem => ({
-  id, title: `Objet ${id}`, description: '', price: 10, quantity: 1, remaining: 1,
+const item = (
+  id: string,
+  publication: AdminItem['publication'] = 'published',
+  destination: AdminItem['destination'] = 'amis',
+  bought = false,
+): AdminItem => ({
+  id, title: `Objet ${id}`, description: '', price: 10, priceMax: null, quantity: 1, remaining: 1,
   availability: 'available', photos: [], takers: [], publication, position: 1, takenQuantity: 0,
-  createdAt: '', updatedAt: '',
+  destination, bought, createdAt: '', updatedAt: '',
 });
 
 describe('ItemsPage', () => {
@@ -19,7 +24,7 @@ describe('ItemsPage', () => {
     });
     const fixture = TestBed.createComponent(ItemsPage);
     const http = TestBed.inject(HttpTestingController);
-    http.expectOne('/api/admin/items').flush([item('a'), item('b'), item('c', 'draft')]);
+    http.expectOne('/api/admin/items').flush([item('a'), item('b', 'published', 'cagnotte', true), item('c', 'draft')]);
     fixture.detectChanges();
     return { fixture, http, el: fixture.nativeElement as HTMLElement };
   }
@@ -38,6 +43,18 @@ describe('ItemsPage', () => {
     fixture.detectChanges();
     expect(el.querySelectorAll('.items__row')).toHaveLength(1);
     expect(el.querySelector('.items__move')).toBeNull();
-    expect(el.textContent).toContain("Affiche « Tous » pour changer l'ordre.");
+    expect(el.textContent).toContain('pour changer l\'ordre.');
+  });
+
+  it('filters the kitty items and badges them, bought ones included', () => {
+    const { fixture, el } = render();
+    const kitty = Array.from(el.querySelectorAll('.items__filters button')).find((b) => b.textContent?.trim() === 'Cagnotte') as HTMLButtonElement;
+    kitty.click();
+    fixture.detectChanges();
+    const rows = el.querySelectorAll('.items__row');
+    expect(rows).toHaveLength(1);
+    expect(rows[0].textContent).toContain('Objet b');
+    expect(rows[0].querySelector('.items__badge--kitty')?.textContent).toContain('acheté');
+    expect(el.querySelector('.items__move')).toBeNull();
   });
 });

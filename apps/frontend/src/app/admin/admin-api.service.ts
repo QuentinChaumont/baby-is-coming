@@ -11,6 +11,7 @@ import type {
   AssignItemRequest,
   CreateItemRequest,
   CreateListingRequest,
+  HallOfFameEntry,
   ItemPublication,
   UpdateBirthListRequest,
   UpdateContributionRequest,
@@ -103,5 +104,13 @@ export class AdminApi {
   }
   cancelContribution(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/contributions/${id}`, INLINE_ERRORS);
+  }
+
+  // ── hall of fame (Kiki's notebook) ──
+  hallOfFame(): Observable<HallOfFameEntry[]> {
+    return this.http.get<HallOfFameEntry[]>(`${this.base}/hall-of-fame`, INLINE_ERRORS);
+  }
+  removeFromHallOfFame(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/hall-of-fame/${id}`, INLINE_ERRORS);
   }
 }

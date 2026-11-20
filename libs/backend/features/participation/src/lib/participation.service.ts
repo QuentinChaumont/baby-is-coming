@@ -154,6 +154,9 @@ export class ParticipationService {
     if (!item || item.listId !== MAIN_LIST || (publishedOnly && item.publication !== 'published')) {
       return new NotFoundError('ITEM_NOT_FOUND', 'Item not found');
     }
+    if (publishedOnly && item.destination === 'cagnotte') {
+      return new ConflictError('ITEM_IN_KITTY', 'The parents buy this one with the kitty');
+    }
     return new ConflictError(
       'ITEM_ALREADY_TAKEN',
       item.takenQuantity >= item.quantity

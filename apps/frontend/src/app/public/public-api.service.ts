@@ -4,6 +4,8 @@ import { API_BASE_URL } from '@org/frontend-core';
 import { SKIP_ERROR_TOAST } from '@org/frontend-feedback';
 import {
   isApiError,
+  type HallOfFameEntry,
+  type JoinHallOfFameRequest,
   type PledgeRequest,
   type PublicBirthList,
   type PublicItem,
@@ -34,6 +36,7 @@ export class PublicApi {
     if (query.q?.trim()) params = params.set('q', query.q.trim());
     if (query.showTaken) params = params.set('showTaken', 'true');
     if (query.sort) params = params.set('sort', query.sort);
+    if (query.destination) params = params.set('destination', query.destination);
     return this.http.get<PublicItem[]>(`${this.base}/items`, { ...INLINE_ERRORS, params });
   }
 
@@ -55,6 +58,15 @@ export class PublicApi {
 
   pledge(request: PledgeRequest): Observable<PublicKitty> {
     return this.http.post<PublicKitty>(`${this.base}/contributions`, request, INLINE_ERRORS);
+  }
+
+  /** Who found every secret of Kiki's notebook, first finders first. */
+  hallOfFame(): Observable<HallOfFameEntry[]> {
+    return this.http.get<HallOfFameEntry[]>(`${this.base}/hall-of-fame`, INLINE_ERRORS);
+  }
+
+  joinHallOfFame(request: JoinHallOfFameRequest): Observable<HallOfFameEntry[]> {
+    return this.http.post<HallOfFameEntry[]>(`${this.base}/hall-of-fame`, request, INLINE_ERRORS);
   }
 }
 

@@ -13,9 +13,7 @@ export type KikiDiscovery =
   | 'bain'
   | 'loucher'
   | 'langue'
-  | 'bulles'
-  | 'danse'
-  | 'cache-cache';
+  | 'bulles';
 
 const STORAGE_KEY = 'kiki-carnet';
 

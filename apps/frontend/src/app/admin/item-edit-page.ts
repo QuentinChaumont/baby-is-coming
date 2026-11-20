@@ -1,25 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import type { AdminItem, AdminListing, ItemPublication, ListingStatus } from '@org/shared-contracts';
+import type { AdminItem, AdminListing, ItemDestination, ItemPublication, ListingStatus, UpdateItemRequest } from '@org/shared-contracts';
 import { AdminApi } from './admin-api.service';
 import { PUBLICATION_LABEL } from './items-page';
 import { PhotoUploader } from './photo-uploader';
 import { apiErrorCode } from '../public/public-api.service';
+import { LISTING_STATUS_LABEL, errorText, optionalNumber } from './item-edit.helpers';
 
-const LISTING_STATUS_LABEL: Record<ListingStatus, string> = {
-  active: 'Visible',
-  hidden: 'Masquée',
-  expired: 'Expirée',
-};
-
-const ERRORS: Record<string, string> = {
-  PHOTO_REQUIRED: 'Ajoute au moins une photo avant de publier.',
-  QUANTITY_BELOW_TAKEN: 'Impossible : des unités sont déjà prises.',
-  ITEM_HAS_PARTICIPATIONS: "Cet objet a déjà été pris : archive-le plutôt que de le supprimer.",
-  LISTING_DUPLICATE: 'Cette annonce est déjà ajoutée.',
-};
-const errorText = (err: unknown, fallback: string) => ERRORS[apiErrorCode(err) ?? ''] ?? fallback;
 
 /**
  * Create / edit an item (DEV step 4.2): details, photos (cropped in the
@@ -50,9 +38,16 @@ const errorText = (err: unknown, fallback: string) => ERRORS[apiErrorCode(err) ?
         </label>
         <div class="edit__row">
           <label class="edit__field">
-            <span>Prix seconde main indicatif (€)</span>
-            <input formControlName="price" type="number" min="0" step="1" required />
+            <span>Prix indicatif (€)</span>
+            <input formControlName="price" type="number" min="0" step="1" placeholder="Ex. 80" />
           </label>
+          <label class="edit__field">
+            <span>Jusqu'à (€) <em>(fourchette)</em></span>
+            <input formControlName="priceMax" type="number" min="0" step="1" placeholder="Ex. 120" />
+          </label>
+        </div>
+        <p class="edit__hint">Un prix, une fourchette, ou rien du tout si vous ne savez pas.</p>
+        <div class="edit__row">
           <label class="edit__field">
             <span>Quantité</span>
             <input formControlName="quantity" type="number" min="1" max="99" step="1" required />
@@ -75,6 +70,30 @@ const errorText = (err: unknown, fallback: string) => ERRORS[apiErrorCode(err) ?
             }
           </ul>
           <app-photo-uploader [itemId]="it.id" (uploaded)="item.set($event)" />
+        </section>
+
+        <section class="edit__card">
+          <h2>Liste</h2>
+          <p class="edit__hint">
+            Liste des amis : les invités peuvent le prendre. Cagnotte : vous l'achèterez avec la cagnotte.
+          </p>
+          <div class="edit__buttons" role="group" aria-label="Liste de l'objet">
+            <button type="button" class="app-button" [class.app-button--ink]="it.destination === 'amis'"
+              [class.app-button--outline]="it.destination !== 'amis'" [attr.aria-pressed]="it.destination === 'amis'"
+              (click)="setDestination('amis')">Liste des amis</button>
+            <button type="button" class="app-button" [class.app-button--ink]="it.destination === 'cagnotte'"
+              [class.app-button--outline]="it.destination !== 'cagnotte'" [attr.aria-pressed]="it.destination === 'cagnotte'"
+              (click)="setDestination('cagnotte')">Cagnotte</button>
+          </div>
+          @if (it.destination === 'cagnotte') {
+            @if (it.takenQuantity) {
+              <p class="edit__hint">Déjà pris par un invité : sa participation est conservée.</p>
+            }
+            <label class="edit__check">
+              <input type="checkbox" [checked]="it.bought" (change)="setBought($any($event.target).checked)" />
+              <span>Acheté (les invités voient le tampon « Acheté ! »)</span>
+            </label>
+          }
         </section>
 
         <section class="edit__card">
@@ -247,6 +266,18 @@ const errorText = (err: unknown, fallback: string) => ERRORS[apiErrorCode(err) ?
     .edit__danger {
       color: var(--app-color-error);
     }
+    .edit__check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      font-weight: 700;
+    }
+    .edit__check input {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--app-color-ink);
+    }
     .edit__hint {
       font-size: 0.875rem;
       color: var(--app-color-on-surface-variant);
@@ -308,7 +339,8 @@ export class ItemEditPage {
   protected readonly form = this.fb.group({
     title: ['', [Validators.required, Validators.maxLength(120)]],
     description: [''],
-    price: [0, [Validators.required, Validators.min(0)]],
+    price: [null as number | null, Validators.min(0)],
+    priceMax: [null as number | null, Validators.min(0)],
     quantity: [1, [Validators.required, Validators.min(1)]],
   });
   protected readonly listingForm = this.fb.group({
@@ -336,20 +368,22 @@ export class ItemEditPage {
       title: item.title,
       description: item.description,
       price: item.price,
+      priceMax: item.priceMax,
       quantity: item.quantity,
     });
   }
 
   protected save(): void {
     if (this.form.invalid || !this.form.getRawValue().title.trim()) {
-      this.message.set({ text: 'Un titre et un prix, au minimum.', error: true });
+      this.message.set({ text: 'Un titre, au minimum (et des prix positifs).', error: true });
       return;
     }
     const value = this.form.getRawValue();
     const body = {
       title: value.title,
       description: value.description,
-      price: Number(value.price),
+      price: optionalNumber(value.price),
+      priceMax: optionalNumber(value.priceMax),
       quantity: Number(value.quantity),
     };
     this.busy.set(true);
@@ -369,6 +403,29 @@ export class ItemEditPage {
         this.busy.set(false);
         this.message.set({ text: errorText(err, "L'enregistrement a échoué."), error: true });
       },
+    });
+  }
+
+  protected setDestination(destination: ItemDestination): void {
+    const current = this.item();
+    if (!current || current.destination === destination) return;
+    this.update({ destination }, destination === 'cagnotte' ? 'Objet passé dans la cagnotte.' : 'Objet passé dans la liste des amis.');
+  }
+
+  protected setBought(bought: boolean): void {
+    const current = this.item();
+    if (current) this.update({ bought }, bought ? 'Marqué acheté.' : 'Plus marqué acheté.');
+  }
+
+  private update(patch: UpdateItemRequest, done: string): void {
+    const current = this.item();
+    if (!current) return;
+    this.api.updateItem(current.id, patch).subscribe({
+      next: (item) => {
+        this.item.set(item);
+        this.message.set({ text: done, error: false });
+      },
+      error: (err: unknown) => this.message.set({ text: errorText(err, 'Le changement a échoué.'), error: true }),
     });
   }
 

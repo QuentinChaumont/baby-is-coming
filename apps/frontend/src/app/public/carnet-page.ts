@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } f
 import { RouterLink } from '@angular/router';
 import { Confetti, Doudou, Hochet } from '@org/frontend-ui';
 import { CARNET, CarnetProgress } from './carnet';
+import { CarnetFame } from './carnet-fame';
 
 /**
  * Kiki's notebook: every secret and treasure on the site, described once
@@ -9,7 +10,7 @@ import { CARNET, CarnetProgress } from './carnet';
  */
 @Component({
   selector: 'app-carnet-page',
-  imports: [RouterLink, Doudou, Hochet],
+  imports: [RouterLink, CarnetFame, Doudou, Hochet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main class="carnet">
@@ -50,13 +51,15 @@ import { CARNET, CarnetProgress } from './carnet';
             <li class="carnet__entry carnet__entry--locked">
               <span class="carnet__icon" aria-hidden="true">?</span>
               <div>
-                <h2><span aria-hidden="true">???</span><span class="carnet__sr">Secret pas encore découvert</span></h2>
+                <h2 aria-label="Secret pas encore découvert">???</h2>
                 <p>{{ entry.hint }}</p>
               </div>
             </li>
           }
         }
       </ul>
+
+      <app-carnet-fame [complete]="progress.complete()" />
 
       <div class="carnet__reset">
         @if (confirming()) {
@@ -197,14 +200,6 @@ import { CARNET, CarnetProgress } from './carnet';
       flex: none;
       width: 34px;
       margin: 0 3px;
-    }
-    .carnet__sr {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
     }
     .carnet__reset {
       display: flex;

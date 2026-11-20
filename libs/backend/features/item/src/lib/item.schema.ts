@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type { ItemPublication, ParticipationKind } from '@org/shared-contracts';
+import type { ItemDestination, ItemPublication, ParticipationKind } from '@org/shared-contracts';
 import { HydratedDocument } from 'mongoose';
 
 /** Guest-safe copy of a participation, kept on the item so guest pages
@@ -31,9 +31,14 @@ export class Item {
   @Prop({ type: String, default: '' })
   description!: string;
 
-  /** Indicative second-hand price, whole euros. */
-  @Prop({ type: Number, required: true })
-  price!: number;
+  /** Indicative price, whole euros: exact, or the low end of a range;
+   * `null` when unknown. */
+  @Prop({ type: Number, default: null })
+  price!: number | null;
+
+  /** High end of a price range, or `null`. */
+  @Prop({ type: Number, default: null })
+  priceMax!: number | null;
 
   @Prop({ type: Number, default: 1 })
   quantity!: number;
@@ -56,6 +61,14 @@ export class Item {
 
   @Prop({ type: String, default: 'draft' })
   publication!: ItemPublication;
+
+  /** Friends' list or kitty (items created before this field are `amis`). */
+  @Prop({ type: String, default: 'amis' })
+  destination!: ItemDestination;
+
+  /** Kitty items: the parents bought it. */
+  @Prop({ type: Boolean, default: false })
+  bought!: boolean;
 
   /** Lower-cased, accent-stripped title + description for search. */
   @Prop({ type: String, default: '' })

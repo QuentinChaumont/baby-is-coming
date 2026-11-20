@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { NotFoundError, ValidationError } from '@org/backend-core';
 import { BirthListService } from '@org/backend-features-birth-list';
+import { ItemService } from '@org/backend-features-item';
 import type {
   AdminContribution,
   PledgeRequest,
@@ -41,6 +42,7 @@ export class ContributionService {
   constructor(
     @InjectModel(Contribution.name) private readonly model: Model<Contribution>,
     private readonly birthList: BirthListService,
+    private readonly items: ItemService,
   ) {}
 
   async pledge(request: PledgeRequest): Promise<PublicKitty> {
@@ -64,9 +66,11 @@ export class ContributionService {
   async kitty(): Promise<PublicKitty> {
     const docs = await this.model.find({ listId: MAIN_LIST }).sort({ createdAt: 1 }).exec();
     const { kittyGoal } = await this.birthList.getPublic();
+    // The parents' goal, or else what the kitty's items add up to.
+    const goal = kittyGoal ?? ((await this.items.kittyItemsTotal()) || null);
     return {
       totalPromised: docs.reduce((sum, d) => sum + d.amount, 0),
-      goal: kittyGoal,
+      goal,
       contributorCount: docs.length,
       contributors: docs
         .filter((d) => !d.hideName && !d.anonymized && d.firstName && d.lastName)

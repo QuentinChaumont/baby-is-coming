@@ -1,15 +1,21 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import type { AdminItem, ItemPublication } from '@org/shared-contracts';
+import type { AdminItem, ItemDestination, ItemPublication } from '@org/shared-contracts';
 import { AdminApi } from './admin-api.service';
-import { euros } from './admin-format';
+import { priceRange } from './admin-format';
 
 const FILTERS: { value: ItemPublication | null; label: string }[] = [
   { value: null, label: 'Tous' },
   { value: 'published', label: 'Publiés' },
   { value: 'draft', label: 'Brouillons' },
   { value: 'archived', label: 'Archivés' },
+];
+
+const DESTINATIONS: { value: ItemDestination | null; label: string }[] = [
+  { value: null, label: 'Toutes les listes' },
+  { value: 'amis', label: 'Liste des amis' },
+  { value: 'cagnotte', label: 'Cagnotte' },
 ];
 
 export const PUBLICATION_LABEL: Record<ItemPublication, string> = {
@@ -20,8 +26,8 @@ export const PUBLICATION_LABEL: Record<ItemPublication, string> = {
 
 /**
  * Items in the back-office (DEV step 4.2): every item in the parents'
- * order, filters by publication, drag & drop (or ↑ ↓ buttons, for the
- * keyboard) to reorder.
+ * order, filters by publication and by list (friends / kitty), drag & drop
+ * (or ↑ ↓ buttons, for the keyboard) to reorder.
  */
 @Component({
   selector: 'app-items-page',
@@ -42,6 +48,14 @@ export const PUBLICATION_LABEL: Record<ItemPublication, string> = {
         }
       </div>
 
+      <div class="items__filters" role="group" aria-label="Filtrer par liste">
+        @for (d of destinations; track d.label) {
+          <button type="button" [attr.aria-pressed]="destination() === d.value" (click)="destination.set(d.value)">
+            {{ d.label }}
+          </button>
+        }
+      </div>
+
       @if (error(); as message) {
         <p class="items__error" role="alert">{{ message }}</p>
       }
@@ -51,13 +65,13 @@ export const PUBLICATION_LABEL: Record<ItemPublication, string> = {
       } @else if (!visible().length) {
         <p>Aucun objet ici pour l'instant.</p>
       } @else {
-        @if (filter() !== null) {
-          <p class="items__hint">Affiche « Tous » pour changer l'ordre.</p>
+        @if (filtered()) {
+          <p class="items__hint">Affiche « Tous » et « Toutes les listes » pour changer l'ordre.</p>
         }
-        <ol class="items__list" cdkDropList [cdkDropListDisabled]="filter() !== null" (cdkDropListDropped)="drop($event)">
+        <ol class="items__list" cdkDropList [cdkDropListDisabled]="filtered()" (cdkDropListDropped)="drop($event)">
           @for (item of visible(); track item.id; let i = $index; let last = $last) {
             <li class="items__row" cdkDrag>
-              @if (filter() === null) {
+              @if (!filtered()) {
                 <span class="items__grip" cdkDragHandle aria-hidden="true">⋮⋮</span>
               }
               <span class="items__thumb">
@@ -66,12 +80,15 @@ export const PUBLICATION_LABEL: Record<ItemPublication, string> = {
                 }
               </span>
               <a class="items__title" [routerLink]="[item.id]">{{ item.title }}</a>
-              <span class="items__price">{{ euros(item.price) }}</span>
+              <span class="items__price">{{ priceRange(item.price, item.priceMax) }}</span>
               <span class="items__badge" [attr.data-status]="item.publication">{{ publicationLabel[item.publication] }}</span>
+              @if (item.destination === 'cagnotte') {
+                <span class="items__badge items__badge--kitty">{{ item.bought ? 'Cagnotte · acheté ✓' : 'Cagnotte' }}</span>
+              }
               <span class="items__avail">
                 {{ item.availability === 'taken' ? 'Pris' : item.quantity > 1 ? item.remaining + '/' + item.quantity + ' dispo' : 'Disponible' }}
               </span>
-              @if (filter() === null) {
+              @if (!filtered()) {
                 <span class="items__move">
                   <button type="button" [disabled]="i === 0" (click)="move(i, -1)" [attr.aria-label]="'Monter ' + item.title">↑</button>
                   <button type="button" [disabled]="last" (click)="move(i, 1)" [attr.aria-label]="'Descendre ' + item.title">↓</button>
@@ -177,6 +194,9 @@ export const PUBLICATION_LABEL: Record<ItemPublication, string> = {
       font-size: 0.8125rem;
       font-weight: 800;
     }
+    .items__badge--kitty {
+      background: var(--app-color-secondary);
+    }
     .items__badge[data-status='published'] {
       background: var(--app-color-sage);
     }
@@ -219,16 +239,21 @@ export class ItemsPage {
   private readonly api = inject(AdminApi);
   protected readonly filters = FILTERS;
   protected readonly publicationLabel = PUBLICATION_LABEL;
-  protected readonly euros = euros;
+  protected readonly priceRange = priceRange;
 
   protected readonly items = signal<AdminItem[]>([]);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
+  protected readonly destinations = DESTINATIONS;
   protected readonly filter = signal<ItemPublication | null>(null);
+  protected readonly destination = signal<ItemDestination | null>(null);
+  /** Reordering needs the whole list in view. */
+  protected readonly filtered = computed(() => this.filter() !== null || this.destination() !== null);
 
   protected readonly visible = computed(() => {
     const f = this.filter();
-    return f ? this.items().filter((i) => i.publication === f) : this.items();
+    const d = this.destination();
+    return this.items().filter((i) => (!f || i.publication === f) && (!d || i.destination === d));
   });
 
   constructor() {

@@ -11,11 +11,14 @@ const item = (over: Partial<PublicItem>): PublicItem => ({
   title: 'Poussette',
   description: '',
   price: 120,
+  priceMax: null,
   quantity: 1,
   remaining: 1,
   availability: 'available',
   photos: [{ id: 'p1', thumbUrl: '/api/media/p1/thumb', largeUrl: '/api/media/p1/large' }],
   takers: [],
+  destination: 'amis',
+  bought: false,
   ...over,
 });
 

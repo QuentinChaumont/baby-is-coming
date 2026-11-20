@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Kiki, KikiDiscoveries } from '@org/frontend-ui';
+import { Kiki } from '@org/frontend-ui';
 
 /** Catch-all for unknown URLs — Angular otherwise throws
  * "Cannot match any routes" and renders nothing. Kiki plays hide-and-seek
@@ -108,9 +108,4 @@ import { Kiki, KikiDiscoveries } from '@org/frontend-ui';
     }
   `,
 })
-export class NotFoundPage {
-  constructor() {
-    // Finding Kiki's hiding spot is one of her notebook's secrets.
-    inject(KikiDiscoveries).record('cache-cache');
-  }
-}
+export class NotFoundPage {}

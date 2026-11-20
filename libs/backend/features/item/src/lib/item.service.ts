@@ -3,6 +3,7 @@ import { ConflictError, NotFoundError, ValidationError } from '@org/backend-core
 import type {
   AdminItem,
   CreateItemRequest,
+  ItemDestination,
   ItemPublication,
   PublicItem,
   PublicItemDetail,
@@ -10,7 +11,7 @@ import type {
   UpdateItemRequest,
 } from '@org/shared-contracts';
 import { QueryFilter } from 'mongoose';
-import { normalizeSearch, searchTextOf, toAdminItem, toPublicItem } from './item.mapper';
+import { normalizePrice, normalizeSearch, priceSortKey, searchTextOf, toAdminItem, toPublicItem } from './item.mapper';
 import { ItemRepository } from './item.repository';
 import { MAIN_LIST } from './list.constants';
 import { ListingService } from './listing.service';
@@ -38,20 +39,25 @@ export class ItemService {
 
   async listPublic(query: PublicItemsQuery = {}): Promise<PublicItem[]> {
     const filter: QueryFilter<Item> = { listId: MAIN_LIST, publication: 'published' };
-    if (!query.showTaken) {
-      filter.$expr = { $lt: ['$takenQuantity', '$quantity'] };
+    if (query.destination === 'cagnotte') {
+      // The kitty shows everything: what's left to buy and what's bought.
+      filter.destination = 'cagnotte';
+    } else {
+      filter.destination = { $ne: 'cagnotte' };
+      if (!query.showTaken) filter.$expr = { $lt: ['$takenQuantity', '$quantity'] };
     }
     const q = query.q ? normalizeSearch(query.q) : '';
     if (q) {
       filter.searchText = { $regex: escapeRegex(q) };
     }
-    const sort: Record<string, 1 | -1> =
-      query.sort === 'price_asc'
-        ? { price: 1, position: 1 }
-        : query.sort === 'price_desc'
-          ? { price: -1, position: 1 }
-          : { position: 1 };
-    const docs = await this.repository.findSorted(filter, sort);
+    // Parents' order first; a price sort is stable on top of it, and done
+    // here so that items without a price always end up last.
+    const docs = await this.repository.findSorted(filter, { position: 1 });
+    if (query.sort === 'price_asc' || query.sort === 'price_desc') {
+      const direction = query.sort === 'price_asc' ? 'asc' : 'desc';
+      const sign = direction === 'asc' ? 1 : -1;
+      docs.sort((a, b) => sign * (priceSortKey(a, direction) - priceSortKey(b, direction)) || 0);
+    }
     return docs.map(toPublicItem);
   }
 
@@ -66,9 +72,22 @@ export class ItemService {
 
   // ── parents ───────────────────────────────────────────────────────────
 
-  async listAdmin(publication?: ItemPublication): Promise<AdminItem[]> {
+  /** What the kitty's published items add up to (price × quantity) — the
+   * kitty goal when the parents set none. */
+  async kittyItemsTotal(): Promise<number> {
+    const docs = await this.repository.findSorted(
+      { listId: MAIN_LIST, publication: 'published', destination: 'cagnotte' },
+      { position: 1 },
+    );
+    // A range counts its high end: better to aim a little high.
+    return docs.reduce((sum, d) => sum + (d.priceMax ?? d.price ?? 0) * d.quantity, 0);
+  }
+
+  async listAdmin(publication?: ItemPublication, destination?: ItemDestination): Promise<AdminItem[]> {
     const filter: QueryFilter<Item> = { listId: MAIN_LIST };
     if (publication) filter.publication = publication;
+    if (destination === 'cagnotte') filter.destination = 'cagnotte';
+    else if (destination === 'amis') filter.destination = { $ne: 'cagnotte' };
     const docs = await this.repository.findSorted(filter, { position: 1 });
     return docs.map(toAdminItem);
   }
@@ -84,10 +103,11 @@ export class ItemService {
       listId: MAIN_LIST,
       title,
       description,
-      price: input.price,
+      ...this.prices(input.price ?? null, input.priceMax ?? null),
       quantity: input.quantity ?? 1,
       position: (await this.repository.maxPosition(MAIN_LIST)) + 1,
       publication: 'draft',
+      destination: input.destination ?? 'amis',
       searchText: searchTextOf({ title, description }),
     });
     return toAdminItem(doc);
@@ -99,7 +119,15 @@ export class ItemService {
 
     if (patch.title !== undefined) set.title = patch.title.trim();
     if (patch.description !== undefined) set.description = patch.description.trim();
-    if (patch.price !== undefined) set.price = patch.price;
+    if (patch.price !== undefined || patch.priceMax !== undefined) {
+      Object.assign(
+        set,
+        this.prices(
+          patch.price !== undefined ? patch.price : (current.price ?? null),
+          patch.priceMax !== undefined ? patch.priceMax : (current.priceMax ?? null),
+        ),
+      );
+    }
     if (patch.quantity !== undefined) {
       if (patch.quantity < current.takenQuantity) {
         throw new ValidationError(
@@ -116,6 +144,17 @@ export class ItemService {
       }
       set.publication = patch.publication;
     }
+    // Takers are kept when an item moves (the parents' choice); only the
+    // kitty knows « bought », so moving back to the friends clears it.
+    const destination = patch.destination ?? current.destination ?? 'amis';
+    if (patch.destination !== undefined) set.destination = patch.destination;
+    if (patch.bought !== undefined) {
+      if (patch.bought && destination !== 'cagnotte') {
+        throw new ValidationError('NOT_A_KITTY_ITEM', 'Only kitty items can be marked bought');
+      }
+      set.bought = patch.bought;
+    }
+    if (destination === 'amis') set.bought = false;
     if (set.title !== undefined || set.description !== undefined) {
       set.searchText = searchTextOf({
         title: set.title ?? current.title,
@@ -153,6 +192,12 @@ export class ItemService {
     }
     await this.repository.reorder(MAIN_LIST, ids);
     return this.listAdmin();
+  }
+
+  private prices(min: number | null, max: number | null): { price: number | null; priceMax: number | null } {
+    const prices = normalizePrice(min, max);
+    if (!prices) throw new ValidationError('PRICE_RANGE', 'The high end must be above the low end');
+    return prices;
   }
 
   private async load(id: string): Promise<ItemDocument> {

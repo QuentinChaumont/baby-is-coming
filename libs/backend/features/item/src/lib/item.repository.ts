@@ -63,7 +63,11 @@ export class ItemRepository extends BaseRepository<Item> {
       listId,
       $expr: { $lte: [{ $add: ['$takenQuantity', units] }, '$quantity'] },
     };
-    if (publishedOnly) filter.publication = 'published';
+    // Guests take from the friends' list only, never from the kitty.
+    if (publishedOnly) {
+      filter.publication = 'published';
+      filter.destination = { $ne: 'cagnotte' };
+    }
     return this.model
       .findOneAndUpdate(
         filter,
