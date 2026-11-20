@@ -1,11 +1,27 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { GiraffeBand, InkCard } from '@org/frontend-ui';
+import { GiraffeBand, InkCard, Kiki, KikiTreasures } from '@org/frontend-ui';
 import type { PublicBirthList } from '@org/shared-contracts';
 import { catchError, map, of, startWith } from 'rxjs';
 import { PublicApi, formatDay } from './public-api.service';
 import { ShareButton } from './share-button';
+import { SoapBubbles } from './soap-bubbles';
+import { KikiCorner } from './kiki-corner';
+import { TreasureGift } from './treasure-gift';
+
+/** « Plus que 42 dodos » — the nights left until the due date. */
+export function dodosLine(dueDate: string | null | undefined, today = new Date()): string | null {
+  if (!dueDate) return null;
+  const [y, m, d] = dueDate.split('-').map(Number);
+  const due = Date.UTC(y, m - 1, d);
+  const now = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const nights = Math.round((due - now) / 86_400_000);
+  if (nights < 0) return null;
+  if (nights === 0) return "C'est le grand jour !";
+  if (nights === 1) return "Plus qu'un dodo !";
+  return `Plus que ${nights} dodos`;
+}
 
 type HomeState =
   | { status: 'loading' }
@@ -19,18 +35,32 @@ type HomeState =
  */
 @Component({
   selector: 'app-home-page',
-  imports: [RouterLink, GiraffeBand, InkCard, ShareButton],
+  imports: [RouterLink, GiraffeBand, InkCard, Kiki, ShareButton, SoapBubbles, KikiCorner, TreasureGift],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main class="home">
-      <header class="home__hero">
-        <div class="home__hero-inner">
-        <img class="home__kiki" src="kiki.svg" alt="" width="270" height="430" />
+      <!-- Tapping the sky blows soap bubbles (Kiki licks one of each puff). -->
+      <header class="home__hero" (pointerdown)="aim($event)" (pointerup)="blow($event, bubbles)">
+        <div class="home__hero-inner" [style.--treasures]="treasures.found().length">
+        <app-soap-bubbles #bubbles [kiki]="kiki" />
+        <lib-kiki #kiki class="home__kiki" [name]="nickname()" [missing]="treasures.missing()" />
+        @for (treasure of treasures.found(); track treasure; let i = $index) {
+          <app-treasure-gift
+            class="home__treasure"
+            [style.--slot]="i"
+            [treasure]="treasure"
+            [target]="kiki.element"
+            (given)="kiki.receive(treasure)"
+          />
+        }
         <h1>Coucou,<br />c'est {{ nickname() }}</h1>
         <p class="home__tagline">Une liste de naissance 100 % seconde main</p>
         <div class="home__labels">
           @if (dueDate(); as due) {
             <span class="home__label home__label--butter">Terme prévu : {{ due }}</span>
+          }
+          @if (dodos(); as left) {
+            <span class="home__label home__label--count">{{ left }}</span>
           }
           <span class="home__label">Fille ou garçon ? Surprise</span>
         </div>
@@ -100,6 +130,7 @@ type HomeState =
         </a>
         <app-share-button />
       </nav>
+      <app-kiki-corner />
     </main>
   `,
   styles: `
@@ -125,13 +156,21 @@ type HomeState =
       margin-inline: auto;
       box-sizing: border-box;
     }
+    /* Found treasures wait in a row at Kiki's feet, on her left; the
+       labels make room for them. */
+    .home__treasure {
+      position: absolute;
+      right: calc(clamp(112px, 30vw, 150px) + 2px + var(--slot, 0) * 32px);
+      bottom: 4px;
+      z-index: 2;
+      width: 30px;
+    }
     .home__kiki {
       position: absolute;
       right: 12px;
       bottom: -6px;
       width: clamp(112px, 30vw, 150px);
-      height: auto;
-      pointer-events: none;
+      z-index: 1;
       transform-origin: 50% 100%;
       animation: kiki-arrive 520ms var(--app-ease-out) 120ms both;
     }
@@ -140,6 +179,9 @@ type HomeState =
         opacity: 0;
         transform: translateY(18px) rotate(-4deg);
       }
+    }
+    .home__hero-inner .home__labels {
+      max-width: calc(100% - clamp(100px, 28vw, 140px) - var(--treasures, 0) * 34px);
     }
     .home__hero h1,
     .home__tagline,
@@ -171,6 +213,19 @@ type HomeState =
       font-weight: 800;
       font-size: 0.875rem;
       transform: rotate(1.5deg);
+    }
+    .home__label--count {
+      font-family: var(--app-font-hand);
+      font-size: 1.25rem;
+      font-weight: 700;
+      padding: 2px 12px;
+      transform: rotate(-1deg);
+      animation: home-count 2.8s ease-in-out infinite;
+    }
+    @keyframes home-count {
+      50% {
+        transform: rotate(1.5deg) scale(1.04);
+      }
     }
     .home__label--butter {
       background: var(--app-color-secondary);
@@ -243,6 +298,7 @@ type HomeState =
 })
 export class HomePage {
   private readonly api = inject(PublicApi);
+  protected readonly treasures = inject(KikiTreasures);
 
   protected readonly state = toSignal(
     this.api.list().pipe(
@@ -260,8 +316,27 @@ export class HomePage {
 
   protected readonly nickname = computed(() => this.list()?.babyNickname ?? 'Kiki');
   protected readonly welcome = computed(() => this.list()?.welcomeMessage ?? '');
+  protected readonly dodos = computed(() => dodosLine(this.list()?.dueDate));
   protected readonly dueDate = computed(() => {
     const due = this.list()?.dueDate;
     return due ? formatDay(due) : null;
   });
+
+  private tapStart: { x: number; y: number; t: number } | null = null;
+
+  protected aim(event: PointerEvent): void {
+    this.tapStart = { x: event.clientX, y: event.clientY, t: event.timeStamp };
+  }
+
+  /** Bubbles on a tap in the sky — not a scroll that started there, and not
+   * from Kiki, her treasures or links. */
+  protected blow(event: PointerEvent, bubbles: SoapBubbles): void {
+    const start = this.tapStart;
+    this.tapStart = null;
+    if (!start || event.timeStamp - start.t > 600) return;
+    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10) return;
+    const target = event.target as Element | null;
+    if (target?.closest('lib-kiki, app-treasure-gift, a, button')) return;
+    bubbles.blow(event.clientX, event.clientY);
+  }
 }

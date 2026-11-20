@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { LinkPill, PriceTag, Stamp } from '@org/frontend-ui';
+import { Confetti, Kiki, LinkPill, PriceTag, Stamp } from '@org/frontend-ui';
 import type { ListingPlatform, PublicItem, PublicItemDetail, PublicListing } from '@org/shared-contracts';
 import { catchError, map, merge, of, startWith, Subject, switchMap } from 'rxjs';
 import { stampOf, takenByLine } from './item-card';
@@ -47,7 +47,7 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
  */
 @Component({
   selector: 'app-item-page',
-  imports: [RouterLink, LinkPill, PriceTag, Stamp, TakeForm],
+  imports: [RouterLink, Kiki, LinkPill, PriceTag, Stamp, TakeForm],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @switch (state().status) {
@@ -118,7 +118,7 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
               }
               @if (confirmation(); as done) {
                 <div class="item__done app-rise">
-                  <img class="item__kiki" src="kiki.svg" alt="" width="270" height="430" />
+                  <lib-kiki class="item__kiki" [interactive]="false" celebrate />
                   <h2>{{ done.title }}</h2>
                   <p>{{ done.text }}</p>
                   <a class="app-button app-button--outline app-button--block" routerLink="/liste">Retour à la liste</a>
@@ -279,7 +279,6 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
     }
     .item__kiki {
       width: 120px;
-      height: auto;
       margin: 0 auto 4px;
       display: block;
       transform-origin: 50% 100%;
@@ -315,6 +314,7 @@ const CONFIRMATION: Record<TakeKind, { title: string; text: string }> = {
 })
 export class ItemPage {
   private readonly api = inject(PublicApi);
+  private readonly confetti = inject(Confetti);
 
   /** Route param `:id` (component input binding). */
   readonly id = input.required<string>();
@@ -358,6 +358,7 @@ export class ItemPage {
     this.afterTake.set(item);
     this.kind.set(null);
     this.confirmation.set(CONFIRMATION[kind]);
+    this.confetti.burst();
   }
 
   /** Someone else took it first: close the form, say so, refresh. */

@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { KikiPeek } from './kiki-peek';
+import { KikiCorner } from './kiki-corner';
 
 /**
  * Frame of the public pages other than the home (list, item, kitty):
@@ -8,7 +10,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
  */
 @Component({
   selector: 'app-public-shell',
-  imports: [RouterLink, RouterOutlet],
+  imports: [RouterLink, RouterOutlet, KikiPeek, KikiCorner],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="public-header">
@@ -23,6 +25,8 @@ import { RouterLink, RouterOutlet } from '@angular/router';
     <div class="public-body">
       <router-outlet />
     </div>
+    <app-kiki-peek />
+    <app-kiki-corner />
   `,
   styles: `
     :host {

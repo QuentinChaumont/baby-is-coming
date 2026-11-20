@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LinkPill } from '@org/frontend-ui';
+import { BabyBottle, Confetti, LinkPill } from '@org/frontend-ui';
 import type { PaymentMethods, PublicKitty } from '@org/shared-contracts';
 import { catchError, forkJoin, map, of, startWith } from 'rxjs';
 import { PublicApi } from './public-api.service';
@@ -35,7 +35,7 @@ export function formatIban(iban: string): string {
  */
 @Component({
   selector: 'app-kitty-page',
-  imports: [ReactiveFormsModule, LinkPill],
+  imports: [ReactiveFormsModule, BabyBottle, LinkPill],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main class="kitty">
@@ -54,6 +54,9 @@ export function formatIban(iban: string): string {
         }
         @default {
           <section class="kitty__total" [class.kitty__total--bump]="thanked()" aria-label="Total promis">
+            @if (ratio() !== null) {
+              <lib-baby-bottle class="kitty__bottle" [ratio]="ratio() ?? 0" />
+            }
             @if (empty()) {
               <p class="kitty__amount kitty__amount--empty">Pas encore de participation</p>
               <p class="kitty__goal">À toi l'honneur !</p>
@@ -189,6 +192,13 @@ export function formatIban(iban: string): string {
     .kitty__total p {
       margin: 0;
     }
+    /* The bottle fills up towards the goal, on the right of the amounts. */
+    .kitty__bottle {
+      float: right;
+      width: 44px;
+      margin: -4px 0 0 12px;
+      transform: rotate(6deg);
+    }
     .kitty__amount {
       font-family: var(--app-font-display);
       font-weight: 800;
@@ -310,6 +320,7 @@ export function formatIban(iban: string): string {
 })
 export class KittyPage {
   private readonly api = inject(PublicApi);
+  private readonly confetti = inject(Confetti);
 
   private readonly latest = signal<PublicKitty | null>(null);
   protected readonly thanked = signal(false);
@@ -350,6 +361,11 @@ export class KittyPage {
     const g = this.kitty()?.goal;
     return g ? EUR.format(g) : null;
   });
+  /** Share of the goal reached, or null when no goal is set. */
+  protected readonly ratio = computed(() => {
+    const k = this.kitty();
+    return k?.goal ? k.totalPromised / k.goal : null;
+  });
   protected readonly thanks = computed(() => {
     const k = this.kitty();
     return k ? thanksLine(k) : null;
@@ -386,6 +402,7 @@ export class KittyPage {
           this.submitting.set(false);
           this.latest.set(kitty);
           this.thanked.set(true);
+          this.confetti.burst();
         },
         error: () => {
           this.submitting.set(false);

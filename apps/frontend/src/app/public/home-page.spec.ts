@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import type { PublicBirthList } from '@org/shared-contracts';
-import { HomePage } from './home-page';
+import { HomePage, dodosLine } from './home-page';
 
 const LIST: PublicBirthList = {
   babyNickname: 'Kiki',
@@ -47,5 +47,14 @@ describe('HomePage', () => {
     http.expectOne('/api/public/list').flush(null, { status: 500, statusText: 'Server Error' });
     fixture.detectChanges();
     expect(el.querySelector('[role="alert"]')?.textContent).toContain("n'a pas pu se charger");
+  });
+
+  it('counts the nights left until the due date', () => {
+    const today = new Date(2027, 2, 1);
+    expect(dodosLine('2027-03-15', today)).toBe('Plus que 14 dodos');
+    expect(dodosLine('2027-03-02', today)).toBe("Plus qu'un dodo !");
+    expect(dodosLine('2027-03-01', today)).toBe("C'est le grand jour !");
+    expect(dodosLine('2027-02-20', today)).toBeNull();
+    expect(dodosLine(null, today)).toBeNull();
   });
 });

@@ -17,3 +17,10 @@ app-root {
 app-root > router-outlet + * {
   flex: 1 0 auto;
 }
+
+/* On the public pages, Kiki's corner (sound + notebook) and her peeking
+   head float at the bottom: leave the legal footer room to show. */
+app-root:has(app-kiki-corner) lib-legal-links {
+  display: block;
+  padding-bottom: 64px;
+}

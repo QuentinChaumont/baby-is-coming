@@ -40,6 +40,11 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('./public/kitty-page').then((m) => m.KittyPage),
         title: 'Cagnotte',
       },
+      {
+        path: 'carnet',
+        loadComponent: () => import('./public/carnet-page').then((m) => m.CarnetPage),
+        title: 'Le carnet de Kiki',
+      },
     ],
   },
   // Dev-only showcase of the brand components (DEV step 0.2).

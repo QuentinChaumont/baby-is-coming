@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { LegalLinks } from '@org/frontend-consent';
 import { OfflineBanner } from '@org/frontend-core';
 import { VerifyEmailBanner } from '@org/frontend-auth';
+import { TreasureHideout } from './treasure-hideout';
 
 @Component({
   imports: [
@@ -10,6 +11,7 @@ import { VerifyEmailBanner } from '@org/frontend-auth';
     LegalLinks,
     VerifyEmailBanner,
     OfflineBanner,
+    TreasureHideout,
   ],
   selector: 'app-root',
   templateUrl: './app.html',
