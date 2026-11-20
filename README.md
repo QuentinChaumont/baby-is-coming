@@ -663,23 +663,86 @@ throwaway value.
 
 ### Production (k3s, repo `qct-deploy`)
 
-Manifests live in `qct-deploy/deploy/5-kiki/` (ConfigMap, Secret,
-Deployment + Service, Ingress with its own Let's Encrypt cert) and serve
-`https://kiki.quentinchaumont.fr`. Data goes to the `baby-is-coming`
-database on the same MongoDB Atlas cluster as qct-admin.
+`https://kiki.quentinchaumont.fr` runs on the single-node k3s cluster
+(OVH VPS `51.91.159.140`, Traefik + cert-manager) next to qct-admin.
+Manifests live in `qct-deploy/deploy/5-kiki/`:
 
-1. Bump `TAG` in `.github/workflows/docker.yml`, merge to `main`, wait for
-   the workflow to be green.
-2. In `qct-deploy`, set the same tag in `deploy/5-kiki/3-kiki.deploy.yaml`,
-   then `kubectl diff -f deploy/5-kiki` and `kubectl apply -f deploy/5-kiki`.
-3. `kubectl rollout status deploy/kiki`.
+| File                               | What                                                                           |
+| ---------------------------------- | ------------------------------------------------------------------------------ |
+| `0-redirect-https.middleware.yaml` | Traefik middleware: `http://` → `https://` (301)                               |
+| `1-kiki.config.yaml`               | ConfigMap: `CORS_ORIGINS`, `AUTH_COOKIE_SECURE`, `TRUST_PROXY=1`, `MAIL_FROM`… |
+| `3-kiki.deploy.yaml`               | Deployment (probes on `/api/health/live` + `/ready`) + Service `kiki:5603`     |
+| `4-kiki.ingress.yaml`              | Ingress + Let's Encrypt cert `kiki-cert` (auto-renewed)                        |
 
-Parent accounts (once, after the first deploy):
+The `kiki-secret` Secret (`MONGO_URI`, `JWT_SECRET`) is **not in git**: it
+is created once on the cluster (see below). Data: database
+`baby-is-coming` on the same MongoDB Atlas cluster as qct-admin, through a
+dedicated Atlas user. Kubeconfig renewal: see the `qct-deploy` README.
+
+#### Release a new version
 
 ```bash
-kubectl exec -it deploy/kiki -- \
-  env SEED_ADMIN_EMAIL=… SEED_ADMIN_PASSWORD=… node seed-admin.js
+# 1. baby-is-coming: bump the image tag, ship to main
+#    .github/workflows/docker.yml → TAG: kiki-X.Y.Z
+git commit -am "chore(release): kiki-X.Y.Z" && git push
+git checkout main && git merge --ff-only feat/mvp && git push origin main
+gh run watch -R QuentinChaumont/baby-is-coming \
+  $(gh run list -R QuentinChaumont/baby-is-coming -w "Docker image" -L 1 --json databaseId -q '.[0].databaseId')
+
+# 2. qct-deploy: point the Deployment at the new tag
+#    deploy/5-kiki/3-kiki.deploy.yaml → image: quentinchmt/qct-admin:kiki-X.Y.Z
+git commit -am "MEP kiki X.Y.Z" && git push origin master
+kubectl diff -f deploy/5-kiki     # only the image line should change
+kubectl apply -f deploy/5-kiki
+kubectl rollout status deploy/kiki
+
+# 3. check
+curl -s -o /dev/null -w "%{http_code}\n" https://kiki.quentinchaumont.fr/api/health/ready   # 200
 ```
+
+`kubectl diff` exits 1 when there are differences: run it on its own, not
+chained with `&&`.
+
+Rollback: `kubectl rollout undo deploy/kiki` (then set the previous tag
+back in `3-kiki.deploy.yaml` so git matches the cluster).
+
+Logs / state: `kubectl logs deploy/kiki -f`, `kubectl get pods -l app=kiki`,
+`kubectl top pod -l app=kiki`.
+
+#### First-time setup (already done once)
+
+1. **DNS** (Gandi): `kiki` A → `51.91.159.140`.
+2. **Atlas**: Security → Database Access → user with `readWrite` on
+   `baby-is-coming` only (the VPS IP is already allowed).
+3. **GitHub secrets** (repo baby-is-coming): `REGISTRY_USERNAME`
+   (`quentinchmt`) and `REGISTRY_KEY` (Docker Hub token, Read & Write). Set
+   them from a real terminal — `gh secret set` reads the value from a
+   prompt, which `!` in Claude Code cannot show (it stores an empty value).
+4. **Kubernetes Secret**, from a real terminal (the password stays out of
+   git and of the shell history):
+   ```bash
+   read -s "MONGO_PWD?Atlas password: "; echo
+   kubectl create secret generic kiki-secret \
+     --from-literal=MONGO_URI="mongodb+srv://kiki:${MONGO_PWD}@qctadmin.qxxiu5r.mongodb.net/baby-is-coming?retryWrites=true&w=majority" \
+     --from-literal=JWT_SECRET="$(openssl rand -base64 48)"
+   unset MONGO_PWD
+   ```
+   To change it: `kubectl delete secret kiki-secret`, re-run, then
+   `kubectl rollout restart deploy/kiki`.
+5. `kubectl apply -f deploy/5-kiki` (from `qct-deploy`), then
+   `kubectl rollout status deploy/kiki`.
+6. **Parent accounts** (verified admins; idempotent, re-running promotes an
+   existing user):
+   ```bash
+   for EMAIL in parent1@example.com parent2@example.com; do
+     read -s "PWD_ADMIN?Password for $EMAIL: "; echo
+     kubectl exec deploy/kiki -- env SEED_ADMIN_EMAIL="$EMAIL" SEED_ADMIN_PASSWORD="$PWD_ADMIN" node seed-admin.js
+   done
+   unset PWD_ADMIN
+   ```
+
+Known gap: no SMTP yet (`SMTP_URL` unset, `nodemailer` not installed), so
+verification / reset emails are only logged.
 
 ## License
 
