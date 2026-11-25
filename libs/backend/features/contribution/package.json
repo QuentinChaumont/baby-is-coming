@@ -39,6 +39,6 @@
     "@nestjs/swagger": "^11.4.7",
     "@nestjs/throttler": "^6.5.0",
     "class-validator": "^0.15.1",
-    "mongoose": "^9.9.3"
+    "mongoose": "^9.12.3"
   }
 }
