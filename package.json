@@ -106,7 +106,7 @@
     "class-validator": "^0.15.1",
     "compression": "^1.8.1",
     "helmet": "^8.3.0",
-    "mongoose": "^9.9.3",
+    "mongoose": "^9.12.3",
     "ngx-image-cropper": "9.1.7",
     "openid-client": "^5.7.1",
     "passport": "^0.7.0",
